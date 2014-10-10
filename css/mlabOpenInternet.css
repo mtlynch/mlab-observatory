@@ -1,0 +1,208 @@
+/* 
+blue: #9bd2cf;
+orange: #d94f40;
+*/
+.line {
+  fill: none;
+  stroke-width: 1px;
+}
+
+@font-face{
+	font-family:'Proxima Nova';
+	src:url("fonts/proxima-nova/bold/proximanova-bold-webfont.eot");
+	src:url("fonts/proxima-nova/bold/proximanova-bold-webfont.eot?#iefix") format("embedded-opentype"),
+		url("fonts/proxima-nova/bold/proximanova-bold-webfont.woff") format("woff"),
+		url("fonts/proxima-nova/bold/proximanova-bold-webfont.ttf") format("truetype"),
+		url("fonts/proxima-nova/bold/proximanova-bold-webfont.svg#wf") format("svg");font-weight:bold;font-style:normal}
+
+@font-face{
+	font-family:'Proxima Nova';
+	src:url("fonts/proxima-nova/semi-bold/proximanova-semibold-webfont.eot");
+	src:url("fonts/proxima-nova/semi-bold/proximanova-semibold-webfont.eot?#iefix") format("embedded-opentype"),
+		url("fonts/proxima-nova/semi-bold/proximanova-semibold-webfont.woff") format("woff"),
+		url("fonts/proxima-nova/semi-bold/proximanova-semibold-webfont.ttf") format("truetype"),
+		url("fonts/proxima-nova/semi-bold/proximanova-semibold-webfont.svg#wf") format("svg");font-weight:400;font-style:normal}
+
+@font-face{
+	font-family:'Proxima Nova';
+	src:url("fonts/proxima-nova/regular/proximanova-reg-webfont.eot");
+	src:url("fonts/proxima-nova/regular/proximanova-reg-webfont.eot?#iefix") format("embedded-opentype"),
+		url("fonts/proxima-nova/regular/proximanova-reg-webfont.woff") format("woff"),
+		url("fonts/proxima-nova/regular/proximanova-reg-webfont.ttf") format("truetype"),
+		url("fonts/proxima-nova/regular/proximanova-reg-webfont.svg#wf") format("svg");font-weight:normal;font-style:normal}
+
+html, body {
+	padding: 0;
+	margin:0;
+	height: 100%;
+	font-family: "Proxima Nova Regular", Arial, Helvetica, sans-serif;
+}
+
+.wrapper {
+	background-color: #fff;
+	width: 960px;
+	margin:0 auto;
+}
+
+/***************
+  HEADER
+***************/
+
+.header {
+	background-color: #9bd2cf;
+	color: white;
+	height: 72px;
+}
+.header img {
+	width: 460px;
+	float: left;
+}
+.header .headerLinks {
+	float: right;
+	color: #767676;
+	font-size: 12px;
+	text-transform: uppercase;
+	margin-right: 40px;
+	margin-top: 28px;
+}
+.header .headerLinks > div {
+	cursor: pointer;
+}
+.header .headerLinks > div:hover {
+	cursor: pointer;
+	color: #d94f40;
+}
+
+h1 {
+	color: #9bd2c7;
+	padding-left: 65px;
+}
+
+
+/*
+Controls
+*/
+#controls .tabs {
+	list-style-type: none;
+	padding-left: 65px;
+	margin: 0;
+}
+#controls .tabs li {
+	float: left;
+	font-size: 13px;
+	padding: 10px 15px 7px 15px;
+	font-weight: bold;
+	color: #8c8c8c;
+	background-color: #ebebeb;
+	margin-right: 4px;
+	border-bottom: 3px solid #ebebeb;
+}
+#controls .tabs li.active {
+	background-color: #d9d9d9;
+	border-bottom-color: #a1a1a1;
+}
+#controls .selectBar {
+	background-color: #f1f2f2;
+	padding: 0 65px;
+	border: 1px solid #e1e1e1;
+	border-left: none;
+	border-right: none;
+}
+#controls .btn-default {
+	background-color: #f1f2f2;
+	border: none;
+	box-shadow: none;
+	outline: none;
+}
+#controls .selectionLabels  {
+	padding-left: 65px;
+	font-size: 22px;
+	color: #cbcbcb;
+	margin-top: 40px;
+}
+#controls .selectionLabels .b {
+	font-weight: bold;
+	color: #8b8b8b;
+}
+#controls .dropdown-menu {
+	border-radius: 0;
+}
+#controls .bootstrap-select {
+	outline: none;
+}
+#controls *:focus {
+	outline: none;
+	outline-style:none;
+	box-shadow:none;
+	border-color:transparent;
+}
+/***********
+Explore Viz
+***********/
+#exploreViz {
+	padding: 0 65px;
+}
+#exploreViz g.lines path {
+	fill: none;
+	stroke: #ccc;
+}
+#exploreViz .xAxis > path, #exploreViz .xAxis .tick line {
+	fill: none;
+	stroke: #b0b3b5;
+}
+#exploreViz .yAxis > path {
+	fill: none;
+}
+#exploreViz .axis text {
+	font-size: 11px;
+	fill: #666666;
+	font-weight: bold;
+}
+
+
+/*
+Time controller
+*/
+#timeControl {
+	padding: 0 65px;
+}
+
+/***************
+  ABOUT
+***************/
+
+.aboutModal {
+  display: none;
+  position: fixed;
+  width: 960px;
+  height: 100%;
+  background-color: rgba(0,0,0,0.2);
+  top: 0;
+  left: 0;
+  z-index: 50;
+}
+.aboutContent {
+  background: white;
+  padding: 30px;
+  color: #767676;
+  width: 70%;
+  margin: 200px auto;
+}
+
+
+
+
+.cf:before,
+.cf:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+.cf:after {
+    clear: both;
+}
+
+.cf {
+    *zoom: 1;
+}
+
