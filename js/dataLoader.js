@@ -1,4 +1,8 @@
 (function() {
+	var colors = [
+		"#4bb84b", "#dc4d3b", "#997edf", "#a3417f", "#548bd7", "#bdcb29", "#d68a1e",
+		"#93d493", "#ea9489", "#c2b2ec", "#c88db2", "#98b9e7", "#d7e07f", "#e6b978"
+	]
 	var exports = new EventEmitter()
 	var metadatafolder = 'metadata/'
 
@@ -127,6 +131,7 @@
 					setupDates(data, dataType)
 					requestData.filenameID = combo.filename
 					requestData.data = data
+					requestData.color = colors[~~ ( Math.random() * colors.length) ]
 					//console.log(combo.filename)
 					//console.log(requestData)
 					numCombosLoaded ++;

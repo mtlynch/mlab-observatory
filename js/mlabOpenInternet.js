@@ -23,10 +23,12 @@
 		timeControl.init();
 		timeControl.addListener('selectionChanged', selectionChanged)
 		exploreViz.show()
+		timeControl.show()
 	}
 	function selectionChanged(e) {
 		console.log('show')
 		exploreViz.show()
+		timeControl.show()
 	}
 	/*
 	function update(){

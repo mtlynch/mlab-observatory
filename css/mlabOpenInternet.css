@@ -166,6 +166,10 @@ Time controller
 #timeControl {
 	padding: 0 65px;
 }
+#timeControl svg path {
+	fill: none;
+	stroke: #ccc ;
+}
 
 /***************
   ABOUT

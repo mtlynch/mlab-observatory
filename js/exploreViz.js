@@ -43,7 +43,7 @@
 				return d.month == dateToMatch.month && d.year == dateToMatch.year
 			})
 			//console.log(timelyData)
-			dataInTimePeriod.push({data: timelyData, id: dataset.filenameID})
+			dataInTimePeriod.push({data: timelyData, id: dataset.filenameID, color: dataset.color})
 		})
 		plot(dataInTimePeriod)
 	}
@@ -101,7 +101,8 @@
 				return null
 			} else {
 				d.active = true;
-				return colors[~~(Math.random() * colors.length)]
+				console.log(d)
+				return d.color;
 			}
 		}).style('stroke-width', function(d) {
 			if(d.active) {
