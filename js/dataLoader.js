@@ -118,7 +118,9 @@
 				//request data
 				var requestData = {}
 				requestData.requested = true;
-				requestData.received = false
+				requestData.received = false;
+				requestData.callbacks = []
+				requestData.callbacks.push(callback)
 				dataObj[combo.filename] = requestData
 				d3.csv(dataPath + combo.filename + '_' + dataType + '.csv', function(err, data) {
 					requestData.received = true
@@ -128,7 +130,7 @@
 					//console.log(combo.filename)
 					//console.log(requestData)
 					numCombosLoaded ++;
-					checkIfAllDataLoaded(numCombosLoaded, combos, callback, dataObj)
+					checkIfAllDataLoaded(numCombosLoaded, combos, requestData.callbacks, dataObj)
 					/*
 					if(numCombosLoaded === combos.length) {
 						var rtnObj = [];
@@ -144,21 +146,27 @@
 				//or data has been requested and received
 				var requestData = dataObj[combo.filename]
 				if(! requestData.received) {
-					console.error('data has been requested but not received...')
+					//data requested but not received
+					requestData.callbacks.push(callback)
+				} else {
+					//data already received
+					numCombosLoaded++
+					checkIfAllDataLoaded(numCombosLoaded, combos, [callback], dataObj)
+
 				}
-				numCombosLoaded++
-				checkIfAllDataLoaded(numCombosLoaded, combos, callback, dataObj)
 			} 
 		})
 	}
-	function checkIfAllDataLoaded(numLoaded, combos, callback, dataObj) {
+	function checkIfAllDataLoaded(numLoaded, combos, callbacks, dataObj) {
 		var numExpected = combos.length
 		if(numLoaded === numExpected) {
 			var rtnObj = [];
 			_.each(combos, function(c) {
 				rtnObj.push(dataObj[c.filename])
 			})
-			callback(rtnObj)
+			_.each(callbacks, function(callback) {
+				callback(rtnObj)
+			})
 		}
 	}
 	function setupDates(data, dataType) {
