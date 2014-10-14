@@ -10,7 +10,7 @@
 	var svg;
 	var svgDimensions = {
 		height: 40,
-		width: 822
+		width: 820
 	}
 	var linesTranslateData;
 	function init() {
@@ -50,6 +50,7 @@
 		mlabOpenInternet.dataLoader.requestCityData(curCity, view, dataLoaded)
 	}
 	function dataLoaded(allCityData) {
+		//plot the entire dataset of selected cities (or all cities if none selected)
 		console.log('time control data loaded')
 		var datasets;
 		var metric = mlabOpenInternet.controls.getSelectedMetric();
@@ -74,7 +75,12 @@
 		var minDate = null;
 		var maxDate = null;
 		console.log(datasets)
+		//determine min / maxes
+		
+		//we need to break up datasets by month to color them properly :/
+		var monthlyDatasets = []
 		_.each(datasets, function(dataset) {
+			var thisDataSetByMonths = {}
 			_.each(dataset.data, function(datum) {
 				var metricValue = +datum[metricKey]
 				if(metricValue < minDataValue) {
@@ -89,14 +95,28 @@
 				if(maxDate === null || datum.date > maxDate) {
 					maxDate = datum.date
 				}
+				var monthYearKey = datum.date.getMonth() + "-" + datum.date.getFullYear();
+				if(typeof thisDataSetByMonths[monthYearKey] === 'undefined') {
+					thisDataSetByMonths[monthYearKey] = []
+				}
+				thisDataSetByMonths[monthYearKey].push(datum)
+			})
+			_.each(thisDataSetByMonths, function(data, key) {
+				monthlyDatasets.push({
+					data: data,
+					color: dataset.color
+				})
+				console.log(data[0])
+				console.log(data[data.length - 1])
 			})
 		})
+		console.log(monthlyDatasets)
 		console.log(minDataValue + ' ' + maxDataValue)
 		console.log(minDate + " " + maxDate)
 		var yScale = d3.scale.linear().domain([0, maxDataValue])
 			.range([svgDimensions.height, 0])
 		//var xScale = d3.scale.linear().domain([0, maxDatasetLength - 1]).range([0, exploreDimensions.w])
-		var monthsToShowAtOnce = 6;
+		var monthsToShowAtOnce = 5;
 		var monthWidth = svgDimensions.width / monthsToShowAtOnce;
 		var startDateMoment = moment(minDate);
 		var endDateMoment = moment(maxDate)
@@ -104,7 +124,7 @@
 		var fullWidth = monthWidth * numMonths;
 		console.log('numMonths ' + numMonths)
 		var xScale = d3.time.scale().domain([minDate, maxDate]).range([0, fullWidth])
-		var paths = svg.select('g.lines').selectAll('path').data(datasets)
+		var paths = svg.select('g.lines').selectAll('path').data(monthlyDatasets)
 		var lineGen = d3.svg.line()
 			.x(function(d,i) {
 				return xScale(d.date)
@@ -149,6 +169,7 @@
 					linesTranslateData.x = maxTranslateAmount
 				}
 				d3.select(this).select('g.lines')
+					.transition().duration(300)
 					.attr('transform', 'translate(' + linesTranslateData.x + ',' + linesTranslateData.y + ')')
 			}).origin(function(d) { return linesTranslateData })
 		var linesTranslateData = {
