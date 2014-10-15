@@ -21,14 +21,18 @@
 		controls.addListener('selectionChanged', selectionChanged)
 		console.log(timeControl)
 		timeControl.init();
-		timeControl.addListener('selectionChanged', selectionChanged)
-		exploreViz.show()
+		timeControl.addListener('timeChanged', timeChanged)
 		timeControl.show()
+		exploreViz.show()
+	}
+	function timeChanged(e) {
+		exploreViz.show()
 	}
 	function selectionChanged(e) {
 		console.log('show')
-		exploreViz.show()
 		timeControl.show()
+		exploreViz.show()
+
 	}
 	/*
 	function update(){
