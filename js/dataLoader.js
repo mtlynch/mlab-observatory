@@ -20,6 +20,7 @@
 	var metrics = null;
 	var dailyDataByCode = {};
 	var hourlyDataByCode = {};
+	var mlabSitesByCode = {}
 	/*
 	var ispList = [];
 	var codeList = [];
@@ -76,6 +77,8 @@
 			if(validCities.indexOf(cityState) === -1) {
 				validCities.push(cityState)
 			}
+			var code = mapping['MlabSiteName'].toLowerCase()
+			mlabSitesByCode[code] = mapping
 		})
 
 		d3.json(metricFile, loadMetrics);
@@ -186,123 +189,20 @@
 			datum.date = date
 		})
 	}
+	function getTPForCode(code) {
+		var mapping = mlabSitesByCode[code]
+		return mapping['TransitProvider']
+	}
 	exports.init = init
 	exports.getMetrics = function() { return metrics }
 	exports.getCities = function() { return validCities }
 	exports.getCombinations = getCombinations
 	exports.requestCityData = requestCityData
+	exports.getTPForCode = getTPForCode
 	if( ! window.mlabOpenInternet){
 		window.mlabOpenInternet = {}
 	}
 
 	window.mlabOpenInternet.dataLoader = exports;
-	/*
-	function init() {
-
-		d3.csv(ispFile, function(data){
-			_.each(data, function(datum){
-				ispList.push(datum.ISP);
-			});
-
-			d3.csv(mapFile, function(map){
-				_.each(map, function(mp){
-					var siteCode = mp.MlabSiteName.toLowerCase();
-					var cityState = mp.City + ', ' + mp.State;
-					codeList.push(siteCode);
-					codeCity[siteCode] = cityState; 
-					codeTP[siteCode] = mp.TransitProvider;
-					if(!(cityState in cityCode))
-						cityCode[cityState] = [siteCode];
-					else if (cityCode[cityState].indexOf(siteCode) == -1)
-						cityCode[cityState].push(siteCode);
-				});
-				return calDataPathNum();
-			});
-		});
-	}
-
-	function calDataPathNum() {
-		var cnt = 0;
-		for(var i = 0; i < years.length; i++){
-			for(var j = 0; j < codeList.length; j++){
-				for(var k = 0; k < ispList.length; k++){
-					var path = dataPath + years[i] + "-01-01-000000+" + ynums[i] + "d_" + codeList[j] + "_" + ispList[k] + "_agg.csv";
-					pathList.push(path);
-					dataAccessMap[years[i] + "-" + codeList[j] + "-" + ispList[k]] = cnt;
-					cnt++;
-				}
-			}
-		}
-		return loadAggData(0);
-	}
-
-	function loadAggData(counter){
-		// if(counter == pathList.length)
-		if(counter == 112)
-			return mlabOpenInternet.app.update();
-		d3.csv(pathList[counter], function(error, data){
-			var tmpHourly = [];
-			var tmpDaily = [];
-			if(!error){
-				_.each(data, function(datum){
-					if(datum['hour'] == "-99")
-						tmpDaily.push(datum);
-					else
-						tmpHourly.push(datum);						
-				});
-			}
-			aggDailyData.push(tmpDaily);
-			aggHourlyData.push(tmpHourly);
-			loadAggData(++counter);
-		});
-	}
-
-	function getISPList(){
-		return ispList;
-	}
-
-	function getCodeList(){
-		return codeList;
-	}
-
-	function getCodeCity(){
-		return codeCity;
-	}
-
-	function getCodeTP(){
-		return codeTP;
-	}
-				
-	function getCityCode(){
-		return cityCode;
-	}
-
-	function getDataAccessMap(){
-		return dataAccessMap;
-	}
-
-	function getAggDailyData(){
-		return aggDailyData;
-	}
-
-	function getAggHourlyData(){
-		return aggHourlyData;
-	}
-
-	if( ! window.mlabOpenInternet){
-		window.mlabOpenInternet = {}
-	}
-
-	window.mlabOpenInternet.dataLoader = {
-		init: init,
-		getISPList: getISPList,
-		getCodeList: getCodeList,
-		getCodeCity: getCodeCity,
-		getCodeTP: getCodeTP,
-		getCityCode: getCityCode,
-		getDataAccessMap: getDataAccessMap,
-		getAggDailyData: getAggDailyData,
-		getAggHourlyData: getAggHourlyData
-	}
-	*/
+	
 })()

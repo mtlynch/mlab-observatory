@@ -144,6 +144,7 @@ Explore Viz
 ***********/
 #exploreViz {
 	padding: 0 65px;
+	position: relative;
 }
 #exploreViz g.lines path {
 	fill: none;
@@ -162,7 +163,45 @@ Explore Viz
 	font-weight: bold;
 }
 
-
+#exploreViz .fillDot {
+	pointer-events: none;
+}
+#exploreViz .exploreTTContainer {
+	position: absolute;
+	display: none;
+	opacity: 0;
+}
+#exploreViz .exploreTTContent {
+	background: #616266;
+	color: #fff;
+	border-radius: 5px;
+	padding: 10px;
+}
+#exploreViz .exploreTTContent .ttTitle {
+	font-size: 15px;
+	margin-bottom: 0.5em;
+	font-weight: bold;
+}
+#exploreViz .exploreTTContent .ttLabel {
+	color: #c2c2c2;
+	font-size: 11px;
+	white-space: nowrap;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+#exploreViz .exploreTTContent .ttValue {
+	margin-bottom: 0.5em;
+	font-size: 13px;
+	font-weight: bold;
+}
+#exploreViz .exploreTTContainer .exploreTTArrow {
+	width: 0; 
+	height: 0; 
+	border-left: 8px solid transparent;
+	border-right: 8px solid transparent;
+	border-top: 8px solid #616266;
+	position: absolute;
+}
 /*
 Time controller
 */
