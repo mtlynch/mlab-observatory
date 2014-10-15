@@ -2,7 +2,11 @@
 	var exports = new EventEmitter()
 	var div;
 
-	var tabData = ['Explore','Compare', 'How this works']
+	var tabData = [
+		{lbl: 'Explore', id: 'explore'},
+		{lbl: 'Compare', id: 'compare'},
+		{lbl: 'How this works', id: 'help'} 
+	]
 	var metrics;
 	var cities;
 
@@ -37,11 +41,11 @@
 
 		var tabContainer = div.append('ul').attr('class','tabs cf')
 		var tabs = tabContainer.selectAll('li').data(tabData)
-		tabs.enter().append('li').text(String)
+		tabs.enter().append('li').text(function(d) { return d.lbl})
 			.classed('active', function(d,i) {
 				return i === 0
 			})
-
+			.on('click', clickTab)
 		var selectBar = div.append('div').attr('class','selectBar')
 
 		selectionLabels = div.append('div').attr('class','selectionLabels')
@@ -68,7 +72,20 @@
 		setupComboSelectOptions()
 
 		populateSelectionLabel()
+		_.defer(function() {
+			exports.emitEvent('switchTab', [tabData[0]])
 
+		})
+
+	}
+	function clickTab(d,i) {
+		var dTab = d3.select(this);
+		if(dTab.classed('active')) {
+			return
+		}
+		$(div[0][0]).find('.tabs li.active').removeClass('active')
+		dTab.classed('active', true)
+		exports.emitEvent('switchTab', [d])
 	}
 	function changeMetric(event) {
 		var newMetric = _.find(metrics, function(d) { return d.key === $metricsSelect.val() } )

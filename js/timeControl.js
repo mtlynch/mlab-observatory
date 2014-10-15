@@ -64,6 +64,7 @@
 		*/
 	}
 	function show() {
+		div.style('display',null)
 		var curCity = mlabOpenInternet.controls.getSelectedCity()
 		var view = 'daily'
 		mlabOpenInternet.dataLoader.requestCityData(curCity, view, dataLoaded)
@@ -310,8 +311,12 @@
 		var d= new Date(date.getFullYear(), date.getMonth()+1, 0);
 		return d.getDate();
 	}
+	function hide() {
+		div.style('display','none')
+	}
 	exports.init = init
 	exports.show = show
+	exports.hide = hide;
 	exports.getSelectedDate = function() { return selectedDate }
 	if( ! window.mlabOpenInternet){
 		window.mlabOpenInternet = {}

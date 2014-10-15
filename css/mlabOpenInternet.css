@@ -97,6 +97,7 @@ Controls
 	color: #8c8c8c;
 	background-color: #ebebeb;
 	margin-right: 4px;
+	cursor: pointer;
 	border-bottom: 3px solid #ebebeb;
 }
 #controls .tabs li.active {

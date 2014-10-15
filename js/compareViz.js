@@ -137,7 +137,7 @@
 	if( ! window.mlabOpenInternet) {
 		window.mlabOpenInternet = {}
 	}
-	window.mlabOpenInternet.exploreViz = {
+	window.mlabOpenInternet.compareViz = {
 		init: init,
 		show: show,
 		hide: hide
