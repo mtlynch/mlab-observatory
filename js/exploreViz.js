@@ -67,18 +67,23 @@
 		console.log(datasets)
 		_.each(datasets, function(dataset) {
 			_.each(dataset.data, function(datum) {
+				
+				if(minDate === null || datum.date < minDate) {
+					minDate = datum.date
+				}
+				if(maxDate === null || datum.date > maxDate) {
+					maxDate = datum.date
+				}
+				var sampleSize = +datum[metricKey + "_n"]
+				if(sampleSize < mlabOpenInternet.dataLoader.getMinSampleSize()) {
+					return
+				}
 				var metricValue = +datum[metricKey]
 				if(metricValue < minDataValue) {
 					minDataValue = metricValue
 				}
 				if(metricValue > maxDataValue) {
 					maxDataValue = metricValue
-				}
-				if(minDate === null || datum.date < minDate) {
-					minDate = datum.date
-				}
-				if(maxDate === null || datum.date > maxDate) {
-					maxDate = datum.date
 				}
 			})
 		})

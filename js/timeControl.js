@@ -103,14 +103,9 @@
 		var maxMonthIndex = 0;
 		_.each(datasets, function(dataset) {
 			var thisDataSetByMonths = {}
-			_.each(dataset.data, function(datum) {
+			_.each(dataset.data, function(datum,index) {
 				var metricValue = +datum[metricKey]
-				if(metricValue < minDataValue) {
-					minDataValue = metricValue
-				}
-				if(metricValue > maxDataValue) {
-					maxDataValue = metricValue
-				}
+				
 				if(minDate === null || datum.date < minDate) {
 					minDate = datum.date
 				}
@@ -122,6 +117,18 @@
 					thisDataSetByMonths[monthYearKey] = []
 				}
 				thisDataSetByMonths[monthYearKey].push(datum)
+
+				var sampleSize = +datum[metricKey + "_n"]
+				if(sampleSize < mlabOpenInternet.dataLoader.getMinSampleSize()) {
+					console.log('sample size too small')
+					return
+				}
+				if(metricValue < minDataValue) {
+					minDataValue = metricValue
+				}
+				if(metricValue > maxDataValue) {
+					maxDataValue = metricValue
+				}
 			})
 			dataset.byMonths = thisDataSetByMonths; 
 		})

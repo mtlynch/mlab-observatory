@@ -201,7 +201,6 @@
 			console.error('setup hourly data')
 		} else {
 
-			console.log(minDate + ' ' + maxDate)
 			var momentMin = moment(minDate)
 			var momentMax = moment(maxDate)
 			//sort data
@@ -215,8 +214,7 @@
 				}
 			})
 			var numDays = momentMax.diff(momentMin, 'days', true) + 1
-			console.log( numDays)
-
+		
 			var dataWithGaps = new Array(numDays)
 			_.each(data, function(datum) {
 				var dayCount = datum.moment.diff(momentMin,'days', true)
