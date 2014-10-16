@@ -65,26 +65,26 @@
 	}
 	function show() {
 		div.style('display',null)
-		var curCity = mlabOpenInternet.controls.getSelectedCity()
+		var curMetro = mlabOpenInternet.controls.getSelectedMetro()
 		var view = 'daily'
-		mlabOpenInternet.dataLoader.requestCityData(curCity, view, dataLoaded)
+		mlabOpenInternet.dataLoader.requestMetroData(curMetro, view, dataLoaded)
 	}
-	function dataLoaded(allCityData) {
+	function dataLoaded(allMetroData) {
 		//plot the entire dataset of selected cities (or all cities if none selected)
 		console.log('time control data loaded')
 		var datasets;
 		var metric = mlabOpenInternet.controls.getSelectedMetric();
 		selectedCombinations = mlabOpenInternet.controls.getSelectedCombinations()
 		if(selectedCombinations.length === 0) {
-			datasets = allCityData
+			datasets = allMetroData
 		//	datasets = []
 		} else {
 			datasets = []
-			_.each(allCityData, function(cityData) {
-				var dataID = cityData.filenameID;
+			_.each(allMetroData, function(metroData) {
+				var dataID = metroData.filenameID;
 				var included = _.find(selectedCombinations, function(combo) { return combo.filename === dataID })
 				if(typeof included !== 'undefined') {
-					datasets.push(cityData)
+					datasets.push(metroData)
 				}
 			})
 			console.log(selectedCombinations)

@@ -15,7 +15,7 @@
 	var ispsBySite = {}
 	var validISPs = [];
 	var validSiteNames = [];
-	var validCities = [];
+	var validMetroRegions = []
 	var siteMappings = null;
 	var metrics = null;
 	var dailyDataByCode = {};
@@ -72,10 +72,9 @@
 	function loadCodeMappings(err, data) {
 		siteMappings = data;
 		_.each(data, function(mapping) {
-			var cityState = mapping['City'] + ', ' + mapping['State'];
-			mapping.cityState = cityState
-			if(validCities.indexOf(cityState) === -1) {
-				validCities.push(cityState)
+			var metro = mapping['MetroArea']
+			if(validMetroRegions.indexOf(metro) === -1) {
+				validMetroRegions.push(metro)
 			}
 			var code = mapping['MlabSiteName'].toLowerCase()
 			mlabSitesByCode[code] = mapping
@@ -92,8 +91,8 @@
 		metrics = data;
 		exports.emitEvent('loaded')
 	}
-	function getCombinations(city) {
-		var mLabSites = _.select(siteMappings, function(d) { return d.cityState === city })
+	function getCombinations(metro) {
+		var mLabSites = _.select(siteMappings, function(d) { return d.MetroArea === metro })
 		var combos = []
 		_.each(mLabSites, function(site) {
 			var code = site.MlabSiteName.toLowerCase()
@@ -108,7 +107,7 @@
 		})
 		return combos
 	}
-	function requestCityData(city, dataType, callback) {
+	function requestMetroData(metro, dataType, callback) {
 		var dataObj = null;
 		if(dataType === 'hourly') {
 			dataObj = hourlyDataByCode;
@@ -118,7 +117,8 @@
 			console.error('invalid data requested: ' + dataType)
 			return
 		}
-		var combos = getCombinations(city);
+		var combos = getCombinations(metro);
+		console.log(combos)
 		var numCombosLoaded = 0;
 		_.each(combos, function(combo) {
 			if(typeof dataObj[combo.filename] === 'undefined') {
@@ -195,9 +195,9 @@
 	}
 	exports.init = init
 	exports.getMetrics = function() { return metrics }
-	exports.getCities = function() { return validCities }
+	exports.getMetroRegions = function() { return validMetroRegions }
 	exports.getCombinations = getCombinations
-	exports.requestCityData = requestCityData
+	exports.requestMetroData = requestMetroData
 	exports.getTPForCode = getTPForCode
 	if( ! window.mlabOpenInternet){
 		window.mlabOpenInternet = {}

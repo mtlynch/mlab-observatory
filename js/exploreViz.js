@@ -28,14 +28,14 @@
 	}
 	function show() {
 		div.style('display', null)
-		var curCity = mlabOpenInternet.controls.getSelectedCity()
+		var curMetro = mlabOpenInternet.controls.getSelectedMetro()
 		var view = 'daily'
-		mlabOpenInternet.dataLoader.requestCityData(curCity, view, dataLoaded)
+		mlabOpenInternet.dataLoader.requestMetroData(curMetro, view, dataLoaded)
 		
 	}
-	function dataLoaded(allCityData) {
-		console.log('all city data loaded')
-		console.log(allCityData)
+	function dataLoaded(allMetroData) {
+		console.log('all metro data loaded')
+		console.log(allMetroData)
 		var dataInTimePeriod = []
 		var curDate = mlabOpenInternet.timeControl.getSelectedDate()
 		var dateToMatch = {
@@ -44,7 +44,7 @@
 		}
 		//console.log(dateToMatch)
 
-		_.each(allCityData, function(dataset) {
+		_.each(allMetroData, function(dataset) {
 			console.log(dataset)
 			var timelyData = _.filter(dataset.data, function(d) {
 				return d.month == dateToMatch.month && d.year == dateToMatch.year

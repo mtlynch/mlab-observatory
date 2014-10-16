@@ -8,10 +8,10 @@
 		{lbl: 'How this works', id: 'help'} 
 	]
 	var metrics;
-	var cities;
+	var metros;
 
 	var selectedMetric;
-	var selectedCity;
+	var selectedMetroRegion;
 	var selectedCombinations;
 
 	var currentCombinationOptions;
@@ -19,8 +19,8 @@
 	var metricsSelectD3;
 	var $metricsSelect;
 
-	var citySelectD3;
-	var $citySelect;
+	var metroSelectD3;
+	var $metroSelect;
 
 	var comboSelectD3;
 	var $comboSelect;
@@ -31,10 +31,10 @@
 		div = d3.select('#controls')
 
 		metrics = mlabOpenInternet.dataLoader.getMetrics()
-		cities = mlabOpenInternet.dataLoader.getCities()
+		metros = mlabOpenInternet.dataLoader.getMetroRegions()
 
 		selectedMetric = _.find(metrics, function(d) { return d.key === 'download_throughput'})
-		selectedCity = "New York, NY"
+		selectedMetroRegion = "New York"
 		selectedCombinations = []
 
 		console.log(selectedMetric)
@@ -58,11 +58,11 @@
 			.attr('value', function(d) { return d.key })
 		$metricsSelect = $(metricsSelect[0][0]).selectpicker({selectedTextFormat: 'static'}).on('change', changeMetric)
 
-		var citySelect = selectBar.append('select').attr('title', 'City')
-		citySelectD3 = citySelect;
-		var cityOpts = citySelect.selectAll('option').data(cities)
-		cityOpts.enter().append('option').text(String).attr('value', String)
-		$citySelect = $(citySelect[0][0]).selectpicker({selectedTextFormat: 'static'}).on('change', changeCity)
+		var metroSelect = selectBar.append('select').attr('title', 'Metro Region')
+		metroSelectD3 = metroSelect;
+		var metroOpts = metroSelect.selectAll('option').data(metros)
+		metroOpts.enter().append('option').text(String).attr('value', String)
+		$metroSelect = $(metroSelect[0][0]).selectpicker({selectedTextFormat: 'static'}).on('change', changeMetro)
 
 		var comboSelect = selectBar.append('select')
 			.attr('multiple','multiple').attr('title','Combinations')
@@ -96,12 +96,12 @@
 		populateSelectionLabel()
 		exports.emitEvent('selectionChanged')
 	}
-	function changeCity(event) {
-		var newCity = $citySelect.val();
-		if(newCity === selectedCity) {
+	function changeMetro(event) {
+		var newMetro = $metroSelect.val();
+		if(newMetro === selectedMetroRegion) {
 			return;
 		}
-		selectedCity = newCity;
+		selectedMetroRegion = newMetro;
 		setupComboSelectOptions()
 		populateSelectionLabel()
 		exports.emitEvent('selectionChanged')
@@ -123,7 +123,7 @@
 
 	}
 	function setupComboSelectOptions() {
-		var options = mlabOpenInternet.dataLoader.getCombinations(selectedCity);
+		var options = mlabOpenInternet.dataLoader.getCombinations(selectedMetroRegion);
 		currentCombinationOptions = options
 		var comboOpts = comboSelectD3.selectAll('option').data(options)
 		comboOpts.enter().append('option')
@@ -146,12 +146,12 @@
 			labelHTML += 'some subset of combinations'
 		}
 		labelHTML += ' in '
-		labelHTML += '<span class="b">' + selectedCity + '</span>'
+		labelHTML += '<span class="b">' + selectedMetroRegion + '</span>'
 		selectionLabels.html(labelHTML)
 	}
 
 	exports.init = init
-	exports.getSelectedCity = function() { return selectedCity }
+	exports.getSelectedMetro = function() { return selectedMetroRegion }
 	exports.getSelectedMetric = function() { return selectedMetric }
 	exports.getSelectedCombinations = function() { return selectedCombinations }
 	if( ! window.mlabOpenInternet){
