@@ -247,10 +247,11 @@
 			.on('drag', function(d) {
 				var delta = d3.event.dx;
 				linesTranslateData.dx += delta;
-				if(Math.abs(linesTranslateData.dx) < monthWidth) {
+				var shiftNeeded = monthWidth / 2;
+				if(Math.abs(linesTranslateData.dx) < shiftNeeded) {
 					return;
 				}
-				var monthsToShift = ~~(linesTranslateData.dx / monthWidth)
+				var monthsToShift = ~~(linesTranslateData.dx / shiftNeeded)
 				var shiftAmount = monthsToShift * monthWidth
 				console.log(monthsToShift + " "  + shiftAmount);
 				linesTranslateData.dx -= shiftAmount
