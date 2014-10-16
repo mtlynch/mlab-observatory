@@ -65,7 +65,7 @@
 		$metroSelect = $(metroSelect[0][0]).selectpicker({selectedTextFormat: 'static'}).on('change', changeMetro)
 
 		var comboSelect = selectBar.append('select')
-			.attr('multiple','multiple').attr('title','Combinations')
+			.attr('multiple','multiple').attr('title','ISP Combinations')
 			.attr('data-max-options', 3)
 		comboSelectD3 = comboSelect
 		$comboSelect = $(comboSelect[0][0]).selectpicker({selectedTextFormat: 'static'}).on('change', changeCombinations)
