@@ -21,6 +21,7 @@
 	var dailyDataByCode = {};
 	var hourlyDataByCode = {};
 	var mlabSitesByCode = {}
+	var minSampleSize = 50
 	/*
 	var ispList = [];
 	var codeList = [];
@@ -131,9 +132,8 @@
 				dataObj[combo.filename] = requestData
 				d3.csv(dataPath + combo.filename + '_' + dataType + '.csv', function(err, data) {
 					requestData.received = true
-					setupDates(data, dataType)
+					requestData.data = setupDates(data, dataType)
 					requestData.filenameID = combo.filename
-					requestData.data = data
 					requestData.color = colors[~~ ( Math.random() * colors.length) ]
 					//console.log(combo.filename)
 					//console.log(requestData)
@@ -178,6 +178,8 @@
 		}
 	}
 	function setupDates(data, dataType) {
+		var minDate = null;
+		var maxDate = null;
 		_.each(data, function(datum) {
 			var date;
 			if(dataType === 'hourly') {
@@ -187,7 +189,63 @@
 				date = new Date(datum['year'], datum['month'] - 1, datum['day'])
 			}
 			datum.date = date
+			datum.moment = moment(date);
+			if(minDate === null || date < minDate) {
+				minDate = date
+			}
+			if(maxDate === null || date > maxDate) {
+				maxDate = date
+			}
 		})
+		if(dataType === 'hourly') {
+			console.error('setup hourly data')
+		} else {
+
+			console.log(minDate + ' ' + maxDate)
+			var momentMin = moment(minDate)
+			var momentMax = moment(maxDate)
+			//sort data
+			data.sort(function(a,b) {
+				if(a.date > b.date) {
+					return 1
+				} else if(a.date < b.date) {
+					return -1;
+				} else {
+					return 0
+				}
+			})
+			var numDays = momentMax.diff(momentMin, 'days', true) + 1
+			console.log( numDays)
+
+			var dataWithGaps = new Array(numDays)
+			_.each(data, function(datum) {
+				var dayCount = datum.moment.diff(momentMin,'days', true)
+				dataWithGaps[dayCount] = datum;
+			})
+			for(var i = 0; i < dataWithGaps.length; i++) {
+				var datum = dataWithGaps[i];
+				if(typeof datum === 'undefined') {
+					var previous = dataWithGaps[i - 1]
+					var fakeMomentDate = previous.moment.clone()
+					fakeMomentDate.add(1,'days')
+					var fakeDate = fakeMomentDate.toDate()
+					var fakeData = {
+						month: fakeMomentDate.month() + 1,
+						day: fakeMomentDate.date(),
+						year: fakeMomentDate.year()
+					}
+					fakeData.date = fakeDate
+					fakeData.moment = fakeMomentDate
+					_.each(metrics, function(metric) {
+						fakeData[metric.key] = 0
+						fakeData[metric.key + '_n'] = 0
+					})
+					dataWithGaps[i] = fakeData
+				}
+			}
+			return dataWithGaps
+
+		}
 	}
 	function getTPForCode(code) {
 		var mapping = mlabSitesByCode[code]
@@ -199,6 +257,7 @@
 	exports.getCombinations = getCombinations
 	exports.requestMetroData = requestMetroData
 	exports.getTPForCode = getTPForCode
+	exports.getMinSampleSize = function() { return minSampleSize }
 	if( ! window.mlabOpenInternet){
 		window.mlabOpenInternet = {}
 	}

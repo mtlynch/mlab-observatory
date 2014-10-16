@@ -224,6 +224,8 @@
 					return svgDimensions.height
 				}
 				return yScale(d[metricKey])
+			}).defined(function(d,i) {
+				return d[metricKey+"_n"] >= mlabOpenInternet.dataLoader.getMinSampleSize()
 			})
 		paths.enter().append('path');
 		paths.exit().remove()

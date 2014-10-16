@@ -94,7 +94,14 @@
 				return xScale(d.date)
 			})
 			.y(function(d,i) {
+				var yVal = yScale(d[metricKey])
+				if(isNaN(yVal)) {
+					console.log('nan')
+					console.log(d)
+				}
 				return yScale(d[metricKey])
+			}).defined(function(d,i) {
+				return d[metricKey+"_n"] >= mlabOpenInternet.dataLoader.getMinSampleSize()
 			})
 		var dotData = []
 		paths.enter().append('path');
