@@ -235,6 +235,8 @@
 	function showExploreControls() {
 		$compareViewBySelect.next().hide() //kind of odd 
 		$comboSelect.next().show()
+		$metroSelect.next().show();
+
 		$ispSelect.next().hide()
 		console.log($compareViewBySelect)
 	}
