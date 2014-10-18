@@ -7,19 +7,24 @@
 	var metadatafolder = 'metadata/'
 
 	var mapFile = metadatafolder + "codeMap.csv"
-	var validCodesFile = metadatafolder + 'validKeys.txt'
+	var validExploreCodesFile = metadatafolder + 'validExploreKeys.txt'
+	var validCompareCodesFile = metadatafolder + 'validCompareKeys.txt'
 	var metricFile = metadatafolder + 'metrics.json'
 
 	var dataPath = "data/"
-	var validCodes = [];
+	var validExploreCodes = [];
+	var validCompareCodes = []
 	var ispsBySite = {}
 	var validISPs = [];
 	var validSiteNames = [];
 	var validMetroRegions = []
+	var metroRegionToMLabPrefix = {}
 	var siteMappings = null;
 	var metrics = null;
 	var dailyDataByCode = {};
 	var hourlyDataByCode = {};
+	var dailyCompareDataByCode = {};
+	var hourlyCompareDataByCode = {};
 	var mlabSitesByCode = {}
 	var minSampleSize = 50
 	/*
@@ -40,16 +45,16 @@
 	var aggHourlyData = [];
 	*/
 	function init() {
-		d3.xhr(validCodesFile, loadCodes)
+		d3.xhr(validExploreCodesFile, loadExploreCodes)
 	}
-	function loadCodes(err, data) {
+	function loadExploreCodes(err, data) {
 		console.log(data)
 		var response = data.response.split('\n')
 		_.each(response, function(code) {
 			if(code === '') {
 				return;
 			}
-			validCodes.push(code)
+			validExploreCodes.push(code)
 			var codeParts = code.split('_')
 			var siteID = codeParts[0];
 			var isp = codeParts[1];
@@ -63,10 +68,16 @@
 			ispsBySite[siteID].push(isp)
 
 		})
+		d3.xhr(validCompareCodesFile, loadCompareCodes)
 
-		console.log(validCodes);
-		console.log(validISPs);
-		console.log(validSiteNames);
+	}
+	function loadCompareCodes(err, data) {
+		var response = data.response.split('\n')
+		_.each(response, function(code) {
+			if(code !== '') {
+				validCompareCodes.push(code)
+			}
+		})
 		d3.csv(mapFile, loadCodeMappings)
 	}
 
@@ -74,10 +85,12 @@
 		siteMappings = data;
 		_.each(data, function(mapping) {
 			var metro = mapping['MetroArea']
+			var code = mapping['MlabSiteName'].toLowerCase()
+			var codePrefix = code.substr(0,3)
 			if(validMetroRegions.indexOf(metro) === -1) {
 				validMetroRegions.push(metro)
+				metroRegionToMLabPrefix[metro] = codePrefix
 			}
-			var code = mapping['MlabSiteName'].toLowerCase()
 			mlabSitesByCode[code] = mapping
 		})
 
@@ -130,7 +143,7 @@
 				requestData.callbacks = []
 				requestData.callbacks.push(callback)
 				dataObj[combo.filename] = requestData
-				d3.csv(dataPath + combo.filename + '_' + dataType + '.csv', function(err, data) {
+				d3.csv(dataPath + 'exploreData/' + combo.filename + '_' + dataType + '.csv', function(err, data) {
 					requestData.received = true
 					requestData.data = setupDates(data, dataType)
 					requestData.filenameID = combo.filename
@@ -164,6 +177,72 @@
 				}
 			} 
 		})
+	}
+	function requestCompareData(aggregationSelection, viewType, dataType, callback) {
+		console.log(viewType)
+		console.log(aggregationSelection)
+		console.log(validMetroRegions)
+		
+		var dataToLoad = [];
+		if(viewType === 'Metro Region') {
+			var prefix = metroRegionToMLabPrefix[aggregationSelection].toUpperCase()
+			_.each(validCompareCodes, function(compareCode) {
+				console.log(compareCode)
+				if(compareCode.indexOf(prefix) === 0) {
+					dataToLoad.push({
+						filename: compareCode
+					})
+				}
+			})
+		}
+		console.log(dataToLoad)
+
+
+		var dataObj = null;
+		if(dataType === 'hourly') {
+			dataObj = hourlyCompareDataByCode;
+		} else if(dataType === 'daily') {
+			dataObj = dailyCompareDataByCode;
+		} else {
+			console.error('invalid data requested: ' + dataType)
+			return
+		}
+		var numFilesLoaded = 0;
+		_.each(dataToLoad, function(datum) {
+			if(typeof dataObj[datum.filename] === 'undefined') {
+				//request data
+				var requestData = {}
+				requestData.requested = true;
+				requestData.received = false;
+				requestData.callbacks = []
+				requestData.callbacks.push(callback)
+				dataObj[datum.filename] = requestData
+				d3.csv(dataPath + 'compareData/' + datum.filename + '_' + dataType + '.csv', function(err, data) {
+					requestData.received = true
+					requestData.data = setupDates(data, dataType)
+					requestData.filenameID = datum.filename
+					requestData.color = colors[~~ ( Math.random() * colors.length) ]
+					//console.log(requestData)
+					numFilesLoaded ++;
+					checkIfAllDataLoaded(numFilesLoaded, dataToLoad, requestData.callbacks, dataObj)
+					
+				})
+			} else {
+				//data has either been requested and we are waiting for a response
+				//or data has been requested and received
+				var requestData = dataObj[datum.filename]
+				if(! requestData.received) {
+					//data requested but not received
+					requestData.callbacks.push(callback)
+				} else {
+					//data already received
+					numFilesLoaded++
+					checkIfAllDataLoaded(numFilesLoaded, dataToLoad, [callback], dataObj)
+
+				}
+			} 
+		})
+
 	}
 	function checkIfAllDataLoaded(numLoaded, combos, callbacks, dataObj) {
 		var numExpected = combos.length
@@ -252,8 +331,10 @@
 	exports.init = init
 	exports.getMetrics = function() { return metrics }
 	exports.getMetroRegions = function() { return validMetroRegions }
+	exports.getISPs = function() { return validISPs }
 	exports.getCombinations = getCombinations
 	exports.requestMetroData = requestMetroData
+	exports.requestCompareData = requestCompareData
 	exports.getTPForCode = getTPForCode
 	exports.getMinSampleSize = function() { return minSampleSize }
 	if( ! window.mlabOpenInternet){

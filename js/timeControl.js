@@ -120,7 +120,6 @@
 
 				var sampleSize = +datum[metricKey + "_n"]
 				if(sampleSize < mlabOpenInternet.dataLoader.getMinSampleSize()) {
-					console.log('sample size too small')
 					return
 				}
 				if(metricValue < minDataValue) {

@@ -22,8 +22,15 @@
 	var metroSelectD3;
 	var $metroSelect;
 
+	var ispSelectD3;
+	var $ispSelect;
+
 	var comboSelectD3;
 	var $comboSelect;
+
+	var compareViewBySelectD3;
+	var $compareViewBySelect;
+	var viewByOpts = ['Metro Region','ISP']
 
 	var selectionLabels;
 
@@ -58,11 +65,24 @@
 			.attr('value', function(d) { return d.key })
 		$metricsSelect = $(metricsSelect[0][0]).selectpicker({selectedTextFormat: 'static'}).on('change', changeMetric)
 
+
+		compareViewBySelectD3 = selectBar.append('select').attr('title', 'View By')
+		var viewByOptions = compareViewBySelectD3.selectAll('option').data(viewByOpts)
+		viewByOptions.enter().append('option').text(String).attr('value', String)
+		$compareViewBySelect = $(compareViewBySelectD3[0][0]).selectpicker({selectedTextFormat: 'static'}).on('change', changeCompareViewBy)
+
+
 		var metroSelect = selectBar.append('select').attr('title', 'Metro Region')
 		metroSelectD3 = metroSelect;
 		var metroOpts = metroSelect.selectAll('option').data(metros)
 		metroOpts.enter().append('option').text(String).attr('value', String)
 		$metroSelect = $(metroSelect[0][0]).selectpicker({selectedTextFormat: 'static'}).on('change', changeMetro)
+
+		ispSelectD3 = selectBar.append('select').attr('title','ISP')
+		var ispOptsArray = mlabOpenInternet.dataLoader.getISPs();
+		var ispOpts = ispSelectD3.selectAll('option').data(ispOptsArray)
+		ispOpts.enter().append('option').text(String).attr('value', String)
+		$ispSelect = $(ispSelectD3[0][0]).selectpicker({selectedTextFormat: 'static'}).on('change', changeCompareISP)
 
 		var comboSelect = selectBar.append('select')
 			.attr('multiple','multiple').attr('title','ISP Combinations')
@@ -71,7 +91,10 @@
 		$comboSelect = $(comboSelect[0][0]).selectpicker({selectedTextFormat: 'static'}).on('change', changeCombinations)
 		setupComboSelectOptions()
 
+
 		populateSelectionLabel()
+
+		showExploreControls();
 		_.defer(function() {
 			exports.emitEvent('switchTab', [tabData[0]])
 
@@ -85,6 +108,14 @@
 		}
 		$(div[0][0]).find('.tabs li.active').removeClass('active')
 		dTab.classed('active', true)
+		console.log(d)
+		if(d.id === 'explore') {
+			showExploreControls();
+		} else if(d.id === 'compare') {
+			showCompareControls();
+		} else if(d.id === 'help') {
+			showHelpControls()
+		}
 		exports.emitEvent('switchTab', [d])
 	}
 	function changeMetric(event) {
@@ -149,11 +180,48 @@
 		labelHTML += '<span class="b">' + selectedMetroRegion + '</span>'
 		selectionLabels.html(labelHTML)
 	}
+	function showExploreControls() {
+		$compareViewBySelect.next().hide() //kind of odd 
+		$comboSelect.next().show()
+		$ispSelect.next().hide()
+		console.log($compareViewBySelect)
+	}
+	function showCompareControls() {
+		$compareViewBySelect.next().show()
+		changeCompareViewBy()
+		$comboSelect.next().hide()
+	}
+	function showHelpControls() {
 
+	}
+	function changeCompareViewBy() {
+		var compareSelectType = $compareViewBySelect.val()
+		if(compareSelectType === 'Metro Region') {
+			$metroSelect.next().show();
+			$ispSelect.next().hide()
+		} else if(compareSelectType === 'ISP') {
+			$metroSelect.next().hide();
+			$ispSelect.next().show();
+		}
+
+	}
+	function changeCompareISP() {
+
+	}
+	function getCompareAggregationSelection() {
+		var viewType = $compareViewBySelect.val()
+		if(viewType === 'Metro Region') {
+			return $metroSelect.val();
+		} else if(viewType === 'ISP') {
+			return $ispSelect.val()
+		}
+	}
 	exports.init = init
 	exports.getSelectedMetro = function() { return selectedMetroRegion }
 	exports.getSelectedMetric = function() { return selectedMetric }
 	exports.getSelectedCombinations = function() { return selectedCombinations }
+	exports.getCompareByView = function() { return $compareViewBySelect.val() }
+	exports.getCompareAggregationSelection = getCompareAggregationSelection
 	if( ! window.mlabOpenInternet){
 		window.mlabOpenInternet = {}
 	}

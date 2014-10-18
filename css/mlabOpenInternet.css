@@ -227,6 +227,16 @@ Time controller
     user-select: none;
 }
 
+
+/*
+compare
+*/
+#compareViz path {
+	fill: none;
+	stroke: #ccc;
+}
+
+
 /***************
   ABOUT
 ***************/

@@ -3,6 +3,7 @@
 	var dataLoader = mlabOpenInternet.dataLoader;
 	var viz = mlabOpenInternet.viz;
 	var exploreViz = mlabOpenInternet.exploreViz;
+	var compareViz = mlabOpenInternet.compareViz;
 	var filters = mlabOpenInternet.filters;
 	var list = mlabOpenInternet.list;
 	var about = mlabOpenInternet.about;
@@ -18,6 +19,7 @@
 		console.log('loaded')
 		console.log(controls);
 		exploreViz.init()
+		compareViz.init()
 		controls.init()
 		controls.addListener('switchTab', switchTab)
 		controls.addListener('selectionChanged', selectionChanged)
@@ -30,13 +32,18 @@
 	function timeChanged(e) {
 		if(activeTab.id === 'explore') {
 			exploreViz.show()
-
+		} else if(activeTab.id === 'compare') {
+			compareViz.show()
 		}
 	}
 	function selectionChanged(e) {
 		console.log('show')
 		timeControl.show()
-		exploreViz.show()
+		if(activeTab.id === 'explore') {
+			exploreViz.show()
+		} else if(activeTab.id === 'compare') {
+			compareViz.show()
+		}
 	}
 	function switchTab(tab) {
 		console.log(tab)
@@ -57,6 +64,7 @@
 				break;
 			case 'compare':
 				timeControl.show();
+				compareViz.show()
 				break;
 
 
