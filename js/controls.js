@@ -16,6 +16,8 @@
 	var selectedISP;
 	var selectedCompareViewBy;
 
+	var selectedTab;
+
 	var currentCombinationOptions;
 
 	var metricsSelectD3;
@@ -85,6 +87,7 @@
 		var ispOpts = ispSelectD3.selectAll('option').data(ispOptsArray)
 		ispOpts.enter().append('option').text(String).attr('value', String)
 		$ispSelect = $(ispSelectD3[0][0]).selectpicker({selectedTextFormat: 'static'}).on('change', changeCompareISP)
+		selectedISP = ispOptsArray[0]
 
 		var comboSelect = selectBar.append('select')
 			.attr('multiple','multiple').attr('title','ISP Combinations')
@@ -94,11 +97,14 @@
 		setupComboSelectOptions()
 
 
+		selectedTab = tabData[0]
+
 		populateSelectionLabel()
 
 		showExploreControls();
+		
 		_.defer(function() {
-			exports.emitEvent('switchTab', [tabData[0]])
+			exports.emitEvent('switchTab', [selectedTab])
 
 		})
 
@@ -108,6 +114,7 @@
 		if(dTab.classed('active')) {
 			return
 		}
+		selectedTab = d
 		$(div[0][0]).find('.tabs li.active').removeClass('active')
 		dTab.classed('active', true)
 		console.log(d)
@@ -118,6 +125,7 @@
 		} else if(d.id === 'help') {
 			showHelpControls()
 		}
+		populateSelectionLabel()
 		exports.emitEvent('switchTab', [d])
 	}
 	function changeMetric(event) {
@@ -173,13 +181,55 @@
 		var labelHTML = "";
 		labelHTML += '<span class="b">' + selectedMetric.name + '</span>'
 		labelHTML += ' for '
-		if(selectedCombinations.length === 0) {
-			labelHTML += '<span class="b">All ISPs</span> on <span class="b">All TPs</span>'
-		} else {
-			labelHTML += 'some subset of combinations'
+		if(selectedTab.id === 'explore') {
+			if(selectedCombinations.length === 0) {
+				labelHTML += '<span class="b">All ISPs</span> on <span class="b">All TPs</span> '
+			} else {
+				var byISP = {}
+				_.each(selectedCombinations, function(combo) {
+					console.log(combo.filename)
+					var idParts = combo.filename.split('_')
+					var mlabID = idParts[0]
+					var isp = idParts[1]
+					if(typeof byISP[isp] === 'undefined') {
+						byISP[isp] = []
+					}
+					var tp = mlabOpenInternet.dataLoader.getTPForCode(mlabID)
+					console.log(tp)
+					byISP[isp].push(tp)
+				})
+				var numISPs = Object.keys(byISP).length
+				var ispIndex = 0;
+				_.each(byISP, function(tps, isp) {
+					console.log(isp)
+					console.log(tps);
+					_.each(tps, function(tp, tpIndex) {
+						labelHTML += '<span class="b">' + tp + '</span>'
+						if(tps.length > 1 && tpIndex != tps.length - 1) {
+							labelHTML += ','
+						}
+						labelHTML += ' '
+					})
+					labelHTML += 'on <span class="b">' + isp + '</span>'
+					if(numISPs > 1 && ispIndex !== numISPs - 1) {
+						labelHTML += ','
+					}
+					labelHTML += ' '
+					ispIndex ++
+				})
+				//labelHTML += 'some subset of combinations'
+			}
+			labelHTML += 'in '
+			labelHTML += '<span class="b">' + selectedMetroRegion + '</span>'
+		} else if(selectedTab.id === 'compare') {
+			labelHTML += '<span class="b">'
+			if(selectedCompareViewBy === 'Metro Region') {
+				labelHTML += selectedMetroRegion
+			} else if(selectedCompareViewBy === 'ISP') {
+				labelHTML += selectedISP
+			}
+			labelHTML += '</span>'
 		}
-		labelHTML += ' in '
-		labelHTML += '<span class="b">' + selectedMetroRegion + '</span>'
 		selectionLabels.html(labelHTML)
 	}
 	function showExploreControls() {
@@ -206,10 +256,15 @@
 			$metroSelect.next().hide();
 			$ispSelect.next().show();
 		}
+		populateSelectionLabel()
+
 		exports.emitEvent('selectionChanged')
 
 	}
 	function changeCompareISP() {
+		selectedISP = $ispSelect.val()
+		populateSelectionLabel()
+
 		exports.emitEvent('selectionChanged')
 	}
 	function getCompareAggregationSelection() {
