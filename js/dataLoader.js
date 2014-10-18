@@ -145,6 +145,7 @@
 				dataObj[combo.filename] = requestData
 				d3.csv(dataPath + 'exploreData/' + combo.filename + '_' + dataType + '.csv', function(err, data) {
 					requestData.received = true
+					checkMetrics(data)
 					requestData.data = setupDates(data, dataType)
 					requestData.filenameID = combo.filename
 					requestData.color = colors[~~ ( Math.random() * colors.length) ]
@@ -219,6 +220,7 @@
 				dataObj[datum.filename] = requestData
 				d3.csv(dataPath + 'compareData/' + datum.filename + '_' + dataType + '.csv', function(err, data) {
 					requestData.received = true
+					checkMetrics(data)
 					requestData.data = setupDates(data, dataType)
 					requestData.filenameID = datum.filename
 					requestData.color = colors[~~ ( Math.random() * colors.length) ]
@@ -323,6 +325,15 @@
 			return dataWithGaps
 
 		}
+	}
+	function checkMetrics(data) {
+		_.each(data, function(d) {
+			_.each(metrics, function(metric) {
+				if(isNaN(+d[metric.key])) {
+					d[metric.key] = 0
+				}
+			})
+		})
 	}
 	function getTPForCode(code) {
 		var mapping = mlabSitesByCode[code]

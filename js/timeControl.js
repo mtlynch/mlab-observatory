@@ -17,7 +17,9 @@
 	var monthWidth = svgDimensions.width / monthsToShowAtOnce;
 	var labels = []
 	var paths;
+	var pathsDashed;
 	var lineGen;
+	var lineGenDashed;
 	var selectedCombinations;
 	function init() {
 		div = d3.select('#timeControl')
@@ -36,32 +38,6 @@
 		labels.push(shades.append('text').attr('x', monthWidth * 3).attr('y', svgDimensions.height + 18)
 			.text('').attr('text-anchor','middle'))
 
-		//les just make it simple for now
-
-		/*
-		var opts = [];
-		var curTime = endDate;
-		while(curTime >= startDate) {
-			var dateO = {
-				label: curTime.format('MMMM YYYY'),
-				date: curTime.clone()
-			}
-			opts.push(dateO)
-			curTime.subtract(1,'months')
-		}
-		console.log(opts)
-		dateOptions = opts;
-		var select = div.append('select')
-		var options = select.selectAll('option').data(opts)
-		options.enter().append('option')
-		options.attr('value', function(d,i) {
-			return d.label
-		}).text(function(d) { return d.label })
-
-		$(select[0][0]).on('change', timeChanged)
-
-		selectedDate = opts[0]
-		*/
 	}
 	function show() {
 		div.style('display',null)
@@ -113,15 +89,17 @@
 					maxDate = datum.date
 				}
 				var monthYearKey = datum.date.getMonth() + "-" + datum.date.getFullYear();
+				
 				if(typeof thisDataSetByMonths[monthYearKey] === 'undefined') {
 					thisDataSetByMonths[monthYearKey] = []
 				}
 				thisDataSetByMonths[monthYearKey].push(datum)
-
+				/*
 				var sampleSize = +datum[metricKey + "_n"]
 				if(sampleSize < mlabOpenInternet.dataLoader.getMinSampleSize()) {
 					return
 				}
+				*/
 				if(metricValue < minDataValue) {
 					minDataValue = metricValue
 				}
@@ -215,7 +193,7 @@
 		console.log(fullWidth)
 		var dailyXScale = d3.scale.linear().domain([0,1]).range([0, monthWidth])
 		var monthlyXScale = d3.scale.linear().domain([0,numMonths - 1]).range([0, fullWidth - monthWidth])
-		paths = svg.select('g.lines').selectAll('path').data(monthlyDatasets)
+		paths = svg.select('g.lines').selectAll('path.full').data(monthlyDatasets)
 		lineGen = d3.svg.line()
 			.x(function(d,i) {
 
@@ -233,8 +211,27 @@
 			}).defined(function(d,i) {
 				return d[metricKey+"_n"] >= mlabOpenInternet.dataLoader.getMinSampleSize()
 			})
-		paths.enter().append('path');
+		paths.enter().append('path').attr('class','full');
 		paths.exit().remove()
+
+		pathsDashed = svg.select('g.lines').selectAll('path.dashed').data(monthlyDatasets)
+		lineGenDashed = d3.svg.line()
+			.x(function(d,i) {
+
+				var monthOffset = monthlyXScale(d.monthIndex);
+				var daysInMonth = getDaysInMonth(d.date)
+				var dayOffset = dailyXScale((+d.day - 1) / (daysInMonth - 1))
+				var xPos = monthOffset + dayOffset;
+				return xPos;
+			})
+			.y(function(d,i) {
+				if(typeof d[metricKey] === 'undefined') {
+					return svgDimensions.height
+				}
+				return yScale(d[metricKey])
+			})
+		pathsDashed.enter().append('path').attr('class','dashed');
+		pathsDashed.exit().remove()
 		updatePaths();
 
 		var maxTranslateAmount = -(fullWidth - svgDimensions.width);
@@ -293,9 +290,7 @@
 
 	}
 	function updatePaths() {
-		paths.attr('d', function(d) {
-			return lineGen(d.data) 
-		}).style('stroke', function(d,i) {
+		var strokeFunc = function(d,i) {
 			//var colors = ['red','blue','green','purple','black']
 			//return colors[Math.floor(colors.length * Math.random())]
 			if(selectedCombinations.length === 0) {
@@ -305,7 +300,13 @@
 				return d.color
 			}
 			return null
-		})
+		}
+		paths.attr('d', function(d) {
+			return lineGen(d.data) 
+		}).style('stroke', strokeFunc )
+		pathsDashed.attr('d', function(d) {
+			return lineGenDashed(d.data)
+		}).style('stroke', strokeFunc)
 	}
 	function nullData(startDate, monthIndex) {
 		startDate = startDate.clone().toDate()

@@ -67,10 +67,12 @@
 				if(maxDate === null || datum.date > maxDate) {
 					maxDate = datum.date
 				}
+				/*
 				var sampleSize = +datum[metricKey + "_n"]
 				if(sampleSize < mlabOpenInternet.dataLoader.getMinSampleSize()) {
 					return
 				}
+				*/
 				var metricValue = +datum[metricKey]
 				if(metricValue < minDataValue) {
 					minDataValue = metricValue
@@ -94,7 +96,7 @@
 			var x = 0
 			return 'translate(' + x + ',' + y + ')'
 		})
-		var paths = datasetGroups.selectAll('path').data(function(d) { return [d] })
+		var paths = datasetGroups.selectAll('path.full').data(function(d) { return [d] })
 		var lineGen = d3.svg.line()
 			.x(function(d,i) {
 				return xScale(d.date)
@@ -110,7 +112,7 @@
 				return d[metricKey+"_n"] >= mlabOpenInternet.dataLoader.getMinSampleSize()
 			})
 		var dotData = []
-		paths.enter().append('path');
+		paths.enter().append('path').attr('class','full');
 		paths.exit().remove()
 		paths.attr('d', function(d) {
 			return lineGen(d.data) 
@@ -141,7 +143,48 @@
 				return null
 			}
 		})
-
+		var pathsDashed = datasetGroups.selectAll('path.dashed').data(function(d) { return [d] })
+		var lineGen = d3.svg.line()
+			.x(function(d,i) {
+				return xScale(d.date)
+			})
+			.y(function(d,i) {
+				var yVal = yScale(d[metricKey])
+				if(isNaN(yVal)) {
+					console.log('nan')
+					console.log(d)
+				}
+				return yScale(d[metricKey])
+			})
+		var dotData = []
+		pathsDashed.enter().append('path').attr('class','dashed');
+		pathsDashed.exit().remove()
+		pathsDashed.attr('d', function(d) {
+			return lineGen(d.data) 
+		}).style('stroke', function(d,i) {
+			return null
+			var active = _.find(selectedCombinations, function(combo) {
+				return combo.filename === d.id
+			})
+			if(typeof active === 'undefined') {
+				d.active = false
+				return null
+			} else {
+				d.active = true;
+				_.each(d.data, function(dotDataPoint) {
+					dotDataPoint.dataID = d.id
+					dotDataPoint.color = d.color
+					dotData.push(dotDataPoint)
+				})
+				return d.color;
+			}
+		}).style('stroke-width', function(d) {
+			if(d.active) {
+				return '3px'
+			} else {
+				return null
+			}
+		})
 		var lineTickLines = [0, 0.5, 1]
 		datasetGroups.selectAll('line.tick')
 

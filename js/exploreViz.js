@@ -75,9 +75,11 @@
 					maxDate = datum.date
 				}
 				var sampleSize = +datum[metricKey + "_n"]
+				/*
 				if(sampleSize < mlabOpenInternet.dataLoader.getMinSampleSize()) {
 					return
 				}
+				*/
 				var metricValue = +datum[metricKey]
 				if(metricValue < minDataValue) {
 					minDataValue = metricValue
@@ -93,17 +95,13 @@
 			.range([exploreDimensions.h, 0])
 		//var xScale = d3.scale.linear().domain([0, maxDatasetLength - 1]).range([0, exploreDimensions.w])
 		xScale = d3.time.scale().domain([minDate, maxDate]).range([0, exploreDimensions.w])
-		var paths = svg.select('g.lines').selectAll('path').data(datasets)
+		var paths = svg.select('g.lines').selectAll('path.full').data(datasets)
 		var lineGen = d3.svg.line()
 			.x(function(d,i) {
 				return xScale(d.date)
 			})
 			.y(function(d,i) {
 				var yVal = yScale(d[metricKey])
-				if(isNaN(yVal)) {
-					console.log('nan')
-					console.log(d)
-				}
 				return yScale(d[metricKey])
 			}).defined(function(d,i) {
 				return d[metricKey+"_n"] >= mlabOpenInternet.dataLoader.getMinSampleSize()
@@ -111,7 +109,7 @@
 		var dotData = []
 		paths.enter().append('path');
 		paths.exit().remove()
-		paths.attr('d', function(d) {
+		paths.attr('class','full').attr('d', function(d) {
 			return lineGen(d.data) 
 		}).style('stroke', function(d,i) {
 			var active = _.find(selectedCombinations, function(combo) {
@@ -139,6 +137,37 @@
 				return null
 			}
 		})
+		var pathsDashed = svg.select('g.lines').selectAll('path.dashed').data(datasets)
+		var lineGen = d3.svg.line()
+			.x(function(d,i) {
+				return xScale(d.date)
+			})
+			.y(function(d,i) {
+				return yScale(d[metricKey])
+			})
+		pathsDashed.enter().append('path');
+		pathsDashed.exit().remove()
+		pathsDashed.attr('class','dashed').attr('d', function(d) {
+			return lineGen(d.data) 
+		}).style('stroke', function(d,i) {
+			var active = _.find(selectedCombinations, function(combo) {
+				return combo.filename === d.id
+			})
+			if(typeof active === 'undefined') {
+				d.active = false
+				return null
+			} else {
+				d.active = true;
+				return d.color;
+			}
+		}).style('stroke-width', function(d) {
+			if(d.active) {
+				return '3px'
+			} else {
+				return null
+			}
+		})
+
 		_.each(datasets, function(dataset) {
 			if(dataset.length < maxDatasetLength) {
 				console.error('dataset missing xvalues, x scale will be off')

@@ -150,6 +150,9 @@ Explore Viz
 	fill: none;
 	stroke: #ccc;
 }
+#exploreViz g.lines path.dashed {
+	stroke-dasharray: 10,10;
+}
 #exploreViz .xAxis > path, #exploreViz .xAxis .tick line {
 	fill: none;
 	stroke: #b0b3b5;
@@ -162,7 +165,6 @@ Explore Viz
 	fill: #666666;
 	font-weight: bold;
 }
-
 #exploreViz .fillDot {
 	pointer-events: none;
 }
@@ -215,6 +217,9 @@ Time controller
 	fill: none;
 	stroke: #ccc ;
 }
+#timeControl svg path.dashed {
+	stroke-dasharray: 5,5;
+}
 #timeControl svg text {
 	font-weight: bold;
 	font-size: 13px;
@@ -235,7 +240,9 @@ compare
 	fill: none;
 	stroke: #ccc;
 }
-
+#compareViz path.dashed {
+	stroke-dasharray: 10,10;
+}
 
 /***************
   ABOUT
