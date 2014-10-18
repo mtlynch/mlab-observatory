@@ -41,9 +41,18 @@
 	}
 	function show() {
 		div.style('display',null)
-		var curMetro = mlabOpenInternet.controls.getSelectedMetro()
 		var view = 'daily'
-		mlabOpenInternet.dataLoader.requestMetroData(curMetro, view, dataLoaded)
+		var selectedTab = mlabOpenInternet.controls.getSelectedTab()
+
+		if(selectedTab.id === 'explore') {
+			var curMetro = mlabOpenInternet.controls.getSelectedMetro()
+			mlabOpenInternet.dataLoader.requestMetroData(curMetro, view, dataLoaded)
+		} else if(selectedTab.id === 'compare') {
+			var curViewType = mlabOpenInternet.controls.getCompareByView()
+			var aggregationSelection = mlabOpenInternet.controls.getCompareAggregationSelection()
+			mlabOpenInternet.dataLoader.requestCompareData(aggregationSelection, curViewType, view, dataLoaded)
+			
+		}
 	}
 	function dataLoaded(allMetroData) {
 		//plot the entire dataset of selected cities (or all cities if none selected)

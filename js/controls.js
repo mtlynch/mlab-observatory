@@ -282,6 +282,7 @@
 	exports.getSelectedMetric = function() { return selectedMetric }
 	exports.getSelectedCombinations = function() { return selectedCombinations }
 	exports.getCompareByView = function() { return selectedCompareViewBy }
+	exports.getSelectedTab = function() { return selectedTab }
 	exports.getCompareAggregationSelection = getCompareAggregationSelection
 	if( ! window.mlabOpenInternet){
 		window.mlabOpenInternet = {}
