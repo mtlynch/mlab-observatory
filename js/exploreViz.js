@@ -45,7 +45,6 @@
 		//console.log(dateToMatch)
 
 		_.each(allMetroData, function(dataset) {
-			console.log(dataset)
 			var timelyData = _.filter(dataset.data, function(d) {
 				return d.month == dateToMatch.month && d.year == dateToMatch.year
 			})

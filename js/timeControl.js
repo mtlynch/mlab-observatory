@@ -48,6 +48,7 @@
 	function dataLoaded(allMetroData) {
 		//plot the entire dataset of selected cities (or all cities if none selected)
 		console.log('time control data loaded')
+		console.log(allMetroData)
 		var datasets;
 		var metric = mlabOpenInternet.controls.getSelectedMetric();
 		selectedCombinations = mlabOpenInternet.controls.getSelectedCombinations()

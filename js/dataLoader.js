@@ -188,7 +188,6 @@
 		if(viewType === 'Metro Region') {
 			var prefix = metroRegionToMLabPrefix[aggregationSelection].toUpperCase()
 			_.each(validCompareCodes, function(compareCode) {
-				console.log(compareCode)
 				if(compareCode.indexOf(prefix) === 0) {
 					dataToLoad.push({
 						filename: compareCode
