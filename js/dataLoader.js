@@ -194,6 +194,12 @@
 					})
 				}
 			})
+		} else if(viewType === 'ISP') {
+			_.each(validCompareCodes, function(compareCode) {
+				if(compareCode.indexOf(aggregationSelection) !== -1) {
+					dataToLoad.push({ filename: compareCode })
+				}
+			})
 		}
 		console.log(dataToLoad)
 

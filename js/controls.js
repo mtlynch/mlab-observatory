@@ -13,6 +13,8 @@
 	var selectedMetric;
 	var selectedMetroRegion;
 	var selectedCombinations;
+	var selectedISP;
+	var selectedCompareViewBy;
 
 	var currentCombinationOptions;
 
@@ -196,6 +198,7 @@
 	}
 	function changeCompareViewBy() {
 		var compareSelectType = $compareViewBySelect.val()
+		selectedCompareViewBy = compareSelectType
 		if(compareSelectType === 'Metro Region') {
 			$metroSelect.next().show();
 			$ispSelect.next().hide()
@@ -203,10 +206,11 @@
 			$metroSelect.next().hide();
 			$ispSelect.next().show();
 		}
+		exports.emitEvent('selectionChanged')
 
 	}
 	function changeCompareISP() {
-
+		exports.emitEvent('selectionChanged')
 	}
 	function getCompareAggregationSelection() {
 		var viewType = $compareViewBySelect.val()
@@ -220,7 +224,7 @@
 	exports.getSelectedMetro = function() { return selectedMetroRegion }
 	exports.getSelectedMetric = function() { return selectedMetric }
 	exports.getSelectedCombinations = function() { return selectedCombinations }
-	exports.getCompareByView = function() { return $compareViewBySelect.val() }
+	exports.getCompareByView = function() { return selectedCompareViewBy }
 	exports.getCompareAggregationSelection = getCompareAggregationSelection
 	if( ! window.mlabOpenInternet){
 		window.mlabOpenInternet = {}

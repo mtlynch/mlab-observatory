@@ -54,6 +54,10 @@
 					exploreViz.hide();
 					timeControl.hide();
 					break;
+				case 'compare':
+					compareViz.hide()
+					timeControl.hide();
+
 			}
 		}
 		activeTab = tab

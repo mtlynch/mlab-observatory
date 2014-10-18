@@ -20,6 +20,7 @@
 	function show() {
 		div.style('display', null)
 		curViewType = mlabOpenInternet.controls.getCompareByView()
+		console.log('show compare');
 		var aggregationSelection = mlabOpenInternet.controls.getCompareAggregationSelection()
 		console.log(aggregationSelection)
 		var view = 'daily'
