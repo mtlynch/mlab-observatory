@@ -1,11 +1,12 @@
 (function() {
-	var margin = {top: 0, right: 0, bottom: 0, left: 0}
+	var margin = {top: 10, right: 5, bottom: 0, left: 0}
 	var dimensions = {
 		w: 824 - margin.left - margin.right,
 	}
 	
 	var eachGraphHeight = 120;
 	var svg;
+	var chart;
 	var div;
 	var curMetric;
 	var curViewType;
@@ -13,7 +14,8 @@
 		div = d3.select('#compareViz')
 		svg = div.append('svg')
 			.attr('width', dimensions.w + margin.left + margin.right)
-
+		chart = svg.append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+		
 	}
 	function show() {
 		div.style('display', null)
@@ -51,6 +53,8 @@
 		svg.attr('height', fullHeight)
 		var metric = mlabOpenInternet.controls.getSelectedMetric();
 		curMetric = metric;
+
+		/* Calculate min & max */
 		var metricKey = metric.key;
 		var minDataValue = Number.MAX_VALUE;
 		var maxDataValue = -Number.MIN_VALUE;
@@ -83,11 +87,14 @@
 		})
 		console.log(minDataValue + " " + maxDataValue)
 
+		/* setup scales */
+		var graphHeight = 60
 		var yScale = d3.scale.linear().domain([0, maxDataValue])
-			.range([eachGraphHeight, 0])
+			.range([graphHeight, 0])
 		//var xScale = d3.scale.linear().domain([0, maxDatasetLength - 1]).range([0, exploreDimensions.w])
 		var xScale = d3.time.scale().domain([minDate, maxDate]).range([0, dimensions.w])
-		var datasetGroups = svg.selectAll('g.dataset').data(datasets)
+		/*setup group for each graph */
+		var datasetGroups = chart.selectAll('g.dataset').data(datasets)
 		datasetGroups.enter().append('g').attr('class','dataset')
 		datasetGroups.exit().remove()
 		datasetGroups.attr("transform",function(d,i) {
@@ -95,6 +102,7 @@
 			var x = 0
 			return 'translate(' + x + ',' + y + ')'
 		})
+		/* add in the full stroked path */
 		var paths = datasetGroups.selectAll('path.full').data(function(d) { return [d] })
 		var lineGen = d3.svg.line()
 			.x(function(d,i) {
@@ -142,6 +150,7 @@
 				return null
 			}
 		})
+		/* add in the dashed line */
 		var pathsDashed = datasetGroups.selectAll('path.dashed').data(function(d) { return [d] })
 		var lineGen = d3.svg.line()
 			.x(function(d,i) {
@@ -184,8 +193,45 @@
 				return null
 			}
 		})
-		var lineTickLines = [0, 0.5, 1]
-		datasetGroups.selectAll('line.tick')
+
+		/* y ticks */
+		var lineTickArray = [0, 0.5, 1]
+		var lineTicks = datasetGroups.selectAll('line.yScaleGuide').data(lineTickArray)
+		lineTicks.enter().append('line').attr('class','yScaleGuide')
+		lineTicks.attr('x1', 0).attr('x2', dimensions.w)
+			.attr('y1', function(d) {
+				return yScale(d * maxDataValue)
+			}).attr('y2', function(d) {
+				return yScale(d * maxDataValue)
+			}).classed('faint', function(d,i) {
+				return i !== 0
+			})
+
+		/* xaxis */
+		chart.selectAll('.axis').remove()
+		var xAxis = d3.svg.axis().scale(xScale).orient('bottom')
+			.tickFormat(d3.time.format("%m-%d")).ticks(3);
+		datasetGroups.append('g').attr('class','xAxis axis').attr('transform', 'translate(0,' + graphHeight +')')
+			.call(xAxis)
+
+		/* yscale text label */
+		var maxYScale = datasetGroups.selectAll('text.yScaleMax').data([maxDataValue])
+		maxYScale.enter().append('text').attr('class','yScaleMax')
+		maxYScale.text(function(d) {
+			return d + " " + metric.units
+		}).attr('x', dimensions.w).attr('y', yScale(maxDataValue) + 4)
+
+		/* graph title */
+		var graphLabel = datasetGroups.selectAll('text.graphLabel').data(function(d) { return [d] })
+		graphLabel.enter().append('text').attr('class','graphLabel')
+		graphLabel.text(function(d) {
+			var idParts = d.id.split('_')
+			if(curViewType === 'Metro Region') {
+				return idParts[1]
+			} else if(curViewType === 'ISP') {
+				return idParts[0]
+			}
+		}).attr('x', 0).attr('y', yScale(0) + 40)
 
 	}
 	function hide() {

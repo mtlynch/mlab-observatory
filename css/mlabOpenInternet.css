@@ -236,6 +236,9 @@ Time controller
 /*
 compare
 */
+#compareViz {
+	margin: 0 65px;
+}
 #compareViz path {
 	fill: none;
 	stroke: #ccc;
@@ -244,6 +247,23 @@ compare
 	stroke-dasharray: 10,10;
 }
 
+
+#compareViz line.yScaleGuide {
+	stroke: #b0b3b5;
+}
+#compareViz line.yScaleGuide.faint {
+	stroke: #e6e6e6;
+	stroke-dasharray: 5,3;
+}
+#compareViz text.yScaleMax {
+	text-anchor: end;
+	font-size: 11px;
+	fill: #8b8b8b;
+	font-weight: bold;
+}
+#compareViz .xAxis line {
+	stroke: #b0b3b5;
+}
 /***************
   ABOUT
 ***************/
