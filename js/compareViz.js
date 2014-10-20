@@ -4,18 +4,33 @@
 		w: 824 - margin.left - margin.right,
 	}
 	
-	var eachGraphHeight = 120;
+	var graphAreaHeight = 120;
+	var graphHeight = 60
+
 	var svg;
 	var chart;
 	var div;
 	var curMetric;
 	var curViewType;
+	var focusLine;
+	var xScale;
+	var curFocusDay = null;
+	var tooltipContainer; 
+	var tooltips;
+	var numDays;
 	function init() {
 		div = d3.select('#compareViz')
 		svg = div.append('svg')
 			.attr('width', dimensions.w + margin.left + margin.right)
 		chart = svg.append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-		
+		focusLine = chart.append('line').attr('class','focus').attr('y1', 0)
+			.attr('x1', -100).attr('x2', -100)
+
+		tooltipContainer = div.append('div').attr('class','compareTooltips')
+
+		svg.on('mouseover', mouseOverGraph)
+		svg.on('mouseout', mouseOutGraph)
+		svg.on('mousemove', mouseOverGraph)
 	}
 	function show() {
 		div.style('display', null)
@@ -38,20 +53,24 @@
 		}
 		//console.log(dateToMatch)
 
+		numDays = 0;
 		_.each(allCityData, function(dataset) {
 			var timelyData = _.filter(dataset.data, function(d) {
 				return d.month == dateToMatch.month && d.year == dateToMatch.year
 			})
 			//console.log(timelyData)
 			dataInTimePeriod.push({data: timelyData, id: dataset.filenameID, color: dataset.color})
+			numDays = Math.max(numDays, timelyData.length)
 		})
-		console.log(dataInTimePeriod)
+		console.log(numDays)
 		plot(dataInTimePeriod)
 	}
 	function plot(datasets) {
-		var fullHeight = datasets.length * eachGraphHeight
+		var fullHeight = datasets.length * graphAreaHeight
 		console.log(fullHeight)
 		svg.attr('height', fullHeight)
+		focusLine.attr('y2', fullHeight - (graphAreaHeight - graphHeight))
+
 		var metric = mlabOpenInternet.controls.getSelectedMetric();
 		curMetric = metric;
 
@@ -89,17 +108,16 @@
 		console.log(minDataValue + " " + maxDataValue)
 
 		/* setup scales */
-		var graphHeight = 60
 		var yScale = d3.scale.linear().domain([0, maxDataValue])
 			.range([graphHeight, 0])
 		//var xScale = d3.scale.linear().domain([0, maxDatasetLength - 1]).range([0, exploreDimensions.w])
-		var xScale = d3.time.scale().domain([minDate, maxDate]).range([0, dimensions.w])
+		xScale = d3.time.scale().domain([minDate, maxDate]).range([0, dimensions.w])
 		/*setup group for each graph */
 		var datasetGroups = chart.selectAll('g.dataset').data(datasets)
 		datasetGroups.enter().append('g').attr('class','dataset')
 		datasetGroups.exit().remove()
 		datasetGroups.attr("transform",function(d,i) {
-			var y = i * eachGraphHeight
+			var y = i * graphAreaHeight
 			var x = 0
 			return 'translate(' + x + ',' + y + ')'
 		})
@@ -195,6 +213,30 @@
 			}
 		})
 
+		tooltips = tooltipContainer.selectAll('div.compareTooltip').data(datasets)
+		tooltips.enter().append('div').attr('class','compareTooltip')
+		tooltips.exit().remove()
+		var arrayIdent = function(d) { return [d] }
+		tooltips.selectAll('div.leftArrow').data(arrayIdent)
+			.enter().append('div').attr('class','leftArrow arrow')
+		content = tooltips.selectAll('div.content').data(arrayIdent)
+		content.enter().append('div').attr('class','content')
+		tooltips.selectAll('div.rightArrow').data(arrayIdent)
+			.enter().append('div').attr('class','rightArrow arrow')
+		var ttContent = [
+			'ttLabel ttMetricLabel',
+			'ttValue ttMetric',
+			'ttLabel ttDateLabel',
+			'ttValue ttDate'
+		]
+		content.selectAll('div').data(ttContent)
+			.enter().append('div').attr('class',String)
+				.text(function(d) {
+					if(d.indexOf('ttDate') !== -1) {
+						return 'Date'
+					}
+					return null
+				})
 		/* y ticks */
 		var lineTickArray = [0, 0.5, 1]
 		var lineTicks = datasetGroups.selectAll('line.yScaleGuide').data(lineTickArray)
@@ -237,6 +279,87 @@
 	}
 	function hide() {
 		div.style('display','none')
+	}
+
+	function mouseOverGraph() {
+		var x = d3.event.offsetX;
+		var y = d3.event.offsetY
+		//console.log(d3.event)
+		var off = $(div[0][0]).offset();
+		y -= margin.top
+		var mouseDate = xScale.invert(x)
+		var day = mouseDate.getDate() + (mouseDate.getHours() >= 12 ? 1 : 0)
+		var nearestDay = new Date(mouseDate.getFullYear(), mouseDate.getMonth(), day)
+		var momentNearest = moment(nearestDay)
+		var xPos = xScale(nearestDay)
+		var xIndex = ~~ (( xPos / dimensions.w ) * numDays)
+		if(xIndex === numDays) {
+			xIndex --
+		}
+		//console.log(xIndex)
+		if(curFocusDay === null || curFocusDay !== day) {
+			focusLine.transition().duration(200).ease('cubic-in-out')
+				.attr('x1', xPos).attr('x2', xPos)
+			curFocusDay = day
+		}
+
+		//console.log(xPos)
+		var yIndex = ~~(y / graphAreaHeight)
+		//console.log(y + " " + yIndex)
+		var tooltipsOnLeft = xPos > dimensions.w / 2;
+		tooltips.select('.ttMetric').text(function(d,i) {
+			var dataValue = d.data[xIndex][curMetric.key];
+			var y = i * graphAreaHeight
+
+			d.tooltipX = xPos;
+			d.tooltipY = y;
+
+			return dataValue + ' ' + curMetric.units
+		})
+		tooltips.select('.ttMetricLabel').text(function(d) {
+			return curMetric.name
+		})
+		tooltips.select('.ttDate').text(momentNearest.format('M/D/YYYY'))
+		var activeWidthCutoffPct = 0.2;
+		tooltips.classed('onLeft', function(d,i) {
+			if(tooltipsOnLeft) {
+				if(i === yIndex && d.tooltipX < dimensions.w * (1 - activeWidthCutoffPct)) {
+					return false;
+				}
+				return true;
+			} else {
+				if(i === yIndex && d.tooltipX > (dimensions.w * activeWidthCutoffPct)) {
+					return true;
+				}
+				return false;
+			}
+		}).classed('active', function(d,i) {
+			return i === yIndex
+		}).transition().duration(200).style('left', function(d,i) {
+			var x = d.tooltipX
+			var arrowOffset = 8
+			var thisTTOnLeft = tooltipsOnLeft;
+			if(i === yIndex  && (
+				d.tooltipX < dimensions.w * (1 - activeWidthCutoffPct)
+				&&
+				d.tooltipX > (dimensions.w * activeWidthCutoffPct) 
+				)
+			) {
+				thisTTOnLeft = !thisTTOnLeft
+			}
+			if(thisTTOnLeft) {
+				x -= $(this).width() + arrowOffset
+			} else {
+				x += arrowOffset
+			}
+			return x + 'px'
+		}).style('top', function(d) {
+			return d.tooltipY + 'px'
+		})
+
+	}
+	function mouseOutGraph() {
+
 	}
 	if( ! window.mlabOpenInternet) {
 		window.mlabOpenInternet = {}

@@ -151,7 +151,7 @@ Explore Viz
 	stroke: #ccc;
 }
 #exploreViz g.lines path.dashed {
-	stroke-dasharray: 10,10;
+	stroke-dasharray: 5,5;
 }
 #exploreViz .xAxis > path, #exploreViz .xAxis .tick line {
 	fill: none;
@@ -238,13 +238,14 @@ compare
 */
 #compareViz {
 	margin: 0 65px;
+	position: relative;;
 }
 #compareViz path {
 	fill: none;
 	stroke: #ccc;
 }
 #compareViz path.dashed {
-	stroke-dasharray: 10,10;
+	stroke-dasharray: 5,5;
 }
 
 
@@ -264,6 +265,76 @@ compare
 #compareViz .xAxis line {
 	stroke: #b0b3b5;
 }
+#compareViz line.focus {
+	stroke: #818181;
+	stroke-dasharray:5,5;
+}
+#compareViz .compareTooltips .compareTooltip {
+	position: absolute;
+}
+#compareViz .compareTooltips .compareTooltip .content {
+	background-color: #ebebeb;
+	padding: 15px 15px 5px;
+	border-radius: 5px;
+}
+
+#compareViz .compareTooltips .compareTooltip .ttLabel {
+	color: #c2c2c2;
+	font-size: 11px;
+	white-space: nowrap;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+#compareViz .compareTooltips .compareTooltip .ttValue {
+	margin-bottom: 0.5em;
+	font-size: 13px;
+	font-weight: bold;
+}
+#compareViz .compareTooltip.active .content{
+	background-color: #616266;
+}
+#compareViz .compareTooltip.active .ttValue {
+	color: white;
+}
+#compareViz .compareTooltip .arrow {
+	width: 0; 
+	height: 0; 
+	border-top: 8px solid transparent;
+	border-bottom: 8px solid transparent; 
+	position: absolute;
+	top: -webkit-calc(50% - 4px);
+	top: calc(50% - 4px);
+}
+#compareViz .compareTooltip .leftArrow {
+	border-right: 8px solid #ebebeb; 
+	left: -8px;
+}
+#compareViz .compareTooltip .rightArrow {
+	border-left: 8px solid #ebebeb;
+	right: -8px;
+	display: none;
+
+}
+#compareViz .compareTooltip.active .leftArrow {
+	border-right-color: #616266;
+}
+#compareViz .compareTooltip.active .rightArrow {
+	border-left-color: #616266;
+}
+#compareViz .compareTooltip.onLeft .rightArrow {
+	display: block;
+}
+#compareViz .compareTooltip.onLeft .leftArrow {
+	display: none;
+}
+#compareViz .compareTooltip .ttDateLabel, #compareViz .compareTooltip .ttDate {
+	display: none;
+}
+#compareViz .compareTooltip.active .ttDateLabel, #compareViz .compareTooltip.active .ttDate {
+	display: block;
+}
+
+
 /***************
   ABOUT
 ***************/
