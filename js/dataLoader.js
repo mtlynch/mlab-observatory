@@ -1,8 +1,5 @@
 (function() {
-	var colors = [
-		"#4bb84b", "#dc4d3b", "#997edf", "#a3417f", "#548bd7", "#bdcb29", "#d68a1e",
-		"#93d493", "#ea9489", "#c2b2ec", "#c88db2", "#98b9e7", "#d7e07f", "#e6b978"
-	]
+	var colorMap;
 	var exports = new EventEmitter()
 	var metadatafolder = 'metadata/'
 
@@ -45,6 +42,10 @@
 	var aggHourlyData = [];
 	*/
 	function init() {
+		d3.json(metadatafolder + "colors.json", loadColors)
+	}
+	function loadColors(err, colors) {
+		colorMap = colors
 		d3.xhr(validExploreCodesFile, loadExploreCodes)
 	}
 	function loadExploreCodes(err, data) {
@@ -148,7 +149,11 @@
 					checkMetrics(data)
 					requestData.data = data
 					requestData.filenameID = combo.filename
-					requestData.color = colors[~~ ( Math.random() * colors.length) ]
+					var filenameParts = combo.filename.split('_')
+					var isp = filenameParts[1];
+					var mlabID = filenameParts[0];
+					var mlabIndex = (+(mlabID.substr(3))) - 1
+					requestData.color = '#' + colorMap[isp][mlabIndex]
 					//console.log(combo.filename)
 					//console.log(requestData)
 					numCombosLoaded ++;
@@ -183,7 +188,6 @@
 		console.log(viewType)
 		console.log(aggregationSelection)
 		console.log(validMetroRegions)
-		
 		var dataToLoad = [];
 		if(viewType === 'Metro Region') {
 			var prefix = metroRegionToMLabPrefix[aggregationSelection].toUpperCase()
@@ -228,7 +232,9 @@
 					checkMetrics(data)
 					requestData.data = data
 					requestData.filenameID = datum.filename
-					requestData.color = colors[~~ ( Math.random() * colors.length) ]
+					var filenameParts = datum.filename.split('_')
+					var isp = filenameParts[1]
+					requestData.color = colorMap[isp][0]
 					//console.log(requestData)
 					numFilesLoaded ++;
 					checkIfAllDataLoaded(numFilesLoaded, dataToLoad, requestData.callbacks, dataObj, dataType)

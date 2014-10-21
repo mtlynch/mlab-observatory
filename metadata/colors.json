@@ -1,0 +1,13 @@
+{
+	"att": ["03455f", "688f9f", "003042", "a4bcc5"],
+	"cablevision": ["4bb84b", "93d493", "33823d", "bee5be"],
+	"centurylink": ["f74f4f", "fa9595", "a83535", "fcbfbf"],
+	"comcast": ["997edf", "c2b2ec", "655293", "dad1f4"],
+	"cox": ["a3417f", "c88db2", "732ef59", "debbd1"],
+	"verizon": ["548bd7", "98b9e7", "3f68a1", "c1d5f1"],
+	"twc": ["bdcb29", "d7e07f", "8e981f", "e7ecb2"],
+	"isp8": ["f37d11", "f8b170", "b65e0d", "fbd0a9"],
+	"isp9": ["48bedf", "91d8ec", "35879e", "bde4ef"]
+
+
+}
