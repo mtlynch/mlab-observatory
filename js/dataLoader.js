@@ -146,13 +146,13 @@
 				d3.csv(dataPath + 'exploreData/' + combo.filename + '_' + dataType + '.csv', function(err, data) {
 					requestData.received = true
 					checkMetrics(data)
-					requestData.data = setupDates(data, dataType)
+					requestData.data = data
 					requestData.filenameID = combo.filename
 					requestData.color = colors[~~ ( Math.random() * colors.length) ]
 					//console.log(combo.filename)
 					//console.log(requestData)
 					numCombosLoaded ++;
-					checkIfAllDataLoaded(numCombosLoaded, combos, requestData.callbacks, dataObj)
+					checkIfAllDataLoaded(numCombosLoaded, combos, requestData.callbacks, dataObj, dataType)
 					/*
 					if(numCombosLoaded === combos.length) {
 						var rtnObj = [];
@@ -226,12 +226,12 @@
 				d3.csv(dataPath + 'compareData/' + datum.filename + '_' + dataType + '.csv', function(err, data) {
 					requestData.received = true
 					checkMetrics(data)
-					requestData.data = setupDates(data, dataType)
+					requestData.data = data
 					requestData.filenameID = datum.filename
 					requestData.color = colors[~~ ( Math.random() * colors.length) ]
 					//console.log(requestData)
 					numFilesLoaded ++;
-					checkIfAllDataLoaded(numFilesLoaded, dataToLoad, requestData.callbacks, dataObj)
+					checkIfAllDataLoaded(numFilesLoaded, dataToLoad, requestData.callbacks, dataObj, dataType)
 					
 				})
 			} else {
@@ -251,21 +251,48 @@
 		})
 
 	}
-	function checkIfAllDataLoaded(numLoaded, combos, callbacks, dataObj) {
+	function checkIfAllDataLoaded(numLoaded, combos, callbacks, dataObj, dataType) {
 		var numExpected = combos.length
 		if(numLoaded === numExpected) {
 			var rtnObj = [];
 			_.each(combos, function(c) {
 				rtnObj.push(dataObj[c.filename])
 			})
+			console.log(dataType)
+			if(typeof dataType !== 'undefined') {
+				console.log(rtnObj)
+				var dateRange = dateExtent(rtnObj)
+				console.log(dateRange)
+				_.each(rtnObj, function(dataset) {
+					dataset.data = setupDates(dataset.data, dataType, dateRange[0], dateRange[1])
+				})
+			}
 			_.each(callbacks, function(callback) {
 				callback(rtnObj)
 			})
 		}
 	}
-	function setupDates(data, dataType) {
+	function dateExtent(datasets, dataType) {
 		var minDate = null;
 		var maxDate = null;
+		if(dataType === 'hourly') {
+			console.error('hourly not setup')
+		}
+		_.each(datasets, function(dataset) {
+			_.each(dataset.data, function(d) {
+				var date = new Date(d['year'], d['month'] - 1, d['day'])
+				if(minDate === null || date < minDate) {
+					minDate = date;
+				}
+				if(maxDate === null || date > maxDate) {
+					maxDate = date;
+				}
+			})
+		})
+
+		return [minDate, maxDate]
+	}
+	function setupDates(data, dataType, minDate,maxDate) {
 		_.each(data, function(datum) {
 			var date;
 			if(dataType === 'hourly') {
@@ -276,13 +303,8 @@
 			}
 			datum.date = date
 			datum.moment = moment(date);
-			if(minDate === null || date < minDate) {
-				minDate = date
-			}
-			if(maxDate === null || date > maxDate) {
-				maxDate = date
-			}
 		})
+		console.log(minDate, maxDate)
 		if(dataType === 'hourly') {
 			console.error('setup hourly data')
 		} else {
@@ -310,7 +332,12 @@
 				var datum = dataWithGaps[i];
 				if(typeof datum === 'undefined') {
 					var previous = dataWithGaps[i - 1]
-					var fakeMomentDate = previous.moment.clone()
+					var fakeMomentDate;
+					if(typeof previous === 'undefined') {
+						fakeMomentDate = moment(minDate)
+					} else {
+						fakeMomentDate = previous.moment.clone()
+					}
 					fakeMomentDate.add(1,'days')
 					var fakeDate = fakeMomentDate.toDate()
 					var fakeData = {
