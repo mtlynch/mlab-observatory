@@ -1,14 +1,14 @@
 (function() {
 	var colorMap;
 	var exports = new EventEmitter()
-	var metadatafolder = 'metadata/'
+	var metadatafolder = 'static/observatory/metadata/'
 
 	var mapFile = metadatafolder + "codeMap.csv"
 	var validExploreCodesFile = metadatafolder + 'validExploreKeys.txt'
 	var validCompareCodesFile = metadatafolder + 'validCompareKeys.txt'
 	var metricFile = metadatafolder + 'metrics.json'
 
-	var dataPath = "data/"
+	var dataPath = "static/observatory/data/"
 	var validExploreCodes = [];
 	var validCompareCodes = []
 	var ispsBySite = {}
