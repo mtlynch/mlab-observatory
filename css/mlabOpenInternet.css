@@ -261,6 +261,7 @@ compare
 	font-size: 11px;
 	fill: #8b8b8b;
 	font-weight: bold;
+	pointer-events: none;
 }
 #compareViz .xAxis line {
 	stroke: #b0b3b5;

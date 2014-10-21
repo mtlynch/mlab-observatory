@@ -14,6 +14,7 @@
 	var curViewType;
 	var focusLine;
 	var xScale;
+	var yScale;
 	var curFocusDay = null;
 	var tooltipContainer; 
 	var tooltips;
@@ -108,7 +109,7 @@
 		console.log(minDataValue + " " + maxDataValue)
 
 		/* setup scales */
-		var yScale = d3.scale.linear().domain([0, maxDataValue])
+		yScale = d3.scale.linear().domain([0, maxDataValue])
 			.range([graphHeight, 0])
 		//var xScale = d3.scale.linear().domain([0, maxDatasetLength - 1]).range([0, exploreDimensions.w])
 		xScale = d3.time.scale().domain([minDate, maxDate]).range([0, dimensions.w])
@@ -312,7 +313,7 @@
 			var y = i * graphAreaHeight
 
 			d.tooltipX = xPos;
-			d.tooltipY = y;
+			d.tooltipY = y + margin.top + yScale(dataValue);
 
 			return dataValue + ' ' + curMetric.units
 		})
@@ -354,7 +355,11 @@
 			}
 			return x + 'px'
 		}).style('top', function(d) {
-			return d.tooltipY + 'px'
+			var ttHeight = $(this).height();
+			var y = d.tooltipY
+			y -= ttHeight / 2
+			y -= 2
+			return y + 'px'
 		})
 
 	}
