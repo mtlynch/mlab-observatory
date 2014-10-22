@@ -46,36 +46,6 @@ html, body {
 	margin:0 auto;
 }
 
-/***************
-  HEADER
-***************/
-
-.header {
-	color: white;
-}
-.header img {
-	width: 460px;
-	float: left;
-}
-.header .headerLinks {
-	float: right;
-	color: #767676;
-	font-size: 12px;
-	text-transform: uppercase;
-	margin-right: 40px;
-	margin-top: 28px;
-}
-.header .headerLinks > div {
-	cursor: pointer;
-}
-.header .headerLinks > div:hover {
-	cursor: pointer;
-	color: #d94f40;
-}
-
-h1 {
-}
-
 
 /*
 Controls
