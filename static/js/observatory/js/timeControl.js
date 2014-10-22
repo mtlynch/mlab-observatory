@@ -247,6 +247,14 @@
 					return svgDimensions.height
 				}
 				return yScale(d[metricKey])
+			}).defined(function(d,i) {
+				if(d.monthIndex === 0 || d.monthIndex === 1) {
+					return false;
+				}
+				if(d.monthIndex === numMonths - 1 || d.monthIndex === numMonths - 2) {
+					return false;
+				}
+				return true
 			})
 		pathsDashed.enter().append('path').attr('class','dashed');
 		pathsDashed.exit().remove()
