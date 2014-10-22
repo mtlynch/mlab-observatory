@@ -20,6 +20,7 @@
 		console.log(controls);
 		exploreViz.init()
 		compareViz.init()
+		compareViz.hide()
 		controls.init()
 		controls.addListener('switchTab', switchTab)
 		controls.addListener('selectionChanged', selectionChanged)
