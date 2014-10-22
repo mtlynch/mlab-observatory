@@ -63,20 +63,25 @@
 		console.log(allMetroData)
 		var datasets;
 		var metric = mlabOpenInternet.controls.getSelectedMetric();
-		selectedCombinations = mlabOpenInternet.controls.getSelectedCombinations()
-		if(selectedCombinations.length === 0) {
+		var curView = mlabOpenInternet.controls.getSelectedTab()
+		if(curView.id === 'compare') {
 			datasets = allMetroData
-		//	datasets = []
 		} else {
-			datasets = []
-			_.each(allMetroData, function(metroData) {
-				var dataID = metroData.filenameID;
-				var included = _.find(selectedCombinations, function(combo) { return combo.filename === dataID })
-				if(typeof included !== 'undefined') {
-					datasets.push(metroData)
-				}
-			})
-			console.log(selectedCombinations)
+			selectedCombinations = mlabOpenInternet.controls.getSelectedCombinations()
+			if(selectedCombinations.length === 0) {
+				datasets = allMetroData
+			//	datasets = []
+			} else {
+				datasets = []
+				_.each(allMetroData, function(metroData) {
+					var dataID = metroData.filenameID;
+					var included = _.find(selectedCombinations, function(combo) { return combo.filename === dataID })
+					if(typeof included !== 'undefined') {
+						datasets.push(metroData)
+					}
+				})
+				console.log(selectedCombinations)
+			}
 		}
 		var metricKey = metric.key;
 		var minDataValue = Number.MAX_VALUE;
