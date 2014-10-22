@@ -51,9 +51,7 @@ html, body {
 ***************/
 
 .header {
-	background-color: #9bd2cf;
 	color: white;
-	height: 72px;
 }
 .header img {
 	width: 460px;
@@ -76,8 +74,6 @@ html, body {
 }
 
 h1 {
-	color: #9bd2c7;
-	padding-left: 65px;
 }
 
 
@@ -373,5 +369,6 @@ compare
 
 .cf {
     *zoom: 1;
+    padding-bottom: 0px;
 }
 
