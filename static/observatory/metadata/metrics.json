@@ -1,17 +1,17 @@
 [
 	{
 		"key": "packet_retransmit_rate",
-		"name": "packet_retransmit_rate",
+		"name": "Packet Retransmit Rate",
 		"units": "%"
 	},
 	{
 		"key": "minimum_rtt",
-		"name": "minimum_rtt",
+		"name": "Minimum RTT",
 		"units": "ms"
 	},
 	{
 		"key": "average_rtt",
-		"name": "average_rtt",
+		"name": "Average RTT",
 		"units": "ms"
 	},
 	{
