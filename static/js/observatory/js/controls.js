@@ -181,6 +181,7 @@
 		var labelHTML = "";
 		labelHTML += '<span class="b">' + selectedMetric.name + '</span>'
 		labelHTML += ' for '
+		var colors = mlabOpenInternet.dataLoader.getColors()
 		if(selectedTab.id === 'explore') {
 			if(selectedCombinations.length === 0) {
 				labelHTML += '<span class="b">All ISPs</span> on <span class="b">All TPs</span> '
@@ -210,7 +211,8 @@
 						}
 						labelHTML += ' '
 					})
-					labelHTML += 'on <span class="b">' + isp + '</span>'
+					var color = colors[isp][0]
+					labelHTML += 'on <span class="b" style="color:#' + color + '">' + isp + '</span>'
 					if(numISPs > 1 && ispIndex !== numISPs - 1) {
 						labelHTML += ','
 					}
@@ -222,7 +224,11 @@
 			labelHTML += 'in '
 			labelHTML += '<span class="b">' + selectedMetroRegion + '</span>'
 		} else if(selectedTab.id === 'compare') {
-			labelHTML += '<span class="b">'
+			var color = null;
+			if(selectedCompareViewBy === 'ISP') {
+				color = colors[selectedISP][0]
+			}
+			labelHTML += '<span class="b"' + (color !== null ? ' style="color:#' + color + '"' : '') + '>'
 			if(selectedCompareViewBy === 'Metro Region') {
 				labelHTML += selectedMetroRegion
 			} else if(selectedCompareViewBy === 'ISP') {

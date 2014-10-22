@@ -234,7 +234,7 @@
 					requestData.filenameID = datum.filename
 					var filenameParts = datum.filename.split('_')
 					var isp = filenameParts[1]
-					requestData.color = colorMap[isp][0]
+					requestData.color = '#' + colorMap[isp][0]
 					//console.log(requestData)
 					numFilesLoaded ++;
 					checkIfAllDataLoaded(numFilesLoaded, dataToLoad, requestData.callbacks, dataObj, dataType)
@@ -386,6 +386,7 @@
 	exports.requestCompareData = requestCompareData
 	exports.getTPForCode = getTPForCode
 	exports.getMinSampleSize = function() { return minSampleSize }
+	exports.getColors = function() { return colorMap }
 	if( ! window.mlabOpenInternet){
 		window.mlabOpenInternet = {}
 	}

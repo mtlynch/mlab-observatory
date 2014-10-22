@@ -1,5 +1,5 @@
 (function() {
-	var margin = {top: 10, right: 20, bottom: 25, left: 80}
+	var margin = {top: 10, right: 20, bottom: 25, left: 60}
 	var exploreDimensions = {
 		w: 824 - margin.left - margin.right,
 		h: 441 - margin.top - margin.bottom
@@ -203,12 +203,12 @@
 
 		chart.append('g').attr('class','xAxis axis').attr('transform', 'translate(0,' + exploreDimensions.h +')')
 			.call(xAxis)
-
 		var yAxis = d3.svg.axis().scale(yScale).orient('left')
 			.tickFormat(function(d) {
 				return d + ' ' + metric.units
 			})
 		chart.append('g').attr('class','yAxis axis').call(yAxis)
+		chart.select('.yAxis').selectAll('text').attr('x', -margin.left).style('text-anchor','initial')
 
 	}
 	function hide() {

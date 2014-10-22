@@ -164,11 +164,9 @@
 				return d.color;
 			}
 		}).style('stroke-width', function(d) {
-			if(d.active) {
-				return '3px'
-			} else {
-				return null
-			}
+			return '2px'
+		}).style('stroke', function(d) {
+			return d.color
 		})
 		/* add in the dashed line */
 		var pathsDashed = datasetGroups.selectAll('path.dashed').data(function(d) { return [d] })
@@ -212,6 +210,8 @@
 			} else {
 				return null
 			}
+		}).style('stroke', function(d) {
+			return d.color
 		})
 
 		tooltips = tooltipContainer.selectAll('div.compareTooltip').data(datasets)
@@ -276,6 +276,16 @@
 				return idParts[0]
 			}
 		}).attr('x', 0).attr('y', yScale(0) + 40)
+		/*
+		.style('fill', function(d) {
+			
+			console.log(curViewType)
+			if(curViewType === 'Metro Region') {
+				return d.color
+			}
+			return null;
+		})
+		*/
 
 	}
 	function hide() {

@@ -33,9 +33,9 @@
 		svg.append('g').attr('class','lines')
 		var shades = svg.append('g').attr('class','windowShades')
 		shades.append('rect').attr('x',0).attr('y',0).attr('width', monthWidth * 2).attr('height',svgDimensions.height)
-			.style('fill','#000').style('opacity',0.1)
+			.style('fill','#2a2d33').style('opacity',0.05)
 		shades.append('rect').attr('x',monthWidth * 3).attr('y',0).attr('width', monthWidth * 2).attr('height',svgDimensions.height)
-			.style('fill','#000').style('opacity',0.1)
+			.style('fill','#2a2d33').style('opacity',0.05)
 		labels.push(shades.append('text').attr('x', monthWidth * 2).attr('y', svgDimensions.height + 18)
 			.text('').attr('text-anchor','middle'))
 		labels.push(shades.append('text').attr('x', monthWidth * 3).attr('y', svgDimensions.height + 18)
@@ -304,8 +304,10 @@
 	}
 	function updatePaths() {
 		var strokeFunc = function(d,i) {
-			//var colors = ['red','blue','green','purple','black']
-			//return colors[Math.floor(colors.length * Math.random())]
+			if(mlabOpenInternet.controls.getSelectedTab().id === 'compare' && (d.monthIndex-2 ===selectedMonthIndex)) {
+				return d.color
+			}
+
 			if(selectedCombinations.length === 0) {
 				return null
 			}
