@@ -36,6 +36,8 @@
 			.style('fill','#2a2d33').style('opacity',0.05)
 		shades.append('rect').attr('x',monthWidth * 3).attr('y',0).attr('width', monthWidth * 2).attr('height',svgDimensions.height)
 			.style('fill','#2a2d33').style('opacity',0.05)
+		shades.append('line').attr('x1', monthWidth * 3).attr('y1', 0).attr('x2', monthWidth*3).attr('y2', svgDimensions.height)
+		shades.append('line').attr('x1', monthWidth * 2).attr('y1', 0).attr('x2', monthWidth*2).attr('y2', svgDimensions.height)
 		labels.push(shades.append('text').attr('x', monthWidth * 2).attr('y', svgDimensions.height + 18)
 			.text('').attr('text-anchor','middle'))
 		labels.push(shades.append('text').attr('x', monthWidth * 3).attr('y', svgDimensions.height + 18)

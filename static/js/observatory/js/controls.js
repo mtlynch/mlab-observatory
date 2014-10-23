@@ -5,7 +5,7 @@
 	var tabData = [
 		{lbl: 'Explore', id: 'explore'},
 		{lbl: 'Compare', id: 'compare'},
-		{lbl: 'How this works', id: 'help'} 
+	//	{lbl: 'How this works', id: 'help'} 
 	]
 	var metrics;
 	var metros;

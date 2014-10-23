@@ -199,17 +199,25 @@
 
 		chart.selectAll('.axis').remove()
 		var xAxis = d3.svg.axis().scale(xScale).orient('bottom')
-			.tickFormat(d3.time.format("%m-%d"));
-
+			.tickFormat(d3.time.format("%e %b"))
 		chart.append('g').attr('class','xAxis axis').attr('transform', 'translate(0,' + exploreDimensions.h +')')
 			.call(xAxis)
 		var yAxis = d3.svg.axis().scale(yScale).orient('left')
 			.tickFormat(function(d) {
 				return d + ' ' + metric.units
-			})
+			}).ticks(5)
 		chart.append('g').attr('class','yAxis axis').call(yAxis)
+		var numTextItems = chart.select('.yAxis').selectAll('text')[0].length
+		console.log(numTextItems)
 		chart.select('.yAxis').selectAll('text').attr('x', -margin.left).style('text-anchor','initial')
-
+			.text(function(d,i) {
+				var curText = d3.select(this).text();
+				if(i === numTextItems - 1) {
+					return curText
+				}
+				var textParts = curText.split(' ')
+				return textParts[0]
+			})
 	}
 	function hide() {
 		div.style('display','none')

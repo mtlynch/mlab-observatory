@@ -133,6 +133,9 @@ Explore Viz
 	fill: #666666;
 	font-weight: bold;
 }
+#exploreViz .xAxis text {
+	text-transform: uppercase;
+}
 #exploreViz .fillDot {
 	pointer-events: none;
 }
@@ -199,8 +202,9 @@ Time controller
     -ms-user-select: none;
     user-select: none;
 }
-
-
+#timeControl .windowShades line {
+	stroke: #626366;
+}
 /*
 compare
 */
