@@ -35,7 +35,7 @@ html, body {
 	padding: 0;
 	margin:0;
 	height: 100%;
-	font-family: "Proxima Nova Regular", Arial, Helvetica, sans-serif;
+	font-family: "Proxima Nova", Arial, Helvetica, sans-serif;
 
 	padding-bottom: 100px;
 }
@@ -83,6 +83,8 @@ Controls
 	border: none;
 	box-shadow: none;
 	outline: none;
+	font-weight: bold;
+	color: #8c8c8c;
 }
 #controls .selectionLabels  {
 	padding-left: 65px;
@@ -149,8 +151,8 @@ Explore Viz
 	background: #616266;
 	color: #fff;
 	border-radius: 5px;
-	padding: 10px;
-	padding-bottom: 5px;
+	padding: 10px 11px;
+	padding-bottom: 1px;
 }
 #exploreViz .exploreTTContent .ttTitle {
 	font-size: 15px;
@@ -176,6 +178,13 @@ Explore Viz
 	border-right: 8px solid transparent;
 	border-top: 8px solid #616266;
 	position: absolute;
+}
+
+#exploreViz .exploreTTContainer .dateLabel {
+	display: none;
+}
+#exploreViz .exploreTTContainer .dateValue {
+	color: #c2c2c2;
 }
 /*
 Time controller
@@ -206,6 +215,11 @@ Time controller
 }
 #timeControl .windowShades line {
 	stroke: #626366;
+}
+#timeControl .timeControlLabel {
+	font-size: 11px;
+	color: #616266;
+	margin-bottom: 0.5em;
 }
 /*
 compare
@@ -249,6 +263,7 @@ compare
 }
 #compareViz .compareTooltips .compareTooltip {
 	position: absolute;
+	display: none;
 }
 #compareViz .compareTooltips .compareTooltip .content {
 	background-color: #ebebeb;

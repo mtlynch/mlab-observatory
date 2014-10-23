@@ -23,6 +23,8 @@
 	var selectedCombinations;
 	function init() {
 		div = d3.select('#timeControl')
+		div.append('div').attr('class','timeControlLabel')
+			.text('Drag scrubber to adjust date range')
 		svg = div.append('svg')
 			.attr('width', svgDimensions.width + margin.left + margin.right)
 			.attr('height', svgDimensions.height + margin.top + margin.bottom)
@@ -36,12 +38,21 @@
 			.style('fill','#2a2d33').style('opacity',0.05)
 		shades.append('rect').attr('x',monthWidth * 3).attr('y',0).attr('width', monthWidth * 2).attr('height',svgDimensions.height)
 			.style('fill','#2a2d33').style('opacity',0.05)
-		shades.append('line').attr('x1', monthWidth * 3).attr('y1', 0).attr('x2', monthWidth*3).attr('y2', svgDimensions.height)
-		shades.append('line').attr('x1', monthWidth * 2).attr('y1', 0).attr('x2', monthWidth*2).attr('y2', svgDimensions.height)
+		var tickLength = 5
+		shades.append('line').attr('x1', monthWidth * 3).attr('y1', 0).attr('x2', monthWidth*3).attr('y2', svgDimensions.height + tickLength)
+		shades.append('line').attr('x1', monthWidth * 2).attr('y1', 0).attr('x2', monthWidth*2).attr('y2', svgDimensions.height + tickLength)
+		shades.append('line').attr('x1', monthWidth * 1).attr('y1', svgDimensions.height).attr('x2', monthWidth*1).attr('y2', svgDimensions.height + tickLength)
+		shades.append('line').attr('x1', monthWidth * 4).attr('y1', svgDimensions.height).attr('x2', monthWidth*4).attr('y2', svgDimensions.height + tickLength)
+		labels.push(shades.append('text').attr('x', monthWidth * 1).attr('y', svgDimensions.height + 18)
+			.text('').attr('text-anchor','middle'))
 		labels.push(shades.append('text').attr('x', monthWidth * 2).attr('y', svgDimensions.height + 18)
 			.text('').attr('text-anchor','middle'))
 		labels.push(shades.append('text').attr('x', monthWidth * 3).attr('y', svgDimensions.height + 18)
 			.text('').attr('text-anchor','middle'))
+		labels.push(shades.append('text').attr('x', monthWidth * 4).attr('y', svgDimensions.height + 18)
+			.text('').attr('text-anchor','middle'))
+		shades.append('line').attr('x1', 0).attr('x2', monthWidth * 5)
+			.attr('y1', svgDimensions.height).attr('y2', svgDimensions.height)
 
 	}
 	function show() {
@@ -195,9 +206,14 @@
 			selectedDate = dateOptions[selectedMonthIndex]
 			console.log(selectedMonthIndex)
 			var dispMonth = selectedDate.date.clone()
+			dispMonth.subtract(1,'months')
 			labels[0].text(dispMonth.format('MMM \'YY').toUpperCase())
 			dispMonth.add(1,'months')
 			labels[1].text(dispMonth.format('MMM \'YY').toUpperCase())
+			dispMonth.add(1,'months')
+			labels[2].text(dispMonth.format('MMM \'YY').toUpperCase())
+			dispMonth.add(1,'months')
+			labels[3].text(dispMonth.format('MMM \'YY').toUpperCase())
 			
 		}
 		var yScale = d3.scale.linear().domain([0, maxDataValue])
@@ -299,9 +315,14 @@
 				var xTranslate = Math.abs(linesTranslateData.x / monthWidth)
 				var dispMonthIndex = xTranslate
 				var dispMonth = dateOptions[dispMonthIndex].date.clone()
+				dispMonth.subtract(1,'months')
 				labels[0].text(dispMonth.format('MMM \'YY').toUpperCase())
 				dispMonth.add(1,'months')
 				labels[1].text(dispMonth.format('MMM \'YY').toUpperCase())
+				dispMonth.add(1,'months')
+				labels[2].text(dispMonth.format('MMM \'YY').toUpperCase())
+				dispMonth.add(1,'months')
+				labels[3].text(dispMonth.format('MMM \'YY').toUpperCase())
 				
 				d3.select(this).select('g.lines')
 					.transition().duration(300)

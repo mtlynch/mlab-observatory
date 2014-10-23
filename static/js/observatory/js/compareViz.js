@@ -71,7 +71,7 @@
 		console.log(fullHeight)
 		svg.attr('height', fullHeight)
 		focusLine.attr('y2', fullHeight - (graphAreaHeight - graphHeight))
-
+			.attr('x1', -100).attr('x2', -100)
 		var metric = mlabOpenInternet.controls.getSelectedMetric();
 		curMetric = metric;
 
@@ -222,6 +222,7 @@
 			.enter().append('div').attr('class','leftArrow arrow')
 		content = tooltips.selectAll('div.content').data(arrayIdent)
 		content.enter().append('div').attr('class','content')
+		tooltips.style('display','none')
 		tooltips.selectAll('div.rightArrow').data(arrayIdent)
 			.enter().append('div').attr('class','rightArrow arrow')
 		var ttContent = [
@@ -348,7 +349,7 @@
 		})
 		tooltips.select('.ttDate').text(momentNearest.format('M/D/YYYY'))
 		var activeWidthCutoffPct = 0.2;
-		tooltips.classed('onLeft', function(d,i) {
+		tooltips.style('display','block').classed('onLeft', function(d,i) {
 			if(tooltipsOnLeft) {
 				if(i === yIndex && d.tooltipX < dimensions.w * (1 - activeWidthCutoffPct)) {
 					return false;
@@ -389,6 +390,8 @@
 
 	}
 	function mouseOutGraph() {
+	}
+	function hideTT() {
 
 	}
 	if( ! window.mlabOpenInternet) {
