@@ -421,6 +421,7 @@
 	exports.getMinSampleSize = function() { return minSampleSize }
 	exports.getColors = function() { return colorMap }
 	exports.getISPNameMap = function() { return ispNameMap }
+	exports.getMetroRegionToCodeMap = function() { return metroRegionToMLabPrefix }
 	if( ! window.mlabOpenInternet){
 		window.mlabOpenInternet = {}
 	}

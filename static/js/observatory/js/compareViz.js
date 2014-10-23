@@ -1,10 +1,10 @@
 (function() {
-	var margin = {top: 10, right: 5, bottom: 0, left: 0}
+	var margin = {top: 10, right: 5, bottom: 0, left: 2}
 	var dimensions = {
 		w: 824 - margin.left - margin.right,
 	}
 	
-	var graphAreaHeight = 120;
+	var graphAreaHeight = 140;
 	var graphHeight = 60
 
 	var svg;
@@ -227,17 +227,10 @@
 		var ttContent = [
 			'ttLabel ttMetricLabel',
 			'ttValue ttMetric',
-			'ttLabel ttDateLabel',
-			'ttValue ttDate'
+			'ttLabel ttDate'
 		]
 		content.selectAll('div').data(ttContent)
 			.enter().append('div').attr('class',String)
-				.text(function(d) {
-					if(d.indexOf('ttDate') !== -1) {
-						return 'Date'
-					}
-					return null
-				})
 		/* y ticks */
 		var lineTickArray = [0, 0.5, 1]
 		var lineTicks = datasetGroups.selectAll('line.yScaleGuide').data(lineTickArray)
@@ -254,17 +247,27 @@
 		/* xaxis */
 		chart.selectAll('.axis').remove()
 		var xAxis = d3.svg.axis().scale(xScale).orient('bottom')
-			.tickFormat(d3.time.format("%m-%d")).ticks(3);
+			.tickFormat(d3.time.format("%e %b")).ticks(6);
 		datasetGroups.append('g').attr('class','xAxis axis').attr('transform', 'translate(0,' + graphHeight +')')
 			.call(xAxis)
 
 		/* yscale text label */
+		var textSize;
 		var maxYScale = datasetGroups.selectAll('text.yScaleMax').data([maxDataValue])
 		maxYScale.enter().append('text').attr('class','yScaleMax')
 		maxYScale.text(function(d) {
 			return d + " " + metric.units
 		}).attr('x', dimensions.w).attr('y', yScale(maxDataValue) + 4)
-
+		.each(function(d) {
+			textSize = this.getBBox()
+		})
+		var maxYScaleBG = datasetGroups.selectAll('rect.yScaleMaxBG').data([maxDataValue])
+		maxYScaleBG.enter().append('rect').attr('class','yScaleMaxBG')
+		maxYScaleBG.attr('y', textSize.y).attr('x', textSize.x)
+			.attr('width', textSize.width).attr('height', textSize.height)
+			.style('fill','white')
+		maxYScale.moveToFront()
+		var metroRegionMap = mlabOpenInternet.dataLoader.getMetroRegionToCodeMap()
 		/* graph title */
 		var graphLabel = datasetGroups.selectAll('text.graphLabel').data(function(d) { return [d] })
 		graphLabel.enter().append('text').attr('class','graphLabel')
@@ -278,9 +281,17 @@
 				}
 				return isp
 			} else if(curViewType === 'ISP') {
-				return idParts[0]
+				var code = idParts[0].toLowerCase();
+				var metroName = code;
+				_.each(metroRegionMap, function(value, key) {
+					if(value === code) {
+						metroName = key
+					}
+				})
+
+				return metroName
 			}
-		}).attr('x', 0).attr('y', yScale(0) + 40)
+		}).attr('x', 0).attr('y', yScale(0) + 35)
 		/*
 		.style('fill', function(d) {
 			
@@ -314,7 +325,7 @@
 		}
 		//console.log(xIndex)
 		if(curFocusDay === null || curFocusDay !== day) {
-			focusLine.transition().duration(200).ease('cubic-in-out')
+			focusLine.transition().duration(450).ease('cubic-out')
 				.attr('x1', xPos).attr('x2', xPos)
 			curFocusDay = day
 		}
@@ -351,7 +362,7 @@
 			}
 		}).classed('active', function(d,i) {
 			return i === yIndex
-		}).transition().duration(200).style('left', function(d,i) {
+		}).transition().duration(450).ease('cubic-out').style('left', function(d,i) {
 			var x = d.tooltipX
 			var arrowOffset = 8
 			var thisTTOnLeft = tooltipsOnLeft;
@@ -373,7 +384,6 @@
 			var ttHeight = $(this).height();
 			var y = d.tooltipY
 			y -= ttHeight / 2
-			y -= 2
 			return y + 'px'
 		})
 

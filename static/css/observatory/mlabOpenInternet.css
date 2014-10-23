@@ -131,7 +131,7 @@ Explore Viz
 }
 #exploreViz .axis text {
 	font-size: 11px;
-	fill: #666666;
+	fill: #808284;
 	font-weight: bold;
 }
 #exploreViz .xAxis text {
@@ -229,6 +229,7 @@ compare
 }
 #compareViz line.yScaleGuide.faint {
 	stroke: #e6e6e6;
+	stroke-width: 0.5;
 	stroke-dasharray: 5,3;
 }
 #compareViz text.yScaleMax {
@@ -243,6 +244,7 @@ compare
 }
 #compareViz line.focus {
 	stroke: #818181;
+	stroke-width: 0.5;
 	stroke-dasharray:5,5;
 }
 #compareViz .compareTooltips .compareTooltip {
@@ -250,10 +252,13 @@ compare
 }
 #compareViz .compareTooltips .compareTooltip .content {
 	background-color: #ebebeb;
-	padding: 15px 15px 5px;
+	padding: 10px 10px 1px;
 	border-radius: 5px;
 }
 
+#compareViz .compareTooltips .compareTooltip.active .content {
+	padding: 10px 11px 5px;
+}
 #compareViz .compareTooltips .compareTooltip .ttLabel {
 	color: #c2c2c2;
 	font-size: 11px;
@@ -263,6 +268,7 @@ compare
 }
 #compareViz .compareTooltips .compareTooltip .ttValue {
 	margin-bottom: 0.5em;
+	color: #616266;
 	font-size: 13px;
 	font-weight: bold;
 }
@@ -278,8 +284,8 @@ compare
 	border-top: 8px solid transparent;
 	border-bottom: 8px solid transparent; 
 	position: absolute;
-	top: -webkit-calc(50% - 4px);
-	top: calc(50% - 4px);
+	top: -webkit-calc(50% - 8px);
+	top: calc(50% - 8px);
 }
 #compareViz .compareTooltip .leftArrow {
 	border-right: 8px solid #ebebeb; 
@@ -303,13 +309,23 @@ compare
 #compareViz .compareTooltip.onLeft .leftArrow {
 	display: none;
 }
-#compareViz .compareTooltip .ttDateLabel, #compareViz .compareTooltip .ttDate {
+#compareViz .compareTooltip .ttDateLabel, #compareViz .compareTooltip .ttDate, #compareViz .compareTooltip .ttMetricLabel {
 	display: none;
 }
-#compareViz .compareTooltip.active .ttDateLabel, #compareViz .compareTooltip.active .ttDate {
+#compareViz .compareTooltip.active .ttDateLabel, #compareViz .compareTooltip.active .ttDate, #compareViz .compareTooltip.active .ttMetricLabel {
 	display: block;
 }
-
+#compareViz .graphLabel {
+	fill: #808284;
+	font-weight: bold;
+	font-size: 17px;
+}
+#compareViz .xAxis .tick text {
+	fill: #808284;
+	font-weight: bold;
+	text-transform: uppercase;
+	font-size: 11px;
+}
 
 /***************
   ABOUT
