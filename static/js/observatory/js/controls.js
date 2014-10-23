@@ -85,7 +85,13 @@
 		ispSelectD3 = selectBar.append('select').attr('title','ISP')
 		var ispOptsArray = mlabOpenInternet.dataLoader.getISPs();
 		var ispOpts = ispSelectD3.selectAll('option').data(ispOptsArray)
-		ispOpts.enter().append('option').text(String).attr('value', String)
+		ispOpts.enter().append('option').text(function(d) {
+			var ispMap = mlabOpenInternet.dataLoader.getISPNameMap()
+			if(typeof ispMap[d] !== 'undefined') {
+				return ispMap[d]
+			}
+			return d
+		}).attr('value', String)
 		$ispSelect = $(ispSelectD3[0][0]).selectpicker({selectedTextFormat: 'static'}).on('change', changeCompareISP)
 		selectedISP = ispOptsArray[0]
 
@@ -212,7 +218,12 @@
 						labelHTML += ' '
 					})
 					var color = colors[isp][0]
-					labelHTML += 'on <span class="b" style="color:#' + color + '">' + isp + '</span>'
+					var ispLabel = isp;
+					var ispNameMap = mlabOpenInternet.dataLoader.getISPNameMap();
+					if(typeof ispNameMap[ispLabel] !== 'undefined') {
+						ispLabel = ispNameMap[ispLabel]
+					}
+					labelHTML += 'on <span class="b" style="color:#' + color + '">' + ispLabel + '</span>'
 					if(numISPs > 1 && ispIndex !== numISPs - 1) {
 						labelHTML += ','
 					}

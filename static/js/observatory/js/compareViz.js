@@ -271,7 +271,12 @@
 		graphLabel.text(function(d) {
 			var idParts = d.id.split('_')
 			if(curViewType === 'Metro Region') {
-				return idParts[1]
+				var isp = idParts[1];
+				var ispNameMap = mlabOpenInternet.dataLoader.getISPNameMap();
+				if(typeof ispNameMap[isp] !== 'undefined') {
+					isp = ispNameMap[isp]
+				}
+				return isp
 			} else if(curViewType === 'ISP') {
 				return idParts[0]
 			}

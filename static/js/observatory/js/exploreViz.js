@@ -244,7 +244,10 @@
 		var idParts = d.dataID.split('_')
 		var code = idParts[0];
 		var isp = idParts[1]
-		isp = isp[0].toUpperCase() + isp.substr(1)
+		var ispNameMap = mlabOpenInternet.dataLoader.getISPNameMap();
+		if(typeof ispNameMap[isp] !== 'undefined') {
+			isp = ispNameMap[isp]
+		}
 		var tp = mlabOpenInternet.dataLoader.getTPForCode(code)
 		exploreTT.select('.ttTitle').text(isp + ", " + tp)
 		exploreTT.select('.valueLabel').text(curMetric.name)

@@ -23,6 +23,7 @@
 	var dailyCompareDataByCode = {};
 	var hourlyCompareDataByCode = {};
 	var mlabSitesByCode = {}
+	var ispNameMap;
 	var minSampleSize = 50
 	/*
 	var ispList = [];
@@ -42,6 +43,10 @@
 	var aggHourlyData = [];
 	*/
 	function init() {
+		d3.json(metadatafolder + 'ispMap.json', loadISPNameMap)
+	}
+	function loadISPNameMap(err, map) {
+		ispNameMap = map;
 		d3.json(metadatafolder + "colors.json", loadColors)
 	}
 	function loadColors(err, colors) {
@@ -113,8 +118,12 @@
 			var code = site.MlabSiteName.toLowerCase()
 			var siteISPs = ispsBySite[code]
 			_.each(siteISPs, function(isp) {
+				var ispLabel = isp;
+				if(typeof ispNameMap[ispLabel] !== 'undefined') {
+					ispLabel = ispNameMap[ispLabel]
+				}
 				var comboObject = {
-					label: isp + ' x ' + site.TransitProvider,
+					label: ispLabel + ' x ' + site.TransitProvider,
 					filename: code + '_' + isp
 				}
 				combos.push(comboObject)
@@ -387,6 +396,7 @@
 	exports.getTPForCode = getTPForCode
 	exports.getMinSampleSize = function() { return minSampleSize }
 	exports.getColors = function() { return colorMap }
+	exports.getISPNameMap = function() { return ispNameMap }
 	if( ! window.mlabOpenInternet){
 		window.mlabOpenInternet = {}
 	}

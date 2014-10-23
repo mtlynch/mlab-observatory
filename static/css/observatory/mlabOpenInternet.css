@@ -78,6 +78,7 @@ Controls
 	border-right: none;
 }
 #controls .btn-default {
+	height: 50px;
 	background-color: #f1f2f2;
 	border: none;
 	box-shadow: none;
@@ -149,6 +150,7 @@ Explore Viz
 	color: #fff;
 	border-radius: 5px;
 	padding: 10px;
+	padding-bottom: 5px;
 }
 #exploreViz .exploreTTContent .ttTitle {
 	font-size: 15px;
