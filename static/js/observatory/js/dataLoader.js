@@ -74,6 +74,9 @@
 			ispsBySite[siteID].push(isp)
 
 		})
+		validISPs.sort(function(a,b) {
+			return a > b
+		})
 		d3.xhr(validCompareCodesFile, loadCompareCodes)
 
 	}
@@ -99,6 +102,9 @@
 			}
 			mlabSitesByCode[code] = mapping
 		})
+		validMetroRegions.sort(function(a,b) {
+			return a > b
+		})
 
 		d3.json(metricFile, loadMetrics);
 	}
@@ -109,11 +115,15 @@
 			return
 		}
 		metrics = data;
+		metrics.sort(function(a,b) {
+			return a.name > b.name
+		})
 		exports.emitEvent('loaded')
 	}
 	function getCombinations(metro) {
 		var mLabSites = _.select(siteMappings, function(d) { return d.MetroArea === metro })
 		var combos = []
+		var labels = []
 		_.each(mLabSites, function(site) {
 			var code = site.MlabSiteName.toLowerCase()
 			var siteISPs = ispsBySite[code]
@@ -122,13 +132,27 @@
 				if(typeof ispNameMap[ispLabel] !== 'undefined') {
 					ispLabel = ispNameMap[ispLabel]
 				}
+				var label =  ispLabel + ' x ' + site.TransitProvider
+				labels.push(label)
 				var comboObject = {
-					label: ispLabel + ' x ' + site.TransitProvider,
+					label: label,
 					filename: code + '_' + isp
 				}
 				combos.push(comboObject)
 			})
 		})
+		combos.sort(function(a,b) {
+			if(a.label === b.label) {
+				return 0
+			} else if(a.label > b.label) {
+				return 1
+			} else {
+				return -1;
+			}
+		})
+		labels.sort();
+		console.log(labels)
+		console.log(combos)
 		return combos
 	}
 	function requestMetroData(metro, dataType, callback) {

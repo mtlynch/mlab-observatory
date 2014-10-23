@@ -34,7 +34,7 @@
 
 	var compareViewBySelectD3;
 	var $compareViewBySelect;
-	var viewByOpts = ['Metro Region','ISP']
+	var viewByOpts = ['ISP','Metro Region']
 
 	var selectionLabels;
 
@@ -67,12 +67,24 @@
 		var metricOpts = metricsSelect.selectAll('option').data(metrics)
 		metricOpts.enter().append('option').text(function(d) { return d.name })
 			.attr('value', function(d) { return d.key })
+			.attr('selected',function(d,i) {
+				if(d.name === selectedMetric.name) {
+					return 'selected'
+				}
+				return null
+			})
 		$metricsSelect = $(metricsSelect[0][0]).selectpicker({selectedTextFormat: 'static'}).on('change', changeMetric)
 
 
 		compareViewBySelectD3 = selectBar.append('select').attr('title', 'View By')
 		var viewByOptions = compareViewBySelectD3.selectAll('option').data(viewByOpts)
 		viewByOptions.enter().append('option').text(String).attr('value', String)
+			.attr('selected', function(d) {
+				if(d === 'Metro Region') {
+					return 'selected'
+				}
+				return null
+			})
 		$compareViewBySelect = $(compareViewBySelectD3[0][0]).selectpicker({selectedTextFormat: 'static'}).on('change', changeCompareViewBy)
 
 
@@ -80,6 +92,12 @@
 		metroSelectD3 = metroSelect;
 		var metroOpts = metroSelect.selectAll('option').data(metros)
 		metroOpts.enter().append('option').text(String).attr('value', String)
+			.attr('selected', function(d) {
+				if(d === selectedMetroRegion) {
+					return 'selected'
+				}
+				return null
+			})
 		$metroSelect = $(metroSelect[0][0]).selectpicker({selectedTextFormat: 'static'}).on('change', changeMetro)
 
 		ispSelectD3 = selectBar.append('select').attr('title','ISP')
@@ -243,7 +261,12 @@
 			if(selectedCompareViewBy === 'Metro Region') {
 				labelHTML += selectedMetroRegion
 			} else if(selectedCompareViewBy === 'ISP') {
-				labelHTML += selectedISP
+				var ispMap = mlabOpenInternet.dataLoader.getISPNameMap();
+				var isp = selectedISP
+				if(typeof ispMap[isp] !== 'undefined') {
+					isp = ispMap[isp]
+				}
+				labelHTML += isp
 			}
 			labelHTML += '</span>'
 		}

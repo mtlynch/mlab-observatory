@@ -236,7 +236,7 @@
 
 	}
 	function mouseOverDot(d,i) {
-		console.log(d)
+		//console.log(d)
 
 		var dot = d3.select(this.parentNode).select('.fillDot')
 		dot.style('opacity',1)
@@ -255,9 +255,9 @@
 		exploreTT.select('.sampleSizeValue').text(d[curMetric.key + '_n'])
 		var momentDate = moment(d.date)
 		exploreTT.select('.dateValue').text(momentDate.format('M/D/YYYY'))
-		console.log(d.date)
+		//console.log(d.date)
 		var graphXPos = Math.round(xScale(d.date))
-		console.log(graphXPos)
+		//console.log(graphXPos)
 		var x = graphXPos + margin.left;
 		var y = yScale(d[curMetric.key]) + margin.top
 		var lPadding = 65;
