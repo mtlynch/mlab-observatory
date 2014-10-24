@@ -99,9 +99,23 @@ Controls
 }
 #controls .dropdown-menu {
 	border-radius: 0;
+	margin-top: 0;
+	padding: 0;
 }
+
 #controls .bootstrap-select {
 	outline: none;
+	margin-right: 60px;
+}
+#controls .bootstrap-select li {
+	border-bottom: 1px solid #d9d9d9;
+}
+#controls .dropdown-menu>li>a {
+	padding: 7px 20px 4px;
+}
+#controls .dropdown-menu>li.selected>a {
+	color: #fff;
+	background-color: #8b8b8b;
 }
 #controls *:focus {
 	outline: none;

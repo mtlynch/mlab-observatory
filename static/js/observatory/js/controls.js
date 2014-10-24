@@ -1,7 +1,7 @@
 (function() {
 	var exports = new EventEmitter()
 	var div;
-
+	var arrowURL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAJCAYAAADkZNYtAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAALdJREFUeNpi7OnpYQACSSB+CcT/GLADAyD+ygQkEoD4KRCvBWIWLAqjgfgcEJ8GKZYAYkYgDgDiRUDMjKTQCYjnQeWfghT3AfEWqGQkEM+ESmoC8TogZgPij0AcCrL2FxCHQDW4AHEy1O2OQMwPlQ8C4mtMUBN/ArE/EB+B8lOBWAWI/wNxEhDvAwkyIbnvGxD7gDyCJNYIxEthHHTfg9zmBTXpEhA3IUtiC6o30FD4BHUGHAAEGADvDSRjAuRkzAAAAABJRU5ErkJggg=='
 	var tabData = [
 		{lbl: 'Explore', id: 'explore'},
 		{lbl: 'Compare', id: 'compare'},
@@ -74,7 +74,7 @@
 				return null
 			})
 		$metricsSelect = $(metricsSelect[0][0]).selectpicker({selectedTextFormat: 'static'}).on('change', changeMetric)
-
+		$metricsSelect.next().width(95)
 
 		compareViewBySelectD3 = selectBar.append('select').attr('title', 'View By')
 		var viewByOptions = compareViewBySelectD3.selectAll('option').data(viewByOpts)
@@ -86,7 +86,7 @@
 				return null
 			})
 		$compareViewBySelect = $(compareViewBySelectD3[0][0]).selectpicker({selectedTextFormat: 'static'}).on('change', changeCompareViewBy)
-
+		$compareViewBySelect.next().width(107)
 
 		var metroSelect = selectBar.append('select').attr('title', 'Metro Region')
 		metroSelectD3 = metroSelect;
@@ -99,6 +99,7 @@
 				return null
 			})
 		$metroSelect = $(metroSelect[0][0]).selectpicker({selectedTextFormat: 'static'}).on('change', changeMetro)
+		$metroSelect.next().width(140)
 
 		ispSelectD3 = selectBar.append('select').attr('title','ISP')
 		var ispOptsArray = mlabOpenInternet.dataLoader.getISPs();
@@ -112,6 +113,7 @@
 		}).attr('value', String)
 		$ispSelect = $(ispSelectD3[0][0]).selectpicker({selectedTextFormat: 'static'}).on('change', changeCompareISP)
 		selectedISP = ispOptsArray[0]
+		$ispSelect.next().width(75)
 
 		var comboSelect = selectBar.append('select')
 			.attr('multiple','multiple').attr('title','ISP Combinations')
@@ -119,6 +121,11 @@
 		comboSelectD3 = comboSelect
 		$comboSelect = $(comboSelect[0][0]).selectpicker({selectedTextFormat: 'static'}).on('change', changeCombinations)
 		setupComboSelectOptions()
+
+		div.selectAll('.caret')
+			.classed('caret', false)
+			.append('img')
+			.attr('src', arrowURL)
 
 
 		selectedTab = tabData[0]
@@ -198,6 +205,7 @@
 		})
 		$comboSelect.selectpicker('val','');
 		$comboSelect.selectpicker('refresh')
+		$comboSelect.next().width(168)
 		selectedCombinations = []
 	}
 
