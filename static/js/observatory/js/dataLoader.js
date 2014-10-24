@@ -25,7 +25,7 @@
 	var mlabSitesByCode = {}
 	var ispNameMap;
 	var minSampleSize = 50
-
+	var regionsToIgnore = ['Washington DC']
 	/*
 	var ispList = [];
 	var codeList = [];
@@ -98,8 +98,10 @@
 			var code = mapping['MlabSiteName'].toLowerCase()
 			var codePrefix = code.substr(0,3)
 			if(validMetroRegions.indexOf(metro) === -1) {
-				validMetroRegions.push(metro)
-				metroRegionToMLabPrefix[metro] = codePrefix
+				if(regionsToIgnore.indexOf(metro) === -1) {
+					validMetroRegions.push(metro)
+					metroRegionToMLabPrefix[metro] = codePrefix
+				}
 			}
 			mlabSitesByCode[code] = mapping
 		})
