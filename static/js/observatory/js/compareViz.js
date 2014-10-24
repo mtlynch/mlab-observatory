@@ -418,8 +418,8 @@
 			return y + 'px'
 		})
 		chart.selectAll('circle.dot').style('opacity',0)
-		chart.select('g.dataset:nth-child(' + (yIndex + 1) + ')')
-			.select('circle.dot:nth-child(' + (xIndex + 1) + ')')
+		chart.selectAll('g.dataset')
+			.selectAll('circle.dot:nth-child(' + (xIndex + 1) + ')')
 			.style('opacity',1)
 	}
 	function mouseOutGraph() {
