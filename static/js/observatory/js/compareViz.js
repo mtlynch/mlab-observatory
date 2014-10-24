@@ -317,6 +317,8 @@
 				return metroName
 			}
 		}).attr('x', 0).attr('y', yScale(0) + 40)
+
+		dotGroup.moveToFront()
 		/*
 		.style('fill', function(d) {
 			
