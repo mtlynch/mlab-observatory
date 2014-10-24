@@ -25,6 +25,7 @@
 	var mlabSitesByCode = {}
 	var ispNameMap;
 	var minSampleSize = 50
+
 	/*
 	var ispList = [];
 	var codeList = [];
@@ -297,11 +298,11 @@
 			_.each(combos, function(c) {
 				rtnObj.push(dataObj[c.filename])
 			})
-			console.log(dataType)
+			//console.log(dataType)
 			if(typeof dataType !== 'undefined') {
-				console.log(rtnObj)
+				//console.log(rtnObj)
 				var dateRange = dateExtent(rtnObj)
-				console.log(dateRange)
+				//console.log(dateRange)
 				_.each(rtnObj, function(dataset) {
 					dataset.data = setupDates(dataset.data, dataType, dateRange[0], dateRange[1])
 				})
@@ -343,13 +344,14 @@
 			datum.date = date
 			datum.moment = moment(date);
 		})
-		console.log(minDate, maxDate)
+		//console.log(minDate, maxDate)
 		if(dataType === 'hourly') {
 			console.error('setup hourly data')
 		} else {
 
 			var momentMin = moment(minDate)
 			var momentMax = moment(maxDate)
+			//console.log(minDate + " " + maxDate)
 			//sort data
 			data.sort(function(a,b) {
 				if(a.date > b.date) {
@@ -361,12 +363,15 @@
 				}
 			})
 			var numDays = momentMax.diff(momentMin, 'days', true) + 1
-		
+			//console.log('num days ' + numDays)
 			var dataWithGaps = new Array(numDays)
 			_.each(data, function(datum) {
 				var dayCount = datum.moment.diff(momentMin,'days', true)
-				dataWithGaps[dayCount] = datum;
+				if(dayCount < numDays) {
+					dataWithGaps[dayCount] = datum;
+				}
 			})
+			//console.log(dataWithGaps.length)
 			for(var i = 0; i < dataWithGaps.length; i++) {
 				var datum = dataWithGaps[i];
 				if(typeof datum === 'undefined') {
