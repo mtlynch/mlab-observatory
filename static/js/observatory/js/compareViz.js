@@ -310,14 +310,20 @@
 	}
 
 	function mouseOverGraph() {
-		var x = d3.event.offsetX;
-		var y = d3.event.offsetY
+		var e = d3.event
+		var x = (e.offsetX || e.clientX - $(e.target).offset().left);
+		var y = (e.offsetY || e.clientY - $(e.target).offset().top);
+
 		//console.log(d3.event)
 		var off = $(div[0][0]).offset();
 		y -= margin.top
 		var mouseDate = xScale.invert(x)
 		var day = mouseDate.getDate() + (mouseDate.getHours() >= 12 ? 1 : 0)
 		var nearestDay = new Date(mouseDate.getFullYear(), mouseDate.getMonth(), day)
+		//console.log(x)
+		//console.log(mouseDate);
+
+		//console.log(nearestDay)
 		var momentNearest = moment(nearestDay)
 		var xPos = xScale(nearestDay)
 		var xIndex = ~~ (( xPos / dimensions.w ) * numDays)
