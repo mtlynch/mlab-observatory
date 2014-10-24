@@ -37,7 +37,7 @@
 	var viewByOpts = ['ISP','Metro Region']
 
 	var selectionLabels;
-
+	var selectedDateLabels;
 	function init() {
 		div = d3.select('#controls')
 
@@ -60,7 +60,7 @@
 		var selectBar = div.append('div').attr('class','selectBar')
 
 		selectionLabels = div.append('div').attr('class','selectionLabels')
-
+		selectedDateLabels = div.append('div').attr('class','selectedDateLabels')
 
 		var metricsSelect = selectBar.append('select').attr('title','Metric')
 		metricsSelectD3 = metricsSelect

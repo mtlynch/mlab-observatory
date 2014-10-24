@@ -1,5 +1,5 @@
 (function() {
-	var margin = {top: 10, right: 20, bottom: 25, left: 60}
+	var margin = {top: 5, right: 20, bottom: 25, left: 60}
 	var exploreDimensions = {
 		w: 824 - margin.left - margin.right,
 		h: 441 - margin.top - margin.bottom

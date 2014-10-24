@@ -123,6 +123,14 @@ Controls
 	box-shadow:none;
 	border-color:transparent;
 }
+#controls .selectedDateLabels {
+	margin-left: 65px;
+	font-weight: bold;
+	font-size: 15px;
+	text-transform: uppercase;
+	color: #8b8b8b;
+	margin-bottom: 30px;
+}
 /***********
 Explore Viz
 ***********/

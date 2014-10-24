@@ -291,6 +291,7 @@
 				linesTranslateData.dx = 0
 				
 				updatePaths()
+				updateDateLabels()
 				exports.emitEvent('timeChanged')
 			})
 			.on('drag', function(d) {
@@ -336,7 +337,14 @@
 			return 'translate(' + d.x + ',' + d.y + ')'
 		})
 		svg.call(drag)
-
+		updateDateLabels()
+	}
+	function updateDateLabels() {
+		var selectedDateLabels = d3.select('#controls .selectedDateLabels')
+		console.log(selectedDate)
+		var date = selectedDate.date.clone();
+		var lbl = date.format('MMM D – MMM ') + date.daysInMonth()
+		selectedDateLabels.text(lbl)
 	}
 	function updatePaths() {
 		var strokeFunc = function(d,i) {
