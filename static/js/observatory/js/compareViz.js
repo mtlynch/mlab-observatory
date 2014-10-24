@@ -1,5 +1,5 @@
 (function() {
-	var margin = {top: 10, right: 5, bottom: 0, left: 2}
+	var margin = {top: 10, right: 5, bottom: 0, left: 5}
 	var dimensions = {
 		w: 824 - margin.left - margin.right,
 	}
@@ -26,7 +26,7 @@
 		chart = svg.append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 		focusLine = chart.append('line').attr('class','focus').attr('y1', 0)
 			.attr('x1', -100).attr('x2', -100)
-
+		chart.append('g').attr('class','datasets')
 		tooltipContainer = div.append('div').attr('class','compareTooltips')
 
 		svg.on('mouseover', mouseOverGraph)
@@ -114,7 +114,7 @@
 		//var xScale = d3.scale.linear().domain([0, maxDatasetLength - 1]).range([0, exploreDimensions.w])
 		xScale = d3.time.scale().domain([minDate, maxDate]).range([0, dimensions.w])
 		/*setup group for each graph */
-		var datasetGroups = chart.selectAll('g.dataset').data(datasets)
+		var datasetGroups = chart.select('g.datasets').selectAll('g.dataset').data(datasets)
 		datasetGroups.enter().append('g').attr('class','dataset')
 		datasetGroups.exit().remove()
 		datasetGroups.attr("transform",function(d,i) {
@@ -182,37 +182,44 @@
 				}
 				return yScale(d[metricKey])
 			})
-		var dotData = []
 		pathsDashed.enter().append('path').attr('class','dashed');
 		pathsDashed.exit().remove()
 		pathsDashed.attr('d', function(d) {
 			return lineGen(d.data) 
 		}).style('stroke', function(d,i) {
-			return null
-			var active = _.find(selectedCombinations, function(combo) {
-				return combo.filename === d.id
-			})
-			if(typeof active === 'undefined') {
-				d.active = false
-				return null
-			} else {
-				d.active = true;
-				_.each(d.data, function(dotDataPoint) {
-					dotDataPoint.dataID = d.id
-					dotDataPoint.color = d.color
-					dotData.push(dotDataPoint)
-				})
-				return d.color;
-			}
+			return d.color
+
 		}).style('stroke-width', function(d) {
 			if(d.active) {
 				return '3px'
 			} else {
 				return null
 			}
-		}).style('stroke', function(d) {
-			return d.color
 		})
+
+		var dotGroup = datasetGroups.selectAll('g.dots').data(function(d) { return [d] })
+		dotGroup.enter().append('g').attr('class','dots')
+		dotGroup.exit().remove()
+		var dotSize = 5;
+		var dots = dotGroup.selectAll('circle.dot').data(function(d) {
+			var dotData = d.data;
+			_.each(dotData, function(dot) {
+				dot.dataset = d;
+			})
+			return dotData
+		})
+		dots.enter().append('circle').attr('class','dot')
+		dots.attr('transform', function(d) {
+				var x = xScale(d.date);
+				var y = yScale(d[metricKey])
+				return 'translate(' + x + ',' + y + ')'
+			})
+			.attr('r', dotSize)
+			.style('fill',function(d) {
+				return d.dataset.color
+			})
+			.style('opacity',0)
+		dots.exit().remove();
 
 		tooltips = tooltipContainer.selectAll('div.compareTooltip').data(datasets)
 		tooltips.enter().append('div').attr('class','compareTooltip')
@@ -401,7 +408,7 @@
 			if(thisTTOnLeft) {
 				x -= $(this).width() + arrowOffset
 			} else {
-				x += arrowOffset
+				x += arrowOffset + 10
 			}
 			return x + 'px'
 		}).style('top', function(d) {
@@ -410,7 +417,10 @@
 			y -= ttHeight / 2
 			return y + 'px'
 		})
-
+		chart.selectAll('circle.dot').style('opacity',0)
+		chart.select('g.dataset:nth-child(' + (yIndex + 1) + ')')
+			.select('circle.dot:nth-child(' + (xIndex + 1) + ')')
+			.style('opacity',1)
 	}
 	function mouseOutGraph() {
 	}
