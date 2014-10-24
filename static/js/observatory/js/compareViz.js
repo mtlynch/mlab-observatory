@@ -252,6 +252,21 @@
 		datasetGroups.append('g').attr('class','xAxis axis').attr('transform', 'translate(0,' + graphHeight +')')
 			.call(xAxis)
 
+		chart.selectAll('.xAxis .tick')
+			.each(function(d,i) {
+				var tick = d3.select(this)
+				var trans = tick.attr("transform")
+				trans = trans.substr(10, trans.length - 11)
+				var parts = trans.split(',')
+				console.log(parts[0])
+				var xPos = parts[0]
+				if(xPos > 800) {
+					tick.select('text').style('text-anchor','end')
+				} else {
+					tick.select('text').style('text-anchor','middle')
+				}
+			})
+
 		/* yscale text label */
 		var textSize;
 		var maxYScale = datasetGroups.selectAll('text.yScaleMax').data([maxDataValue])
