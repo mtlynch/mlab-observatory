@@ -262,6 +262,8 @@
 				var xPos = parts[0]
 				if(xPos > 800) {
 					tick.select('text').style('text-anchor','end')
+				} else if (xPos < 20) {
+					tick.select('text').style('text-anchor','start')
 				} else {
 					tick.select('text').style('text-anchor','middle')
 				}
