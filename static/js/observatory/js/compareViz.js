@@ -265,7 +265,6 @@
 				var trans = tick.attr("transform")
 				trans = trans.substr(10, trans.length - 11)
 				var parts = trans.split(',')
-				console.log(parts[0])
 				var xPos = parts[0]
 				if(xPos > 800) {
 					tick.select('text').style('text-anchor','end')

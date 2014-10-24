@@ -219,44 +219,49 @@
 				labelHTML += '<span class="b">All ISPs</span> on <span class="b">All TPs</span> '
 			} else {
 				var byISP = {}
+				var byTP = {}
 				_.each(selectedCombinations, function(combo) {
 					console.log(combo.filename)
 					var idParts = combo.filename.split('_')
 					var mlabID = idParts[0]
+					var tp = mlabOpenInternet.dataLoader.getTPForCode(mlabID)
 					var isp = idParts[1]
 					if(typeof byISP[isp] === 'undefined') {
 						byISP[isp] = []
 					}
-					var tp = mlabOpenInternet.dataLoader.getTPForCode(mlabID)
+					if(typeof byTP[tp] === 'undefined') {
+						byTP[tp] = []
+					}
 					console.log(tp)
 					byISP[isp].push(tp)
+					byTP[tp].push(isp)
 				})
 				var numISPs = Object.keys(byISP).length
+				var numTPs = Object.keys(byTP).length
 				var ispIndex = 0;
-				_.each(byISP, function(tps, isp) {
-					console.log(isp)
-					console.log(tps);
-					_.each(tps, function(tp, tpIndex) {
-						labelHTML += '<span class="b">' + tp + '</span>'
-						if(tps.length > 1 && tpIndex != tps.length - 1) {
+				var tpIndex = 0;
+				_.each(byTP, function(isps, tp) {
+					_.each(isps, function(isp, ispIndex) {
+						var color = colors[isp][0]
+						var ispLabel = isp
+						var ispNameMap = mlabOpenInternet.dataLoader.getISPNameMap();
+						if(typeof ispNameMap[ispLabel] !== 'undefined') {
+							ispLabel = ispNameMap[ispLabel]
+						}
+						labelHTML += '<span class="b" style="color: #' + color + '";>' + ispLabel + '</span>'
+						if(isps.length > 1 && ispIndex != isps.length - 1) {
 							labelHTML += ','
 						}
 						labelHTML += ' '
 					})
-					var color = colors[isp][0]
-					var ispLabel = isp;
-					var ispNameMap = mlabOpenInternet.dataLoader.getISPNameMap();
-					if(typeof ispNameMap[ispLabel] !== 'undefined') {
-						ispLabel = ispNameMap[ispLabel]
-					}
-					labelHTML += 'on <span class="b" style="color:#' + color + '">' + ispLabel + '</span>'
-					if(numISPs > 1 && ispIndex !== numISPs - 1) {
+					labelHTML += ' on <span class="b">' + tp + '</span>'
+					if(numTPs > 1 && tpIndex !== numTPs - 1) {
 						labelHTML += ','
 					}
 					labelHTML += ' '
-					ispIndex ++
+					tpIndex ++
+
 				})
-				//labelHTML += 'some subset of combinations'
 			}
 			labelHTML += 'in '
 			labelHTML += '<span class="b">' + selectedMetroRegion + '</span>'
