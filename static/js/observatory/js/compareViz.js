@@ -309,7 +309,7 @@
 
 				return metroName
 			}
-		}).attr('x', 0).attr('y', yScale(0) + 35)
+		}).attr('x', 0).attr('y', yScale(0) + 40)
 		/*
 		.style('fill', function(d) {
 			
