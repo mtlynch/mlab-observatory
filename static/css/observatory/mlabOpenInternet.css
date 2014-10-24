@@ -52,27 +52,28 @@ Controls
 */
 #controls .tabs {
 	list-style-type: none;
-	padding-left: 65px;
+	padding-left: 23px;
 	margin: 0;
+	margin-bottom: 10px;
 }
 #controls .tabs li {
 	float: left;
 	font-size: 13px;
-	padding: 7px 15px 4px 15px;
+	padding: 7px 15px 7px 15px;
 	font-weight: bold;
 	color: #8c8c8c;
 	background-color: #ebebeb;
-	margin-right: 4px;
+	margin-right: 10px;
 	cursor: pointer;
-	border-bottom: 3px solid #ebebeb;
+	width: 130px;
+	text-align: center;
 }
 #controls .tabs li.active {
 	background-color: #d9d9d9;
-	border-bottom-color: #a1a1a1;
 }
 #controls .selectBar {
 	background-color: #f1f2f2;
-	padding: 0 65px;
+	padding: 0 65px 0 53px;
 	border: 1px solid #e1e1e1;
 	border-left: none;
 	border-right: none;
@@ -105,7 +106,7 @@ Controls
 
 #controls .bootstrap-select {
 	outline: none;
-	margin-right: 60px;
+	margin-right: 41px;
 }
 #controls .bootstrap-select li {
 	border-bottom: 1px solid #d9d9d9;

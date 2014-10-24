@@ -16,6 +16,13 @@
 	]
 	function init() {
 		div = d3.select('#exploreViz')
+		
+		/*
+		var toggleGreyButton = div.append('div').attr('class','toggleGrey')
+		toggleGreyButton.append('span').text('Hide').attr('class','ul')
+		toggleGreyButton.append('span').text(' all other lines')
+		*/
+
 		exploreTT = div.append('div').attr('class','exploreTTContainer')
 		exploreTT.call(createTT)
 		svg = div.append('svg')
@@ -200,6 +207,7 @@
 		chart.selectAll('.axis').remove()
 		var xAxis = d3.svg.axis().scale(xScale).orient('bottom')
 			.tickFormat(d3.time.format("%e %b"))
+			.ticks(5)
 		chart.append('g').attr('class','xAxis axis').attr('transform', 'translate(0,' + exploreDimensions.h +')')
 			.call(xAxis)
 		var yAxis = d3.svg.axis().scale(yScale).orient('left')
