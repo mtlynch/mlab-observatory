@@ -58,7 +58,7 @@ Controls
 #controls .tabs li {
 	float: left;
 	font-size: 13px;
-	padding: 10px 15px 7px 15px;
+	padding: 7px 15px 4px 15px;
 	font-weight: bold;
 	color: #8c8c8c;
 	background-color: #ebebeb;
@@ -207,6 +207,17 @@ Explore Viz
 }
 #exploreViz .exploreTTContainer .dateValue {
 	color: #c2c2c2;
+}
+
+#exploreViz .toggleGrey {
+	color: #8b8b8b;
+	font-size: 13px;
+	text-align: right;
+	cursor: pointer;
+
+}
+#exploreViz .toggleGrey .ul {
+	text-decoration: underline;
 }
 /*
 Time controller
