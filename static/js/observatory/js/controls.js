@@ -5,7 +5,10 @@
 	var tabData = [
 		{lbl: 'Explore', id: 'explore'},
 		{lbl: 'Compare', id: 'compare'},
-	//	{lbl: 'How this works', id: 'help'} 
+		{lbl: 'How this works', id: 'help'} 
+	]
+	var helpTabs = [
+		'Our Tool', 'The Internet'
 	]
 	var metrics;
 	var metros;
@@ -38,6 +41,11 @@
 
 	var selectionLabels;
 	var selectedDateLabels;
+
+	var helpTabsList;
+	var helpTabs;
+	var selectedHelpTab = null
+
 	function init() {
 		div = d3.select('#controls')
 
@@ -127,9 +135,19 @@
 			.append('img')
 			.attr('src', arrowURL)
 
+		helpTabsList = selectBar.append('div').attr('class','btn-group helpTabs')
+			.style('display','none')
+		helpTab = helpTabsList.selectAll('button').data(helpTabs)
+			.enter().append('button').attr('class','helpTab btn btn-default')
+			.classed('active', function(d,i) {
+				return i === 0
+			})
+			.on('click', clickHelpTab)
+		helpTab.append('div').text(String).attr('class','text')
+		helpTab.append('div').attr('class','underline')
 
 		selectedTab = tabData[0]
-
+		selectedHelpTab = helpTabs[0]
 		populateSelectionLabel()
 
 		showExploreControls();
@@ -292,14 +310,25 @@
 
 		$ispSelect.next().hide()
 		console.log($compareViewBySelect)
+		selectionLabels.style('display','block')
+		selectedDateLabels.style('display','block')
+		helpTabsList.style('display','none')
+
 	}
 	function showCompareControls() {
 		$compareViewBySelect.next().show()
 		changeCompareViewBy()
 		$comboSelect.next().hide()
+		selectionLabels.style('display','block')
+		selectedDateLabels.style('display','block')
+		helpTabsList.style('display','none')
+
 	}
 	function showHelpControls() {
-
+		div.selectAll('.selectBar > *').style('display','none')
+		selectionLabels.style('display','none')
+		selectedDateLabels.style('display','none')
+		helpTabsList.style('display','inline-block')
 	}
 	function changeCompareViewBy() {
 		var compareSelectType = $compareViewBySelect.val()
@@ -330,6 +359,12 @@
 			return $ispSelect.val()
 		}
 	}
+	function clickHelpTab(d) {
+		helpTabsList.selectAll('.active').classed('active', false)
+		d3.select(this).classed('active', true)
+		selectedHelpTab = d
+		exports.emitEvent('selectionChanged')
+	}
 	exports.init = init
 	exports.getSelectedMetro = function() { return selectedMetroRegion }
 	exports.getSelectedMetric = function() { return selectedMetric }
@@ -337,6 +372,7 @@
 	exports.getCompareByView = function() { return selectedCompareViewBy }
 	exports.getSelectedTab = function() { return selectedTab }
 	exports.getCompareAggregationSelection = getCompareAggregationSelection
+	exports.getHelpTab = function() { return selectedHelpTab }
 	if( ! window.mlabOpenInternet){
 		window.mlabOpenInternet = {}
 	}

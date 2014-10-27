@@ -87,6 +87,39 @@ Controls
 	font-weight: bold;
 	color: #8c8c8c;
 }
+
+#controls .dropdown-menu {
+	border-radius: 0;
+	margin-top: 0;
+	padding: 0;
+}
+
+
+#controls .selectBar .helpTabs {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;	
+}
+#controls div.helpTabs button.helpTab {
+	cursor: pointer;
+}
+#controls div.helpTabs button.helpTab.active {
+}
+#controls div.helpTabs button.helpTab .underline{
+	height: 3px;
+	background-color: #a7a7a7;
+	width: 100%;
+	display: none;
+}
+#controls div.helpTabs button.helpTab.active .text {
+	padding-top: 4px;
+}
+
+
+#controls div.helpTabs button.helpTab.active .underline {
+	display:block;
+}
+
 #controls .selectionLabels  {
 	padding-left: 65px;
 	font-size: 22px;
@@ -98,12 +131,6 @@ Controls
 	font-weight: bold;
 	color: #8b8b8b;
 }
-#controls .dropdown-menu {
-	border-radius: 0;
-	margin-top: 0;
-	padding: 0;
-}
-
 #controls .bootstrap-select {
 	outline: none;
 	margin-right: 41px;
@@ -132,6 +159,7 @@ Controls
 	color: #8b8b8b;
 	margin-bottom: 30px;
 }
+
 /***********
 Explore Viz
 ***********/
@@ -374,6 +402,87 @@ compare
 	font-weight: bold;
 	text-transform: uppercase;
 	font-size: 11px;
+}
+
+
+/*
+Help 
+*/
+#help {
+	padding-top: 45px;
+	font-size: 15px;
+	color: #666;
+	position: relative;
+
+}
+#help .left section {
+	display: none;
+}
+#help .left section.active {
+	display: block;
+}
+
+#help > div {
+	box-sizing: border-box;
+	position: absolute;
+}
+
+#help .left {
+	width: -webkit-calc(66% - 1px);
+	width: calc(66% - 1px);
+	padding-right: 30px;
+	padding-left: 65px
+}
+#help .divider {
+	left: -webkit-calc(66% - 1px);
+	left: calc(66% - 1px);
+
+	width: 1px;
+	background-color: #d9d9d9;
+}
+#help .right {
+	left: 66%;
+	padding-left: 30px;
+	padding-right: 65px;
+	width: -webkit-calc(34%-1px);
+	width: calc(34% - 1px);
+	overflow-y: scroll;
+}
+
+#help .helpHeader {
+	font-size: 20px;
+	font-weight: bold;
+
+}
+#help .helpCopy {
+	margin-bottom: 30px;
+}
+#help .helpHeader.internetHeader {
+	font-size: 25px;
+	margin-bottom: 10px;
+}
+#help .right .rightLabel {
+	font-weight: bold;
+	font-size: 26px;
+}
+#help .right .defTypeLabel {
+	color: #666;
+	font-weight: bold;
+	font-size: 20px;
+	margin-bottom:  1em;
+}
+#help .right .termContainer {
+	margin-bottom: 1.5em;
+}
+#help .right .term {
+	color: #9bd2c7;
+	font-weight: bold;
+	font-size: 18px;
+	line-height: 1.1em;
+
+}
+#help .right .def {
+	color: #666;
 }
 
 /***************
