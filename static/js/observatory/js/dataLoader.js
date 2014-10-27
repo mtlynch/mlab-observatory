@@ -26,6 +26,7 @@
 	var ispNameMap;
 	var minSampleSize = 50
 	var regionsToIgnore = ['Washington DC']
+	var filenameToColorMap = {}
 	/*
 	var ispList = [];
 	var codeList = [];
@@ -190,6 +191,7 @@
 					var mlabID = filenameParts[0];
 					var mlabIndex = (+(mlabID.substr(3))) - 1
 					requestData.color = '#' + colorMap[isp][mlabIndex]
+					filenameToColorMap[combo.filename] = requestData.color
 					//console.log(combo.filename)
 					//console.log(requestData)
 					numCombosLoaded ++;
@@ -417,6 +419,9 @@
 		var mapping = mlabSitesByCode[code]
 		return mapping['TransitProvider']
 	}
+	function getColorForFilename(filename) {
+		return filenameToColorMap[filename]
+	}
 	exports.init = init
 	exports.getMetrics = function() { return metrics }
 	exports.getMetroRegions = function() { return validMetroRegions }
@@ -429,6 +434,7 @@
 	exports.getColors = function() { return colorMap }
 	exports.getISPNameMap = function() { return ispNameMap }
 	exports.getMetroRegionToCodeMap = function() { return metroRegionToMLabPrefix }
+	exports.getColorForFilename = getColorForFilename
 	if( ! window.mlabOpenInternet){
 		window.mlabOpenInternet = {}
 	}

@@ -236,7 +236,6 @@
 			if(selectedCombinations.length === 0) {
 				labelHTML += '<span class="b">All ISPs</span> on <span class="b">All TPs</span> '
 			} else {
-				var byISP = {}
 				var byTP = {}
 				_.each(selectedCombinations, function(combo) {
 					console.log(combo.filename)
@@ -244,29 +243,23 @@
 					var mlabID = idParts[0]
 					var tp = mlabOpenInternet.dataLoader.getTPForCode(mlabID)
 					var isp = idParts[1]
-					if(typeof byISP[isp] === 'undefined') {
-						byISP[isp] = []
-					}
 					if(typeof byTP[tp] === 'undefined') {
 						byTP[tp] = []
 					}
 					console.log(tp)
-					byISP[isp].push(tp)
-					byTP[tp].push(isp)
+					byTP[tp].push({isp: isp, filename: combo.filename})
 				})
-				var numISPs = Object.keys(byISP).length
 				var numTPs = Object.keys(byTP).length
-				var ispIndex = 0;
 				var tpIndex = 0;
 				_.each(byTP, function(isps, tp) {
 					_.each(isps, function(isp, ispIndex) {
-						var color = colors[isp][0]
-						var ispLabel = isp
+						var ispLabel = isp.isp
+						var color = mlabOpenInternet.dataLoader.getColorForFilename(isp.filename)
 						var ispNameMap = mlabOpenInternet.dataLoader.getISPNameMap();
 						if(typeof ispNameMap[ispLabel] !== 'undefined') {
 							ispLabel = ispNameMap[ispLabel]
 						}
-						labelHTML += '<span class="b" style="color: #' + color + '";>' + ispLabel + '</span>'
+						labelHTML += '<span class="b" style="color: ' + color + '";>' + ispLabel + '</span>'
 						if(isps.length > 1 && ispIndex != isps.length - 1) {
 							labelHTML += ','
 						}
