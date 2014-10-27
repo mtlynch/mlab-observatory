@@ -27,6 +27,7 @@
 	var minSampleSize = 50
 	var regionsToIgnore = ['Washington DC']
 	var filenameToColorMap = {}
+	var loadingDiv;
 	/*
 	var ispList = [];
 	var codeList = [];
@@ -45,6 +46,8 @@
 	var aggHourlyData = [];
 	*/
 	function init() {
+		loadingDiv = d3.select('#loading')
+		loadingDiv.append('img').attr('src', 'static/observatory/images/loading.gif')
 		d3.json(metadatafolder + 'ispMap.json', loadISPNameMap)
 	}
 	function loadISPNameMap(err, map) {
@@ -160,6 +163,8 @@
 		return combos
 	}
 	function requestMetroData(metro, dataType, callback) {
+
+		loadingDiv.style('display','block')
 		var dataObj = null;
 		if(dataType === 'hourly') {
 			dataObj = hourlyDataByCode;
@@ -226,6 +231,8 @@
 		console.log(viewType)
 		console.log(aggregationSelection)
 		console.log(validMetroRegions)
+
+		loadingDiv.style('display','block')
 		var dataToLoad = [];
 		if(viewType === 'Metro Region') {
 			var prefix = metroRegionToMLabPrefix[aggregationSelection].toUpperCase()
@@ -311,6 +318,8 @@
 					dataset.data = setupDates(dataset.data, dataType, dateRange[0], dateRange[1])
 				})
 			}
+
+			loadingDiv.style('display','none')
 			_.each(callbacks, function(callback) {
 				callback(rtnObj)
 			})
