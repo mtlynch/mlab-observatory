@@ -3,6 +3,18 @@
 	var div;
 	var $div;
 	var left, right ,divider;
+	var helpPopup;
+	var popupDontShowCookiename = 'mlabDontShowPopup'
+
+	var popupCopy = '<div class="popupHeader helpHeader">The Internet is a magical place</div>' +
+	'<div class="helpCopy">The M-Lab Data Observatory allows a window into ISP performance, letting people in the US see how their ISP is doing compared to others, and to view the way in which the connections between ISPs impact performance.</div>' +
+	'<div class="helpCopy">By selecting different options, you can compare a variety of metrics like upload or download speed, round trip time or packet retransmission rate, for different ISPs. You can also see how different ISPs performed across varying locations in the US.</div>' +
+	'<ul class="buttons cf">' +
+	'<li>How this works</li>' + 
+	'<li>Explore the tool</li>' +
+	'</ul>' +
+	'<div class="dontshow"><div class="cb"></div><div class="lbl">Please don\'t show me this again</div></div>'
+
 	var toolCopy = 
 	'<div class="helpHeader">Our Tool</div>' + 
 	'<div class="helpCopy">The M-Lab Data Observatory provides a way to explore ISP performance across a number of metrics, locations, and time periods. It also allows a view into the way ISPs’ connections with each other -- the interconnectedness that makes up the Internet -- shape performance. By selecting different options, you can see how various ISPs performance across a variety of metrics like upload or download speed, round trip time or packet retransmission rate. You can also see how these metrics differed over time, across locations, or relative to ISP interconnection relationships.</div>' + 
@@ -109,7 +121,16 @@
 		divider =div.append('div').attr('class','divider')
 		right = div.append('div').attr('class','right')
 
-
+		helpModal = d3.select('#helpModal')
+		helpModal.select('.helpContent').html(popupCopy)
+		helpModal.select('.dontshow').on('click', function() {
+			var d = d3.select(this).select('.cb')
+			d.classed('active', ! d.classed('active'))
+		})
+		helpModal.selectAll('.helpContent .buttons li').on('click', closeHelpPopup)
+		if(mlabOpenInternet.utils.getCookie(popupDontShowCookiename) !== 'true') {
+			helpModal.style('display','block')
+		}
 		sections = left.selectAll('section').data(sectionData)
 		sections.enter().append("section")
 			.html(function(d) {
@@ -160,6 +181,19 @@
 			})
 		})
 		
+	}
+	function closeHelpPopup(d,i) {
+		var txt = d3.select(this).text()
+		if(txt === 'Explore the tool') {
+
+		} else if(txt === 'How this works') {
+			$('#controls .tabs li').eq(2).click()
+		}
+		var dontShow = helpModal.select('.cb').classed('active')
+		if(dontShow) {
+			mlabOpenInternet.utils.setCookie(popupDontShowCookiename, 'true', 30)
+		}
+		helpModal.style('display','none')
 	}
 	function show() {
 		var curTab = mlabOpenInternet.controls.getHelpTab()
