@@ -115,7 +115,9 @@
 		var dotData = []
 		paths.enter().append('path');
 		paths.exit().remove()
-		paths.attr('class','full').attr('d', function(d) {
+		paths.attr('class',function(d,i) {
+			return 'full full-' + d.id
+		}).attr('d', function(d) {
 			return lineGen(d.data) 
 		}).style('stroke', function(d,i) {
 			var active = _.find(selectedCombinations, function(combo) {
@@ -153,7 +155,9 @@
 			})
 		pathsDashed.enter().append('path');
 		pathsDashed.exit().remove()
-		pathsDashed.attr('class','dashed').attr('d', function(d) {
+		pathsDashed.attr('class',function(d,i) {
+			return 'dashed dashed-' + d.id
+		}).attr('d', function(d) {
 			return lineGen(d.data) 
 		}).style('stroke', function(d,i) {
 			var active = _.find(selectedCombinations, function(combo) {

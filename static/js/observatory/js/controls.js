@@ -259,7 +259,7 @@
 						if(typeof ispNameMap[ispLabel] !== 'undefined') {
 							ispLabel = ispNameMap[ispLabel]
 						}
-						labelHTML += '<span class="b" style="color: ' + color + '";>' + ispLabel + '</span>'
+						labelHTML += '<span data-id="' + isp.filename + '" class="ispSelectionLabel b" style="color: ' + color + '";>' + ispLabel + '</span>'
 						if(isps.length > 1 && ispIndex != isps.length - 1) {
 							labelHTML += ','
 						}
@@ -295,6 +295,32 @@
 			labelHTML += '</span>'
 		}
 		selectionLabels.html(labelHTML)
+		selectionLabels.selectAll('.ispSelectionLabel').on('mouseover', function(d,i) {
+			var d3this = d3.select(this)
+			d3this.style('text-decoration','underline')
+			var id = d3this.attr('data-id')
+			d3.select('#exploreViz .lines').selectAll('path').transition().duration(300)
+				.style('stroke-width',function(d,i) {
+					if(d.id === id) {
+						return 6
+					} else if(d.active) {
+						return 3;
+					}
+					return null
+				})
+
+		}).on('mouseout', function(d,i) {
+			var d3this = d3.select(this)
+			d3this.style('text-decoration',null)
+			d3.select('#exploreViz .lines').selectAll('path').transition().duration(300)
+				.style('stroke-width',function(d) {
+					if(d.active) {
+						return 3
+					}
+					return null
+				})
+		})
+
 	}
 	function showExploreControls() {
 		$compareViewBySelect.next().hide() //kind of odd 
