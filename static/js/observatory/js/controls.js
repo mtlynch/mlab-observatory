@@ -297,7 +297,8 @@
 		selectionLabels.html(labelHTML)
 		selectionLabels.selectAll('.ispSelectionLabel').on('mouseover', function(d,i) {
 			var d3this = d3.select(this)
-			d3this.style('text-decoration','underline')
+			var color = d3this.style('color')
+			d3this.style('border-bottom', '3px solid ' + color)
 			var id = d3this.attr('data-id')
 			d3.select('#exploreViz .lines').selectAll('path').transition().duration(300)
 				.style('stroke-width',function(d,i) {
@@ -311,7 +312,7 @@
 
 		}).on('mouseout', function(d,i) {
 			var d3this = d3.select(this)
-			d3this.style('text-decoration',null)
+			d3this.style('border-bottom',null)
 			d3.select('#exploreViz .lines').selectAll('path').transition().duration(300)
 				.style('stroke-width',function(d) {
 					if(d.active) {
