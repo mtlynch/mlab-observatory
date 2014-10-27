@@ -98,10 +98,11 @@ Controls
 #controls .selectBar .helpTabs {
 	list-style-type: none;
 	margin: 0;
-	padding: 0;	
+	padding: 0;
 }
 #controls div.helpTabs button.helpTab {
 	cursor: pointer;
+	margin-right: 20px;
 }
 #controls div.helpTabs button.helpTab.active {
 }
@@ -464,6 +465,7 @@ Help
 #help .right .rightLabel {
 	font-weight: bold;
 	font-size: 26px;
+	margin-bottom: 10px;
 }
 #help .right .defTypeLabel {
 	color: #666;
@@ -484,6 +486,38 @@ Help
 #help .right .def {
 	color: #666;
 }
+
+#help .right .defLinks {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	margin-bottom: 10px;
+}
+#help .right .defLinks li {
+	float: left;
+	margin-right: 18px;
+	font-size: 15px;
+	cursor: pointer;
+	border-bottom: 3px solid #fff;
+}
+#help .right .defLinks li a {
+	color: #666;
+}
+#help .right .defLinks li a:hover {
+	text-decoration: none;
+}
+
+#help .right .defLinks li:hover {
+	border-bottom: 3px solid #a7a7a7;
+}
+#help .right .defLinks li:last-child {
+	margin-right: 0;
+}
+#help .left img {
+	display: block;
+	margin: 1em auto;
+}
+
 
 /***************
   ABOUT

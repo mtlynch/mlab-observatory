@@ -12,20 +12,20 @@
 	'<li>First, select the metric you’d like to visualize</li>' + 
 	'<li>Then select a city</li>' + 
 	'</ul>' + 
-	'<div class="helpCopy">Based on the city you select, the combinations filter options will change, listing the combinations of Access ISP and Transit ISP available in that city.</div>' +
-	'<ul><li>Select one or more of those combinations to view or compare the data you’ve selected</li></ul>' +
-	'*[image-selection, timeline, single ISP]**' +
+	'<div class="helpCopy" style="margin-bottom:0;">Based on the city you select, the combinations filter options will change, listing the combinations of Access ISP and Transit ISP available in that city.</div>' +
+	'<ul style="margin-top: 0;"><li>Select one or more of those combinations to view or compare the data you’ve selected</li></ul>' +
+	'<img src="static/observatory/images/graphExample.png" />' +
 	'<div class="helpCopy">Based on the selections you make and filters you applied, Observatory graphs the results, highlighting the selected Access ISP / Transit ISP combination(s). Grey lines are shown behind your selection(s) to provide a quick visual comparison to other unselected combinations. You can turn these grey lines on or off using the link at the top right of the graph.</div>' +
 	'<div class="helpCopy">Hover over the lines to see how many tests are contributing to the performance data, and to see what the median value on that date is or a range over data points and dates.</div>' +
-	'[image showing data available on hover]' +
-	'<div class="helpCopy">Adjust the timeline by dragging the left and right handles on the timeline or moving the selected area to see how the performance changes at different times of day and on different dates.</div>' +
-	'[image showing timeline]';
+	'<img src="static/observatory/images/graphHover.png" />' +
+	'<div class="helpCopy">Adjust the timeline by moving the selected area to see how the performance changes at different times of day and on different dates.</div>' +
+	'<img src="static/observatory/images/timeline.png" />';
 
 	
 	var internetCopy = 
 	'<div class="helpHeader internetHeader">How the Internet Works</div>' +
 	'<div class="helpCopy">Whenever we use a computer, a smartphone, tablet or other connected device to go online, we’re accessing our content and services via a collection of networks owned and operated by many organizations and companies across the world. The Internet is an interconnected mesh of separate networks. From a US consumer’s perspective, we buy Internet service, and once it’s hooked up, our ISP (say Verizon, Comcast or Time Warner) lets us connect with everything on the web. To be able to provide us this vast access, our individual ISP must connect to the rest of the Internet. This happens via “interconnection.” Our ISP connects to other, less well-known ISPs that we refer to as transit providers. The points at which transit providers and access ISPs meet and exchange traffic are called “interconnection.” What this means is that the performance we get to our favorite sites and services is determined by many factors, including the relationship between our access ISP and the transit ISPs that it interconnects with.</div>' +
-	'*[Include a Diagram/Graphic]*' +
+	'<img style="width: 540px;" src="static/observatory/images/internetInfographic.png" />' +
 	'<div class="helpCopy">M-Lab choses the locations of its measurement points carefully, placing them inside transit ISPs that interconnect with many other ISPs. This provides a representative location at which it’s possible to measure representative performance as experienced by end-users. In other words, when you run an M-Lab test, the measurement of your connection replicates the experience you have many times daily -- crossing the boundaries of networks and infrastructure owners to download a webpage, or access a file, etc.. This ability to get whatever is hosted on the Internet, from anywhere connected to the Internet, is fundamental to how the Internet functions. Without it, the Internet is not longer in inter-network, and is instead an intra-network.</div>' 
 	
 	var defData = [
@@ -98,7 +98,6 @@
 	function init() {
 		div = d3.select('#help')
 		$div = $(div[0][0])
-		exports.hide = $div.hide
 		left = div.append('div').attr('class','left')
 		divider =div.append('div').attr('class','divider')
 		right = div.append('div').attr('class','right')
@@ -114,11 +113,28 @@
 		})
 
 		right.append('div').attr('class','rightLabel').text('Definitions')
-		right.append('ul').selectAll('li')
 		
+
+		var defLinks = right.append('ul').attr('class','defLinks cf').selectAll('li').data(defData)
+		defLinks.enter().append('li').append('a').attr('src', function(d) {
+			
+		}).text(function(d) {
+			return d.label
+		}).on('click', function(d) {
+			var y = $("[name='def-" + d.label + "']").offset().top
+			var $right = $(right[0][0])
+			y -= $right.offset().top
+			$right.animate({
+			        scrollTop: y
+			}, 1000);
+		})
+		
+
 		var defs = right.selectAll('div.defType').data(defData)
 		var defTypes = defs.enter().append('div').attr('class','defType')
-		defTypes.append('div').text(function(d) { return d.label } ).attr('class','defTypeLabel')
+		defTypes.append('div').append('a').attr('name', function(d) {
+			return 'def-' + d.label
+		}).text(function(d) { return d.label } ).attr('class','defTypeLabel')
 		var defTypeDefs = defTypes.append('div').selectAll('div.def').data(function(d) {
 			return d.terms
 		})
@@ -154,6 +170,7 @@
 	}
 	exports.init = init
 	exports.show = show
+	exports.hide = function() { $div.hide() }
 	if( ! window.mlabOpenInternet){
 		window.mlabOpenInternet = {}
 	}
