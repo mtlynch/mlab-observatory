@@ -307,7 +307,7 @@
 		$compareViewBySelect.next().hide() //kind of odd 
 		$comboSelect.next().show()
 		$metroSelect.next().show();
-
+		$metricsSelect.next().show();
 		$ispSelect.next().hide()
 		console.log($compareViewBySelect)
 		selectionLabels.style('display','block')
@@ -319,6 +319,7 @@
 		$compareViewBySelect.next().show()
 		changeCompareViewBy()
 		$comboSelect.next().hide()
+		$metricsSelect.next().show();
 		selectionLabels.style('display','block')
 		selectedDateLabels.style('display','block')
 		helpTabsList.style('display','none')
