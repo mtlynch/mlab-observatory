@@ -14,14 +14,16 @@
 		"#4bb84b", "#dc4d3b", "#997edf", "#a3417f", "#548bd7", "#bdcb29", "#d68a1e",
 		"#93d49c", "#eq9489", "#c2b2ec", "#c88db2", "#98b9e7", "#d7e07f", "#efb978"
 	]
+	var toggleGreyButton;
+	var hidingGreyLines = false;
 	function init() {
 		div = d3.select('#exploreViz')
 		
-		/*
-		var toggleGreyButton = div.append('div').attr('class','toggleGrey')
+		
+		toggleGreyButton = div.append('div').attr('class','toggleGrey')
 		toggleGreyButton.append('span').text('Hide').attr('class','ul')
 		toggleGreyButton.append('span').text(' all other lines')
-		*/
+		toggleGreyButton.on('click', toggleGreyLines)
 
 		exploreTT = div.append('div').attr('class','exploreTTContainer')
 		exploreTT.call(createTT)
@@ -64,6 +66,15 @@
 		var metric = mlabOpenInternet.controls.getSelectedMetric();
 		curMetric = metric;
 		var selectedCombinations = mlabOpenInternet.controls.getSelectedCombinations()
+		if(selectedCombinations.length === 0) {
+			toggleGreyButton.style('display','none')
+			toggleGreyButton.select('.ul').text('Hide')
+			hidingGreyLines = false
+			div.classed('hideGrey', hidingGreyLines)
+
+		} else {
+			toggleGreyButton.style('display','block')
+		}
 		var metricKey = metric.key;
 		var minDataValue = Number.MAX_VALUE;
 		var maxDataValue = -Number.MIN_VALUE;
@@ -144,6 +155,8 @@
 			} else {
 				return null
 			}
+		}).classed('selectedLine', function(d,i) {
+			return d.active
 		})
 		var pathsDashed = svg.select('g.lines').selectAll('path.dashed').data(datasets)
 		var lineGen = d3.svg.line()
@@ -176,6 +189,8 @@
 			} else {
 				return null
 			}
+		}).classed('selectedLine', function(d,i) {
+			return d.active
 		})
 
 		_.each(datasets, function(dataset) {
@@ -233,6 +248,13 @@
 	}
 	function hide() {
 		div.style('display','none')
+	}
+	function toggleGreyLines(d,i) {
+		hidingGreyLines = !hidingGreyLines
+		div.classed('hideGrey', hidingGreyLines)
+		toggleGreyButton.select('.ul').text(
+			hidingGreyLines ? "Show" : "Hide"
+		)
 	}
 	function createTT() {
 		exploreTT.style('opacity',0).style('display','none')

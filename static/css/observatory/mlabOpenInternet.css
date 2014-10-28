@@ -257,14 +257,24 @@ Explore Viz
 }
 
 #exploreViz .toggleGrey {
+	display: none;
 	color: #8b8b8b;
 	font-size: 13px;
 	text-align: right;
 	cursor: pointer;
+	position: absolute;
+	right: 65px;
+	top:0;
 
 }
 #exploreViz .toggleGrey .ul {
 	text-decoration: underline;
+}
+#exploreViz.hideGrey g.lines path {
+	display: none;
+}
+#exploreViz.hideGrey g.lines path.selectedLine {
+	display: inline;
 }
 /*
 Time controller
