@@ -87,6 +87,12 @@ Controls
 	outline: none;
 	font-weight: bold;
 	color: #8c8c8c;
+	
+	-webkit-transition: none !important;
+	-moz-transition: none !important;
+	-o-transition: none !important;
+	transition: none !important;
+
 }
 
 #controls .dropdown-menu {
@@ -161,6 +167,16 @@ Controls
 	color: #8b8b8b;
 	margin-bottom: 30px;
 }
+#controls .dropdown-menu li a:hover {
+	color: white !important;
+}
+#controls .dropdown-menu li a {
+	-webkit-transition: none !important;
+	-moz-transition: none !important;
+	-o-transition: none !important;
+	transition: none !important;
+}
+
 
 /***********
 Explore Viz
