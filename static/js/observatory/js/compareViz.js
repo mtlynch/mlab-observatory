@@ -427,7 +427,6 @@
 			return x + 'px'
 		}).style('top', function(d) {
 			var ttHeight = $(this).outerHeight();
-			console.log(ttHeight)
 			var y = d.tooltipY
 			y -= ttHeight / 2
 			y += topPadding
