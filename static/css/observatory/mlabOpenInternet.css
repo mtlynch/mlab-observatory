@@ -87,7 +87,7 @@ Controls
 	outline: none;
 	font-weight: bold;
 	color: #8c8c8c;
-	
+
 	-webkit-transition: none !important;
 	-moz-transition: none !important;
 	-o-transition: none !important;
@@ -413,7 +413,7 @@ compare
 #compareViz .graphLabel {
 	fill: #808284;
 	font-weight: bold;
-	font-size: 17px;
+	font-size: 16px;
 }
 #compareViz .xAxis .tick text {
 	fill: #808284;

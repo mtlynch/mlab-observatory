@@ -4,8 +4,9 @@
 		w: 824 - margin.left - margin.right,
 	}
 	
-	var graphAreaHeight = 140;
+	var graphAreaHeight = 150;
 	var graphHeight = 60
+	var topPadding = 20;
 
 	var svg;
 	var chart;
@@ -118,7 +119,7 @@
 		datasetGroups.enter().append('g').attr('class','dataset')
 		datasetGroups.exit().remove()
 		datasetGroups.attr("transform",function(d,i) {
-			var y = i * graphAreaHeight
+			var y = i * graphAreaHeight + (topPadding)
 			var x = 0
 			return 'translate(' + x + ',' + y + ')'
 		})
@@ -255,7 +256,8 @@
 		/* xaxis */
 		chart.selectAll('.axis').remove()
 		var xAxis = d3.svg.axis().scale(xScale).orient('bottom')
-			.tickFormat(d3.time.format("%e %b")).ticks(6);
+			.tickFormat(d3.time.format("%e %b")).ticks(6)
+			.outerTickSize(0);
 		datasetGroups.append('g').attr('class','xAxis axis').attr('transform', 'translate(0,' + graphHeight +')')
 			.call(xAxis)
 
@@ -315,7 +317,7 @@
 
 				return metroName
 			}
-		}).attr('x', 0).attr('y', yScale(0) + 40)
+		}).attr('x', 0).attr('y', -15)
 
 		dotGroup.moveToFront()
 		/*
