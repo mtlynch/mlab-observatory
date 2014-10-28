@@ -236,10 +236,17 @@
 		var ttContent = [
 			'ttLabel ttMetricLabel',
 			'ttValue ttMetric',
+			'ttLabel ttSampleSizeLabel',
+			'ttValue ttSampleSize',
 			'ttLabel ttDate'
 		]
 		content.selectAll('div').data(ttContent)
 			.enter().append('div').attr('class',String)
+			.text(function(d,i) {
+				if(d === 'ttLabel ttSampleSizeLabel') {
+					return 'Sample Size'
+				}
+			})
 		/* y ticks */
 		var lineTickArray = [0, 0.5, 1]
 		var lineTicks = datasetGroups.selectAll('line.yScaleGuide').data(lineTickArray)
@@ -380,6 +387,10 @@
 		tooltips.select('.ttMetricLabel').text(function(d) {
 			return curMetric.name
 		})
+		tooltips.select('.ttSampleSize').text(function(d,i) {
+			var sampleSize = d.data[xIndex][curMetric.key + "_n"]
+			return sampleSize
+		})
 		tooltips.select('.ttDate').text(momentNearest.format('M/D/YYYY'))
 		var activeWidthCutoffPct = 0.2;
 		tooltips.style('display','block').classed('onLeft', function(d,i) {
@@ -415,9 +426,11 @@
 			}
 			return x + 'px'
 		}).style('top', function(d) {
-			var ttHeight = $(this).height();
+			var ttHeight = $(this).outerHeight();
+			console.log(ttHeight)
 			var y = d.tooltipY
 			y -= ttHeight / 2
+			y += topPadding
 			return y + 'px'
 		})
 		chart.selectAll('circle.dot').style('opacity',0)
