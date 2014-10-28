@@ -4,6 +4,7 @@
 	var $div;
 	var left, right ,divider;
 	var helpPopup;
+	var bottomPadding = 10;
 	var popupDontShowCookiename = 'mlabDontShowPopup'
 
 	var popupCopy = '<div class="popupHeader helpHeader">The Internet is a magical place</div>' +
@@ -172,9 +173,9 @@
 
 		_.defer(function() {
 			var height = $(left[0][0]).height();
-			$(divider[0][0]).height(height)
+			$(divider[0][0]).height(height + bottomPadding)
 			$(right[0][0]).height(height)
-
+			$div.height(height + bottomPadding)
 			terms.style('display','none')
 			_.defer(function() {
 				terms.style('display', 'block')
@@ -206,8 +207,10 @@
 		$div.show()
 
 		var height = $(left[0][0]).height();
-		$(divider[0][0]).height(height)
+		$(divider[0][0]).height(height + bottomPadding)
 		$(right[0][0]).height(height)
+		$div.height(height + bottomPadding)
+			
 	}
 	exports.init = init
 	exports.show = show
