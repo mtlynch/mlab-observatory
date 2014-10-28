@@ -24,7 +24,7 @@
 	function init() {
 		div = d3.select('#timeControl')
 		div.append('div').attr('class','timeControlLabel')
-			.text('Drag scrubber to adjust date range')
+			.text('Click and drag left or right to adjust monthly date range')
 		svg = div.append('svg')
 			.attr('width', svgDimensions.width + margin.left + margin.right)
 			.attr('height', svgDimensions.height + margin.top + margin.bottom)
@@ -39,8 +39,8 @@
 		shades.append('rect').attr('x',monthWidth * 3).attr('y',0).attr('width', monthWidth * 2).attr('height',svgDimensions.height)
 			.style('fill','#2a2d33').style('opacity',0.05)
 		var tickLength = 5
-		shades.append('line').attr('x1', monthWidth * 3).attr('y1', 0).attr('x2', monthWidth*3).attr('y2', svgDimensions.height + tickLength)
-		shades.append('line').attr('x1', monthWidth * 2).attr('y1', 0).attr('x2', monthWidth*2).attr('y2', svgDimensions.height + tickLength)
+		shades.append('line').attr('x1', monthWidth * 3).attr('y1', svgDimensions.height ).attr('x2', monthWidth*3).attr('y2', svgDimensions.height + tickLength)
+		shades.append('line').attr('x1', monthWidth * 2).attr('y1', svgDimensions.height ).attr('x2', monthWidth*2).attr('y2', svgDimensions.height + tickLength)
 		shades.append('line').attr('x1', monthWidth * 1).attr('y1', svgDimensions.height).attr('x2', monthWidth*1).attr('y2', svgDimensions.height + tickLength)
 		shades.append('line').attr('x1', monthWidth * 4).attr('y1', svgDimensions.height).attr('x2', monthWidth*4).attr('y2', svgDimensions.height + tickLength)
 		labels.push(shades.append('text').attr('x', monthWidth * 1).attr('y', svgDimensions.height + 18)

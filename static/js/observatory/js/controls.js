@@ -45,6 +45,7 @@
 	var helpTabsList;
 	var helpTabs;
 	var selectedHelpTab = null
+	var firstOptionsSet = false;
 
 	function init() {
 		div = d3.select('#controls')
@@ -218,13 +219,28 @@
 		var comboOpts = comboSelectD3.selectAll('option').data(options)
 		comboOpts.enter().append('option')
 		comboOpts.exit().remove()
+		var selectedOpts = []
 		comboOpts.text(function(d) {
 			return d.label;
+		}).each(function(d,i) {
+			var opt = d3.select(this);
+			if(! firstOptionsSet && (i === 0 || i === 2)) {
+				opt.attr('selected', 'selected')
+				selectedOpts.push(d.label)
+			} else if(i === 0) {
+				opt.attr('selected', 'selected')
+				selectedOpts.push(d.label)
+			}
 		})
-		$comboSelect.selectpicker('val','');
+
+		firstOptionsSet = true
+
+		$comboSelect.selectpicker('val', selectedOpts);
 		$comboSelect.selectpicker('refresh')
 		$comboSelect.next().width(168)
-		selectedCombinations = []
+		selectedCombinations = _.filter(currentCombinationOptions, function(d) {
+			return selectedOpts.indexOf(d.label) !== -1
+		})
 	}
 
 	function populateSelectionLabel() {
