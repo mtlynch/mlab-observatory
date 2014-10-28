@@ -234,7 +234,7 @@
 		var colors = mlabOpenInternet.dataLoader.getColors()
 		if(selectedTab.id === 'explore') {
 			if(selectedCombinations.length === 0) {
-				labelHTML += '<span class="b">All ISPs</span> on <span class="b">All TPs</span> '
+				labelHTML += '<span class="b">All Access ISPs</span> on <span class="b">All Transit ISPs</span> '
 			} else {
 				var byTP = {}
 				_.each(selectedCombinations, function(combo) {
