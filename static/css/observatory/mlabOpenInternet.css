@@ -1,0 +1,660 @@
+/* 
+blue: #9bd2cf;
+orange: #d94f40;
+*/
+.line {
+  fill: none;
+  stroke-width: 1px;
+}
+
+@font-face{
+	font-family:'Proxima Nova';
+	src:url("fonts/proxima-nova/bold/proximanova-bold-webfont.eot");
+	src:url("fonts/proxima-nova/bold/proximanova-bold-webfont.eot?#iefix") format("embedded-opentype"),
+		url("fonts/proxima-nova/bold/proximanova-bold-webfont.woff") format("woff"),
+		url("fonts/proxima-nova/bold/proximanova-bold-webfont.ttf") format("truetype"),
+		url("fonts/proxima-nova/bold/proximanova-bold-webfont.svg#wf") format("svg");font-weight:bold;font-style:normal}
+
+@font-face{
+	font-family:'Proxima Nova';
+	src:url("fonts/proxima-nova/semi-bold/proximanova-semibold-webfont.eot");
+	src:url("fonts/proxima-nova/semi-bold/proximanova-semibold-webfont.eot?#iefix") format("embedded-opentype"),
+		url("fonts/proxima-nova/semi-bold/proximanova-semibold-webfont.woff") format("woff"),
+		url("fonts/proxima-nova/semi-bold/proximanova-semibold-webfont.ttf") format("truetype"),
+		url("fonts/proxima-nova/semi-bold/proximanova-semibold-webfont.svg#wf") format("svg");font-weight:400;font-style:normal}
+
+@font-face{
+	font-family:'Proxima Nova';
+	src:url("fonts/proxima-nova/regular/proximanova-reg-webfont.eot");
+	src:url("fonts/proxima-nova/regular/proximanova-reg-webfont.eot?#iefix") format("embedded-opentype"),
+		url("fonts/proxima-nova/regular/proximanova-reg-webfont.woff") format("woff"),
+		url("fonts/proxima-nova/regular/proximanova-reg-webfont.ttf") format("truetype"),
+		url("fonts/proxima-nova/regular/proximanova-reg-webfont.svg#wf") format("svg");font-weight:normal;font-style:normal}
+
+html, body {
+	padding: 0;
+	margin:0;
+	height: 100%;
+	font-family: "Proxima Nova", Arial, Helvetica, sans-serif;
+
+	padding-bottom: 100px;
+}
+
+.wrapper {
+	background-color: #fff;
+	width: 960px;
+	margin:0 auto;
+	position: relative;
+}
+
+
+/*
+Controls
+*/
+#controls .tabs {
+	list-style-type: none;
+	padding-left: 23px;
+	margin: 0;
+	margin-bottom: 10px;
+}
+#controls .tabs li {
+	float: left;
+	font-size: 13px;
+	padding: 7px 15px 7px 15px;
+	font-weight: bold;
+	color: #8c8c8c;
+	background-color: #ebebeb;
+	margin-right: 10px;
+	cursor: pointer;
+	width: 130px;
+	text-align: center;
+}
+#controls .tabs li.active {
+	background-color: #d9d9d9;
+}
+#controls .selectBar {
+	background-color: #f1f2f2;
+	padding: 0 65px 0 53px;
+	border: 1px solid #e1e1e1;
+	border-left: none;
+	border-right: none;
+}
+#controls .btn-default {
+	height: 50px;
+	background-color: #f1f2f2;
+	border: none;
+	box-shadow: none;
+	outline: none;
+	font-weight: bold;
+	color: #8c8c8c;
+	
+	-webkit-transition: none !important;
+	-moz-transition: none !important;
+	-o-transition: none !important;
+	transition: none !important;
+
+}
+
+#controls .dropdown-menu {
+	border-radius: 0;
+	margin-top: 0;
+	padding: 0;
+}
+
+
+#controls .selectBar .helpTabs {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+#controls div.helpTabs button.helpTab {
+	cursor: pointer;
+	margin-right: 20px;
+}
+#controls div.helpTabs button.helpTab.active {
+}
+#controls div.helpTabs button.helpTab .underline{
+	height: 3px;
+	background-color: #a7a7a7;
+	width: 100%;
+	display: none;
+}
+#controls div.helpTabs button.helpTab.active .text {
+	padding-top: 4px;
+}
+
+
+#controls div.helpTabs button.helpTab.active .underline {
+	display:block;
+}
+
+#controls .selectionLabels  {
+	padding-left: 65px;
+	font-size: 22px;
+	color: #cbcbcb;
+	margin-top: 40px;
+	margin-bottom: 7px;
+}
+#controls .selectionLabels .b {
+	font-weight: bold;
+	color: #8b8b8b;
+}
+#controls .bootstrap-select {
+	outline: none;
+	margin-right: 41px;
+}
+#controls .bootstrap-select li {
+	border-bottom: 1px solid #d9d9d9;
+}
+#controls .dropdown-menu>li>a {
+	padding: 7px 20px 4px;
+}
+#controls .dropdown-menu>li.selected>a {
+	color: #fff;
+	background-color: #8b8b8b;
+}
+#controls *:focus {
+	outline: none;
+	outline-style:none;
+	box-shadow:none;
+	border-color:transparent;
+}
+#controls .selectedDateLabels {
+	margin-left: 65px;
+	font-weight: bold;
+	font-size: 15px;
+	text-transform: uppercase;
+	color: #8b8b8b;
+	margin-bottom: 30px;
+}
+#controls .dropdown-menu li a:hover {
+	color: white !important;
+}
+#controls .dropdown-menu li a {
+	-webkit-transition: none !important;
+	-moz-transition: none !important;
+	-o-transition: none !important;
+	transition: none !important;
+}
+
+
+/***********
+Explore Viz
+***********/
+#exploreViz {
+	padding: 0 65px;
+	position: relative;
+	margin-bottom: 20px;
+}
+#exploreViz g.lines path {
+	fill: none;
+	stroke: #ccc;
+}
+#exploreViz g.lines path.dashed {
+	stroke-dasharray: 5,5;
+}
+#exploreViz .xAxis > path, #exploreViz .xAxis .tick line {
+	fill: none;
+	stroke: #b0b3b5;
+}
+#exploreViz .yAxis > path {
+	fill: none;
+}
+#exploreViz .axis text {
+	font-size: 11px;
+	fill: #808284;
+	font-weight: bold;
+}
+#exploreViz .xAxis text {
+	text-transform: uppercase;
+}
+#exploreViz .fillDot {
+	pointer-events: none;
+}
+#exploreViz .exploreTTContainer {
+	position: absolute;
+	display: none;
+	opacity: 0;
+}
+#exploreViz .exploreTTContent {
+	background: #616266;
+	color: #fff;
+	border-radius: 5px;
+	padding: 10px 11px;
+	padding-bottom: 1px;
+}
+#exploreViz .exploreTTContent .ttTitle {
+	font-size: 15px;
+	margin-bottom: 0.5em;
+	font-weight: bold;
+}
+#exploreViz .exploreTTContent .ttLabel {
+	color: #c2c2c2;
+	font-size: 11px;
+	white-space: nowrap;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+#exploreViz .exploreTTContent .ttValue {
+	margin-bottom: 0.5em;
+	font-size: 13px;
+	font-weight: bold;
+}
+#exploreViz .exploreTTContainer .exploreTTArrow {
+	width: 0; 
+	height: 0; 
+	border-left: 8px solid transparent;
+	border-right: 8px solid transparent;
+	border-top: 8px solid #616266;
+	position: absolute;
+}
+
+#exploreViz .exploreTTContainer .dateLabel {
+	display: none;
+}
+#exploreViz .exploreTTContainer .dateValue {
+	color: #c2c2c2;
+}
+
+#exploreViz .toggleGrey {
+	color: #8b8b8b;
+	font-size: 13px;
+	text-align: right;
+	cursor: pointer;
+
+}
+#exploreViz .toggleGrey .ul {
+	text-decoration: underline;
+}
+/*
+Time controller
+*/
+#timeControl {
+	padding: 0 65px;
+}
+#timeControl svg {
+	cursor: ew-resize;
+}
+#timeControl svg path {
+	fill: none;
+	stroke: #ccc ;
+}
+#timeControl svg path.dashed {
+	stroke-dasharray: 5,5;
+}
+#timeControl svg text {
+	font-weight: bold;
+	font-size: 12px;
+	fill: #808284;
+	-webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+#timeControl .windowShades line {
+	stroke: #626366;
+}
+#timeControl .timeControlLabel {
+	font-size: 11px;
+	color: #616266;
+	margin-bottom: 0.7em;
+}
+/*
+compare
+*/
+#compareViz {
+	margin: 0 65px;
+	margin-top: 20px;
+	position: relative;;
+}
+#compareViz path {
+	fill: none;
+	stroke: #ccc;
+}
+#compareViz path.dashed {
+	stroke-dasharray: 5,5;
+}
+
+
+#compareViz line.yScaleGuide {
+	stroke: #b0b3b5;
+}
+#compareViz line.yScaleGuide.faint {
+	stroke: #e6e6e6;
+	stroke-width: 0.5;
+	stroke-dasharray: 5,3;
+}
+#compareViz text.yScaleMax {
+	text-anchor: end;
+	font-size: 11px;
+	fill: #8b8b8b;
+	font-weight: bold;
+	pointer-events: none;
+}
+#compareViz .xAxis line {
+	stroke: #b0b3b5;
+}
+#compareViz line.focus {
+	stroke: #818181;
+	stroke-width: 0.5;
+	stroke-dasharray:5,5;
+}
+#compareViz .compareTooltips .compareTooltip {
+	position: absolute;
+	display: none;
+}
+#compareViz .compareTooltips .compareTooltip .content {
+	background-color: #ebebeb;
+	padding: 10px 10px 1px;
+	border-radius: 5px;
+}
+
+#compareViz .compareTooltips .compareTooltip.active .content {
+	padding: 10px 11px 5px;
+}
+#compareViz .compareTooltips .compareTooltip .ttLabel {
+	color: #c2c2c2;
+	font-size: 11px;
+	white-space: nowrap;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+#compareViz .compareTooltips .compareTooltip .ttValue {
+	margin-bottom: 0.5em;
+	color: #616266;
+	font-size: 13px;
+	font-weight: bold;
+}
+#compareViz .compareTooltip.active .content{
+	background-color: #616266;
+}
+#compareViz .compareTooltip.active .ttValue {
+	color: white;
+}
+#compareViz .compareTooltip .arrow {
+	width: 0; 
+	height: 0; 
+	border-top: 8px solid transparent;
+	border-bottom: 8px solid transparent; 
+	position: absolute;
+	top: -webkit-calc(50% - 8px);
+	top: calc(50% - 8px);
+}
+#compareViz .compareTooltip .leftArrow {
+	border-right: 8px solid #ebebeb; 
+	left: -8px;
+}
+#compareViz .compareTooltip .rightArrow {
+	border-left: 8px solid #ebebeb;
+	right: -8px;
+	display: none;
+
+}
+#compareViz .compareTooltip.active .leftArrow {
+	border-right-color: #616266;
+}
+#compareViz .compareTooltip.active .rightArrow {
+	border-left-color: #616266;
+}
+#compareViz .compareTooltip.onLeft .rightArrow {
+	display: block;
+}
+#compareViz .compareTooltip.onLeft .leftArrow {
+	display: none;
+}
+#compareViz .compareTooltip .ttDateLabel, #compareViz .compareTooltip .ttDate, #compareViz .compareTooltip .ttMetricLabel {
+	display: none;
+}
+#compareViz .compareTooltip.active .ttDateLabel, #compareViz .compareTooltip.active .ttDate, #compareViz .compareTooltip.active .ttMetricLabel {
+	display: block;
+}
+#compareViz .graphLabel {
+	fill: #808284;
+	font-weight: bold;
+	font-size: 17px;
+}
+#compareViz .xAxis .tick text {
+	fill: #808284;
+	font-weight: bold;
+	text-transform: uppercase;
+	font-size: 11px;
+}
+
+
+/*
+Help 
+*/
+#help {
+	padding-top: 45px;
+	font-size: 15px;
+	color: #666;
+	position: relative;
+
+}
+#help .left section {
+	display: none;
+}
+#help .left section.active {
+	display: block;
+}
+
+#help > div {
+	box-sizing: border-box;
+	position: absolute;
+}
+
+#help .left {
+	width: -webkit-calc(66% - 1px);
+	width: calc(66% - 1px);
+	padding-right: 30px;
+	padding-left: 65px
+}
+#help .divider {
+	left: -webkit-calc(66% - 1px);
+	left: calc(66% - 1px);
+
+	width: 1px;
+	background-color: #d9d9d9;
+}
+#help .right {
+	left: 66%;
+	padding-left: 30px;
+	padding-right: 65px;
+	width: -webkit-calc(34%-1px);
+	width: calc(34% - 1px);
+	overflow-y: scroll;
+}
+
+.helpHeader {
+	font-size: 20px;
+	font-weight: bold;
+
+}
+.helpCopy {
+	margin-bottom: 30px;
+}
+#help .helpHeader.internetHeader {
+	margin-bottom: 10px;
+}
+#help .right .rightLabel {
+	font-weight: bold;
+	font-size: 26px;
+	margin-bottom: 10px;
+}
+#help .right .defTypeLabel {
+	color: #666;
+	font-weight: bold;
+	font-size: 20px;
+	margin-bottom:  1em;
+	display: block;
+}
+#help .right .defTypeLabel:hover {
+	text-decoration: none;
+}
+#help .right .termContainer {
+	margin-bottom: 1.5em;
+}
+#help .right .term {
+	color: #9bd2c7;
+	font-weight: bold;
+	font-size: 18px;
+	line-height: 1.1em;
+
+}
+#help .right .def {
+	color: #666;
+}
+
+#help .right .defLinks {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	margin-bottom: 10px;
+}
+#help .right .defLinks li {
+	float: left;
+	margin-right: 18px;
+	font-size: 15px;
+	cursor: pointer;
+	border-bottom: 3px solid #fff;
+}
+#help .right .defLinks li a {
+	color: #666;
+}
+#help .right .defLinks li a:hover {
+	text-decoration: none;
+}
+
+#help .right .defLinks li:hover {
+	border-bottom: 3px solid #a7a7a7;
+}
+#help .right .defLinks li:last-child {
+	margin-right: 0;
+}
+#help .left img {
+	display: block;
+	margin: 1em auto;
+}
+
+
+#helpModal {
+  display: none;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.2);
+  top: 0;
+  left: 0;
+  z-index: 50;
+}
+.helpContent {
+  background: white;
+  padding: 40px;
+  color: #767676;
+  width: 740px;
+  margin: 150px auto;
+}
+
+.helpContent .helpHeader {
+	font-size: 24px;
+	margin-bottom: 1em;
+}
+.helpContent .buttons {
+	list-style-type: none;
+	margin: 0 auto;
+	padding: 0;
+}
+.helpContent .buttons li {
+	float: left;
+	background: #9bd2c7;
+	color: #fff;
+	font-size: 20px;
+	font-weight: bold;
+	text-align: center;
+	width: 200px;
+	padding: 10px 0;
+	cursor: pointer;
+}
+.helpContent .buttons li:first-child {
+	margin-left: 110px;
+	margin-right: 40px;
+}
+.helpContent .dontshow {
+	cursor: pointer;
+	margin: 40px auto 0;
+	width: 230px;
+}
+.helpContent .dontshow .cb {
+	cursor: pointer;
+	width: 18px;
+	height: 18px;
+	border: 3px solid #9bd2c7;
+	float: left;
+	margin-right: 10px;
+}
+.helpContent .dontshow .cb.active {
+	border: 0;
+	background: #9bd2c7 url('../../observatory/images/checkedstate.png') -1px 0 no-repeat;
+}
+
+/*
+Loading
+*/
+.wrapper .vizContent {
+	position: relative;
+}
+#loading {
+	position: absolute;
+	top: 94px;
+	left: 0;
+	background: rgba(255,255,255,0.7);
+	left: 0;
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	padding-top: 165px;
+	box-sizing: border-box;
+}
+
+/***************
+  ABOUT
+***************/
+
+.aboutModal {
+  display: none;
+  position: fixed;
+  width: 960px;
+  height: 100%;
+  background-color: rgba(0,0,0,0.2);
+  top: 0;
+  left: 0;
+  z-index: 50;
+}
+.aboutContent {
+  background: white;
+  padding: 30px;
+  color: #767676;
+  width: 70%;
+  margin: 200px auto;
+}
+
+
+
+
+.cf:before,
+.cf:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+.cf:after {
+    clear: both;
+}
+
+.cf {
+    *zoom: 1;
+    padding-bottom: 0px;
+}
+

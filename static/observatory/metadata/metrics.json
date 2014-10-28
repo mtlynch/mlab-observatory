@@ -1,0 +1,27 @@
+[
+	{
+		"key": "packet_retransmit_rate",
+		"name": "Packet Retransmit Rate",
+		"units": "%"
+	},
+	{
+		"key": "minimum_rtt",
+		"name": "Minimum RTT",
+		"units": "ms"
+	},
+	{
+		"key": "average_rtt",
+		"name": "Average RTT",
+		"units": "ms"
+	},
+	{
+		"key": "download_throughput",
+		"name": "Download Speed",
+		"units": "Mbps"
+	},
+	{
+		"key": "upload_throughput",
+		"name": "Upload Speed",
+		"units": "Mbps"
+	}
+]
