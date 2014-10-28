@@ -245,6 +245,8 @@
 				var textParts = curText.split(' ')
 				return textParts[0]
 			})
+
+		mlabOpenInternet.controls.populateSelectionLabel()
 	}
 	function hide() {
 		div.style('display','none')

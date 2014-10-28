@@ -254,7 +254,6 @@
 			} else {
 				var byTP = {}
 				_.each(selectedCombinations, function(combo) {
-					console.log(combo.filename)
 					var idParts = combo.filename.split('_')
 					var mlabID = idParts[0]
 					var tp = mlabOpenInternet.dataLoader.getTPForCode(mlabID)
@@ -262,7 +261,6 @@
 					if(typeof byTP[tp] === 'undefined') {
 						byTP[tp] = []
 					}
-					console.log(tp)
 					byTP[tp].push({isp: isp, filename: combo.filename})
 				})
 				var numTPs = Object.keys(byTP).length
@@ -410,6 +408,7 @@
 	exports.getSelectedTab = function() { return selectedTab }
 	exports.getCompareAggregationSelection = getCompareAggregationSelection
 	exports.getHelpTab = function() { return selectedHelpTab }
+	exports.populateSelectionLabel = populateSelectionLabel
 	if( ! window.mlabOpenInternet){
 		window.mlabOpenInternet = {}
 	}
