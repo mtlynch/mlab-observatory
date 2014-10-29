@@ -276,6 +276,19 @@ Explore Viz
 #exploreViz.hideGrey g.lines path.selectedLine {
 	display: inline;
 }
+
+#exploreViz .hoverAreas path {
+	fill: none;
+	pointer-events: all;
+	stroke: none;
+
+}
+/*
+#exploreViz .hoverAreas path:hover {
+	stroke: none;
+	stroke-width: 2px;
+}
+*/
 /*
 Time controller
 */
