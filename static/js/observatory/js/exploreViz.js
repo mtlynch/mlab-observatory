@@ -1,5 +1,5 @@
 (function() {
-	var margin = {top: 5, right: 20, bottom: 25, left: 60}
+	var margin = {top: 15, right: 20, bottom: 25, left: 60}
 	var exploreDimensions = {
 		w: 824 - margin.left - margin.right,
 		h: 441 - margin.top - margin.bottom
@@ -326,9 +326,18 @@
 			})
 
 		mlabOpenInternet.controls.populateSelectionLabel()
+		$(window).off('mousemove', mouseMoveDoc).on('mousemove', mouseMoveDoc)
+	}
+	function mouseMoveDoc(e) {
+		var mouseY =  e.pageY
+		var graphOffset = $(div[0][0]).offset().top
+		if(mouseY < graphOffset) {
+			mouseOutDot()
+		}
 	}
 	function hide() {
 		div.style('display','none')
+		$(window).off('mousemove', mouseMoveDoc)
 	}
 	function toggleGreyLines(d,i) {
 		hidingGreyLines = !hidingGreyLines

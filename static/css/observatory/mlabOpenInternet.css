@@ -263,8 +263,8 @@ Explore Viz
 	text-align: right;
 	cursor: pointer;
 	position: absolute;
-	right: 65px;
-	top:0;
+	right: 90px;
+	top: -48px;
 
 }
 #exploreViz .toggleGrey .ul {
