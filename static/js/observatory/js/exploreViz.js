@@ -425,6 +425,9 @@
 		if(typeof d === 'undefined') {
 			d = lastActiveTooltipData
 		}
+		if(d === null) {
+			return
+		}
 		var dot = d3.select(d.dot).select('.fillDot')
 		dot.style('opacity',0)
 		exploreTT.style('opacity',0).transition().duration(0).delay(300).style('display','none')
