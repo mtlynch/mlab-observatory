@@ -378,7 +378,7 @@
 
 		var dot = d3.select(d.dot).select('.fillDot')
 		dot.style('opacity',1)
-		exploreTT.style('opacity',1).style('display','block')
+		exploreTT.transition().duration(0).style('display','block')
 		var idParts = d.dataID.split('_')
 		var code = idParts[0];
 		var isp = idParts[1]
@@ -418,6 +418,7 @@
 
 
 		exploreTT.style('left', x + 'px').style('top', y + 'px')
+		exploreTT.style('opacity',1)
 		
 	}
 	function mouseOutDot(d,i) {
@@ -426,7 +427,7 @@
 		}
 		var dot = d3.select(d.dot).select('.fillDot')
 		dot.style('opacity',0)
-		exploreTT.style('opacity',0).style('display','none')
+		exploreTT.style('opacity',0).transition().duration(0).delay(300).style('display','none')
 
 	}
 
