@@ -176,7 +176,7 @@
 
 		var dotPointsToUse;
 		if(hidingGreyLines) {
-			dotPointsToUse = activePoints
+			dotPointsToUse = uniqueActivePoints
 		} else {
 			dotPointsToUse = uniquePoints
 		}
