@@ -210,6 +210,7 @@
 		$(divider[0][0]).height(height + bottomPadding)
 		$(right[0][0]).height(height)
 		$div.height(height + bottomPadding)
+		mlabOpenInternet.controls.updateHash()
 			
 	}
 	exports.init = init

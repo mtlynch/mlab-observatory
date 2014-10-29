@@ -43,8 +43,8 @@
 		
 	}
 	function dataLoaded(allMetroData) {
-		console.log('all metro data loaded')
-		console.log(allMetroData)
+		//console.log('all metro data loaded')
+		//console.log(allMetroData)
 		var dataInTimePeriod = []
 		var curDate = mlabOpenInternet.timeControl.getSelectedDate()
 		var dateToMatch = {
@@ -81,7 +81,7 @@
 		var maxDatasetLength = 0;
 		var minDate = null;
 		var maxDate = null;
-		console.log(datasets)
+		//console.log(datasets)
 		_.each(datasets, function(dataset) {
 			_.each(dataset.data, function(datum) {
 				
@@ -106,8 +106,8 @@
 				}
 			})
 		})
-		console.log(minDataValue + ' ' + maxDataValue)
-		console.log(minDate + " " + maxDate)
+		//console.log(minDataValue + ' ' + maxDataValue)
+		//console.log(minDate + " " + maxDate)
 		yScale = d3.scale.linear().domain([0, maxDataValue])
 			.range([exploreDimensions.h, 0])
 		//var xScale = d3.scale.linear().domain([0, maxDatasetLength - 1]).range([0, exploreDimensions.w])
@@ -139,8 +139,8 @@
 				return null
 			} else {
 				d.active = true;
-				console.log('active dataset');
-				console.log(d)
+				//console.log('active dataset');
+				//console.log(d)
 
 				_.each(d.data, function(dotDataPoint) {
 					dotDataPoint.dataID = d.id
@@ -199,7 +199,7 @@
 			}
 		})
 
-		console.log(dotData)
+		//console.log(dotData)
 		var dotSize = 5;
 		var dots = svg.select('g.dots').selectAll('g.dot').data(dotData)
 		dots.enter().append('g').attr('class','dot')
@@ -235,7 +235,7 @@
 			}).ticks(5)
 		chart.append('g').attr('class','yAxis axis').call(yAxis)
 		var numTextItems = chart.select('.yAxis').selectAll('text')[0].length
-		console.log(numTextItems)
+		//console.log(numTextItems)
 		chart.select('.yAxis').selectAll('text').attr('x', -margin.left).style('text-anchor','initial')
 			.text(function(d,i) {
 				var curText = d3.select(this).text();
@@ -247,6 +247,7 @@
 			})
 
 		mlabOpenInternet.controls.populateSelectionLabel()
+		mlabOpenInternet.controls.updateHash()
 	}
 	function hide() {
 		div.style('display','none')
@@ -257,6 +258,7 @@
 		toggleGreyButton.select('.ul').text(
 			hidingGreyLines ? "Show" : "Hide"
 		)
+
 	}
 	function createTT() {
 		exploreTT.style('opacity',0).style('display','none')
@@ -331,6 +333,7 @@
 	window.mlabOpenInternet.exploreViz = {
 		init: init,
 		show: show,
-		hide: hide
+		hide: hide,
+		hidingGreyLines: function() { return hidingGreyLines }
     }
 })()

@@ -327,16 +327,8 @@
 		}).attr('x', 0).attr('y', -15)
 
 		dotGroup.moveToFront()
-		/*
-		.style('fill', function(d) {
-			
-			console.log(curViewType)
-			if(curViewType === 'Metro Region') {
-				return d.color
-			}
-			return null;
-		})
-		*/
+
+		mlabOpenInternet.controls.updateHash()
 
 	}
 	function hide() {

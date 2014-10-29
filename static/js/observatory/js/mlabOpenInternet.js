@@ -17,18 +17,22 @@
 		dataLoader.init();
 	}
 	function loaded() {
-		console.log('loaded')
-		console.log(controls);
+		//console.log('loaded')
+		//console.log(controls);
+		
+		timeControl.init();
+		timeControl.hide()
+		controls.init()
+		
 		exploreViz.init()
+		exploreViz.hide()
 		compareViz.init()
 		compareViz.hide()
 		help.init();
 		help.hide()
-		controls.init()
+		
 		controls.addListener('switchTab', switchTab)
 		controls.addListener('selectionChanged', selectionChanged)
-		console.log(timeControl)
-		timeControl.init();
 		timeControl.addListener('timeChanged', timeChanged)
 		//timeControl.show()
 		//exploreViz.show()
@@ -39,9 +43,9 @@
 		} else if(activeTab.id === 'compare') {
 			compareViz.show()
 		}
+
 	}
 	function selectionChanged(e) {
-		console.log('show')
 		if(activeTab.id === 'explore') {
 			timeControl.show()
 			exploreViz.show()
@@ -51,8 +55,10 @@
 		} else if(activeTab.id === 'help') {
 			help.show()
 		}
+
 	}
 	function switchTab(tab) {
+		console.log(activeTab)
 		console.log(tab)
 		if(activeTab !== null) {
 			//destroy active tab if needed
@@ -81,7 +87,7 @@
 				break;
 			case 'help':
 				help.show()
-
+	
 
 		}
 

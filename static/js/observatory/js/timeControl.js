@@ -72,8 +72,8 @@
 	}
 	function dataLoaded(allMetroData) {
 		//plot the entire dataset of selected cities (or all cities if none selected)
-		console.log('time control data loaded')
-		console.log(allMetroData)
+		//console.log('time control data loaded')
+		//console.log(allMetroData)
 		var datasets;
 		var metric = mlabOpenInternet.controls.getSelectedMetric();
 		var curView = mlabOpenInternet.controls.getSelectedTab()
@@ -81,6 +81,7 @@
 			datasets = allMetroData
 		} else {
 			selectedCombinations = mlabOpenInternet.controls.getSelectedCombinations()
+			//console.log(selectedCombinations)
 			if(selectedCombinations.length === 0) {
 				datasets = allMetroData
 			//	datasets = []
@@ -93,7 +94,7 @@
 						datasets.push(metroData)
 					}
 				})
-				console.log(selectedCombinations)
+			//	console.log(selectedCombinations)
 			}
 		}
 		var metricKey = metric.key;
@@ -102,14 +103,16 @@
 		var maxDatasetLength = 0;
 		var minDate = null;
 		var maxDate = null;
-		console.log(datasets)
+		//console.log(datasets)
 		//determine min / maxes
 		
 		//we need to break up datasets by month to color them properly :/
 		var monthlyDatasets = []
 		var maxMonthIndex = 0;
+		//console.log(datasets)
 		_.each(datasets, function(dataset) {
 			var thisDataSetByMonths = {}
+			//console.log(dataset.data)
 			_.each(dataset.data, function(datum,index) {
 				var metricValue = +datum[metricKey]
 				
@@ -139,6 +142,7 @@
 				}
 			})
 			dataset.byMonths = thisDataSetByMonths; 
+		//	console.log(dataset.byMonths)
 		})
 		_.each(datasets, function(dataset) {
 			var twoMonthsPrior = moment(new Date(minDate.getFullYear(), minDate.getMonth() - 2, 1))
@@ -184,11 +188,12 @@
 
 		})
 		maxMonthIndex -= 2; //to account for the 2 start buffer months
+		/*
 		console.log(monthlyDatasets)
 		console.log(maxMonthIndex)
 		console.log(minDataValue + ' ' + maxDataValue)
 		console.log(minDate + " " + maxDate)
-
+		*/
 		var opts = [];
 		var curTime = moment(minDate)
 		var endDate = moment(maxDate)
@@ -204,7 +209,7 @@
 		if(selectedMonthIndex === null) {
 			selectedMonthIndex = maxMonthIndex
 			selectedDate = dateOptions[selectedMonthIndex]
-			console.log(selectedMonthIndex)
+			//console.log(selectedMonthIndex)
 			var dispMonth = selectedDate.date.clone()
 			dispMonth.subtract(1,'months')
 			labels[0].text(dispMonth.format('MMM \'YY').toUpperCase())
@@ -219,14 +224,14 @@
 		var yScale = d3.scale.linear().domain([0, maxDataValue])
 			.range([svgDimensions.height, 0])
 		//var xScale = d3.scale.linear().domain([0, maxDatasetLength - 1]).range([0, exploreDimensions.w])
-		console.log(monthWidth)
+		//console.log(monthWidth)
 		var startDateMoment = moment(minDate);
 		var endDateMoment = moment(maxDate)
 		var numMonths = Math.ceil(endDateMoment.diff(startDateMoment, 'months',true))
 		numMonths += 4 //add start / end buffer months
 		var fullWidth = monthWidth * ( numMonths);
-		console.log('numMonths ' + numMonths)
-		console.log(fullWidth)
+		//console.log('numMonths ' + numMonths)
+		//console.log(fullWidth)
 		var dailyXScale = d3.scale.linear().domain([0,1]).range([0, monthWidth])
 		var monthlyXScale = d3.scale.linear().domain([0,numMonths - 1]).range([0, fullWidth - monthWidth])
 		paths = svg.select('g.lines').selectAll('path.full').data(monthlyDatasets)
@@ -279,7 +284,7 @@
 		updatePaths();
 
 		var maxTranslateAmount = -(fullWidth - svgDimensions.width);
-		console.log(maxTranslateAmount)
+		//console.log(maxTranslateAmount)
 		var drag = d3.behavior.drag()
 			.on('dragstart', function(d) {
 				linesTranslateData.dx = 0
@@ -303,7 +308,7 @@
 				}
 				var monthsToShift = ~~(linesTranslateData.dx / shiftNeeded)
 				var shiftAmount = monthsToShift * monthWidth
-				console.log(monthsToShift + " "  + shiftAmount);
+				//console.log(monthsToShift + " "  + shiftAmount);
 				linesTranslateData.dx -= shiftAmount
 				var sign = delta > 0 ? 1 : -1;
 				linesTranslateData.x += shiftAmount ;
@@ -341,18 +346,20 @@
 	}
 	function updateDateLabels() {
 		var selectedDateLabels = d3.select('#controls .selectedDateLabels')
-		console.log(selectedDate)
+		//console.log(selectedDate)
 		var date = selectedDate.date.clone();
 		var lbl = date.format('MMM D – ') + date.daysInMonth()
 		selectedDateLabels.text(lbl)
 	}
 	function updatePaths() {
 		var strokeFunc = function(d,i) {
+			//console.log(d)
+			//console.log(mlabOpenInternet.controls.getSelectedTab())
 			if(mlabOpenInternet.controls.getSelectedTab().id === 'compare' && (d.monthIndex-2 ===selectedMonthIndex)) {
 				return d.color
 			}
 
-			if(selectedCombinations.length === 0) {
+			if(mlabOpenInternet.controls.getSelectedTab().id === 'explore' && selectedCombinations.length === 0) {
 				return null
 			}
 			if((d.monthIndex-2) === selectedMonthIndex) {
@@ -383,9 +390,19 @@
 	function hide() {
 		div.style('display','none')
 	}
+	function getDeepLinkHash() {
+		var date = selectedDate.date.clone()
+		var timeHash = date.format('MMDDYYYY')
+		timeHash += '-'
+		date.add(1,'months')
+		timeHash += date.format('MMDDYYYY')
+
+		return timeHash
+	}
 	exports.init = init
 	exports.show = show
 	exports.hide = hide;
+	exports.getDeepLinkHash = getDeepLinkHash
 	exports.getSelectedDate = function() { return selectedDate }
 	if( ! window.mlabOpenInternet){
 		window.mlabOpenInternet = {}
