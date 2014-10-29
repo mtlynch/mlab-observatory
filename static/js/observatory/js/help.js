@@ -18,14 +18,14 @@
 
 	var toolCopy = 
 	'<div class="helpHeader">Our Tool</div>' + 
-	'<div class="helpCopy">The M-Lab Data Observatory provides a way to explore ISP performance across a number of metrics, locations, and time periods. It also allows a view into the way ISPs’ connections with each other -- the interconnectedness that makes up the Internet -- shape performance. By selecting different options, you can see how various ISPs performance across a variety of metrics like upload or download speed, round trip time or packet retransmission rate. You can also see how these metrics differed over time, across locations, or relative to ISP interconnection relationships.</div>' + 
+	'<div class="helpCopy">The M-Lab Data Observatory provides a way to explore ISP performance across a number of metrics, locations, and time periods. It also allows a view into the way ISPs’ connections with each other -- the interconnectedness that makes up the Internet -- shape performance. By selecting different options, you can see how various ISPs performance across a variety of metrics like <a href="#" data-word="Upload Throughput (Megabits per second, Mbps)">upload</a> or <a href="#" data-word="Download Throughput (Megabits per second, abbreviated Mbps)">download speed</a>, <a href="#" data-word="Round Trip Time (Milliseconds, ms)">round trip time</a> or <a href="#" data-word="Packet retransmission rate">packet retransmission rate</a>. You can also see how these metrics differed over time, across locations, or relative to ISP interconnection relationships.</div>' + 
 	'<div class="helpHeader">Exploring the data</div>' +
 	'<div class="helpCopy">Observatory is a tool for exploring M-Lab’s data by selecting a metric like download speed, and then displaying graphs of the data in combination with additional filters.</div>' + 
 	'<ul>' + 
 	'<li>First, select the metric you’d like to visualize</li>' + 
 	'<li>Then select a city</li>' + 
 	'</ul>' + 
-	'<div class="helpCopy" style="margin-bottom:0;">Based on the city you select, the combinations filter options will change, listing the combinations of Access ISP and Transit ISP available in that city.</div>' +
+	'<div class="helpCopy" style="margin-bottom:0;">Based on the city you select, the combinations filter options will change, listing the combinations of <a href="#" data-word="Access ISP or Access Network">Access ISP</a> and <a href="#" data-word="Transit ISP or Transit Network">Transit ISP</a> available in that city.</div>' +
 	'<ul style="margin-top: 0;"><li>Select one or more of those combinations to view or compare the data you’ve selected</li></ul>' +
 	'<img src="static/observatory/images/graphExample.png" />' +
 	'<div class="helpCopy">Based on the selections you make and filters you applied, Observatory graphs the results, highlighting the selected Access ISP / Transit ISP combination(s). Grey lines are shown behind your selection(s) to provide a quick visual comparison to other unselected combinations. You can turn these grey lines on or off using the link at the top right of the graph.</div>' +
@@ -37,7 +37,7 @@
 	
 	var internetCopy = 
 	'<div class="helpHeader internetHeader">How the Internet Works</div>' +
-	'<div class="helpCopy">Whenever we use a computer, a smartphone, tablet or other connected device to go online, we’re accessing our content and services via a collection of networks owned and operated by many organizations and companies across the world. The Internet is an interconnected mesh of separate networks. From a US consumer’s perspective, we buy Internet service, and once it’s hooked up, our ISP (say Verizon, Comcast or Time Warner) lets us connect with everything on the web. To be able to provide us this vast access, our individual ISP must connect to the rest of the Internet. This happens via “interconnection.” Our ISP connects to other, less well-known ISPs that we refer to as transit providers. The points at which transit providers and access ISPs meet and exchange traffic are called “interconnection.” What this means is that the performance we get to our favorite sites and services is determined by many factors, including the relationship between our access ISP and the transit ISPs that it interconnects with.</div>' +
+	'<div class="helpCopy">Whenever we use a computer, a smartphone, tablet or other connected device to go online, we’re accessing our content and services via a collection of networks owned and operated by many organizations and companies across the world. The Internet is an interconnected mesh of separate networks. From a US consumer’s perspective, we buy Internet service, and once it’s hooked up, our ISP (say Verizon, Comcast or Time Warner) lets us connect with everything on the web. To be able to provide us this vast access, our individual ISP must connect to the rest of the Internet. This happens via “<a href="#" data-word="Interconnection">interconnection</a>.” Our ISP connects to other, less well-known ISPs that we refer to as transit providers. The points at which transit providers and access ISPs meet and exchange traffic are called “interconnection.” What this means is that the performance we get to our favorite sites and services is determined by many factors, including the relationship between our access ISP and the transit ISPs that it interconnects with.</div>' +
 	'<a href="static/observatory/images/internetInfographic.png" target="_blank"><img style="width: 540px;" src="static/observatory/images/internetInfographic.png" /></a>' +
 	'<div class="helpCopy">M-Lab choses the locations of its measurement points carefully, placing them inside transit ISPs that interconnect with many other ISPs. This provides a representative location at which it’s possible to measure representative performance as experienced by end-users. In other words, when you run an M-Lab test, the measurement of your connection replicates the experience you have many times daily -- crossing the boundaries of networks and infrastructure owners to download a webpage, or access a file, etc.. This ability to get whatever is hosted on the Internet, from anywhere connected to the Internet, is fundamental to how the Internet functions. Without it, the Internet is not longer in inter-network, and is instead an intra-network.</div>'  +
 	'<a href="static/observatory/images/mlabInfographic.png" target="_blank"><img style="width: 540px;" src="static/observatory/images/mlabInfographic.png" /></a>' +
@@ -153,6 +153,7 @@
 			var y = $("[name='def-" + d.label + "']").offset().top
 			var $right = $(right[0][0])
 			y -= $right.offset().top
+			y += $right[0].scrollTop
 			$right.animate({
 			        scrollTop: y
 			}, 1000);
@@ -181,7 +182,23 @@
 				terms.style('display', 'block')
 			})
 		})
+
+		var words = div.selectAll('a[data-word]')
+		console.log(words)
+		words.on('click', clickDefInText)
 		
+	}
+	function clickDefInText() {
+		var tag = d3.select(this);
+		var word = tag.attr('data-word')
+		var $right = $(right[0][0])
+		var y = $(".term:contains('" + word + "')").offset().top
+		y += $right[0].scrollTop
+		y -= $right.offset().top
+		$right.animate({
+		        scrollTop: y
+		}, 1000);
+
 	}
 	function closeHelpPopup(d,i) {
 		var txt = d3.select(this).text()
