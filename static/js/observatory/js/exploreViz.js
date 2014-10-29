@@ -23,7 +23,7 @@
 		
 		toggleGreyButton = div.append('div').attr('class','toggleGrey')
 		toggleGreyButton.append('span').text('Hide').attr('class','ul')
-		toggleGreyButton.append('span').text(' all other lines')
+		toggleGreyButton.append('span').text(' grey lines')
 		toggleGreyButton.on('click', toggleGreyLines)
 
 		exploreTT = div.append('div').attr('class','exploreTTContainer')
