@@ -264,7 +264,7 @@ Explore Viz
 	cursor: pointer;
 	position: absolute;
 	right: 65px;
-	top:0;
+	top: -15px;
 
 }
 #exploreViz .toggleGrey .ul {
