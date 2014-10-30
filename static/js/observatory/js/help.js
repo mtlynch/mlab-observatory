@@ -5,6 +5,8 @@
 	var left, right ,divider;
 	var helpPopup;
 	var bottomPadding = 10;
+	var defaultDefHeight = 63;
+
 	var popupDontShowCookiename = 'mlabDontShowPopup'
 
 	var popupCopy = '<div class="popupHeader helpHeader">The Internet is a magical place</div>' +
@@ -96,14 +98,15 @@
 				},
 				{
 					'term': 'Round Trip Time (Milliseconds, ms)',
-					'def': 'How much data can be downloaded (server to user computer) per unit of time.   Note that networking capacity is generally measured in bits per second, while application file sizes are generally measured in bytes, which are 8 bit each.  So for example downloading a 1 megabyte photo image in 10 seconds would be 8 Megabits per second or 8 Mbps.' +
-						'How much time does it take for a packet to go from point A to point B and back. The shorter the time, the better.' +
-						'Minimum: the minimum latency measured in transmissions from the server to the client, reported in milliseconds. Normally, this is a good indication of physical path distance, except when there is high load. ISPs with smaller RTTs are probably better connected to other ISPs, meaning that they have more interconnections in more widely distributed geographic locations.' + 
-						'Average: the average latency of data transfers from the server to the client. This is calculated as the sum of round trip times sampled during the test against the number of samples, reported in milliseconds.' +						'Comparing Average and Minimum RTTs provides an estimate of the average delay caused by queuing traffic in the network.'
+					'def': 'How much data can be downloaded (server to user computer) per unit of time.   Note that networking capacity is generally measured in bits per second, while application file sizes are generally measured in bytes, which are 8 bit each.  So for example downloading a 1 megabyte photo image in 10 seconds would be 8 Megabits per second or 8 Mbps. ' +
+					'How much time does it take for a packet to go from point A to point B and back. The shorter the time, the better. ' +
+					'Minimum: the minimum latency measured in transmissions from the server to the client, reported in milliseconds. Normally, this is a good indication of physical path distance, except when there is high load. ISPs with smaller RTTs are probably better connected to other ISPs, meaning that they have more interconnections in more widely distributed geographic locations. ' + 
+					'Average: the average latency of data transfers from the server to the client. This is calculated as the sum of round trip times sampled during the test against the number of samples, reported in milliseconds.' +
+					'Comparing Average and Minimum RTTs provides an estimate of the average delay caused by queuing traffic in the network. '
 				},
 				{
 					'term': 'Packet retransmission rate ',
-					'def': 'The fraction of packets (bundles of Internet data) that need to be sent more than once to deliver complete data.  A big part of the Internet\'s robustness comes from its ability to repair missing data by having it retransmitted.   Data can be lost due to congestion or other problems in the network.  The repair process normally has no explicit symptoms except it does take time and hurts performance.  The retransmission rate is a measure of how much difficulty the network is having delivering the data in the first place, and provides clues as to how much the attached computers had to slow down to repair the losses.'
+					'def': 'The fraction of packets (bundles of Internet data) that need to be sent more than once to deliver complete data.  A big part of the Internet\'s robustness comes from its ability to repair missing data by having it retransmitted. Data can be lost due to congestion or other problems in the network. The repair process normally has no explicit symptoms except it does take time and hurts performance.  The retransmission rate is a measure of how much difficulty the network is having delivering the data in the first place, and provides clues as to how much the attached computers had to slow down to repair the losses.'
 				}
 			]
 		}
@@ -149,28 +152,45 @@
 			
 		}).text(function(d) {
 			return d.label
-		}).on('click', function(d) {
-			var y = $("[name='def-" + d.label + "']").offset().top
-			var $right = $(right[0][0])
-			y -= $right.offset().top
-			y += $right[0].scrollTop
-			$right.animate({
-			        scrollTop: y
-			}, 1000);
 		})
+		defLinks.on('click', clickDefType)
 		
-
-		var defs = right.selectAll('div.defType').data(defData)
-		var defTypes = defs.enter().append('div').attr('class','defType')
-		defTypes.append('div').append('a').attr('name', function(d) {
-			return 'def-' + d.label
-		}).text(function(d) { return d.label } ).attr('class','defTypeLabel')
-		var defTypeDefs = defTypes.append('div').selectAll('div.def').data(function(d) {
-			return d.terms
+		var defs = d3.merge(_.map(defData, function(d) { 
+			_.each(d.terms, function(term) {
+				term.type = d.label
+			})
+			return d.terms 
+		}))
+		defs.sort(function(a,b) {
+			if(a.term > b.term) {
+				return 1
+			}
+			return -1
 		})
-		var terms = defTypeDefs.enter().append('div').attr('class','termContainer')
+		var terms = right.selectAll('div.termContainer').data(defs)
+		terms.enter().append('div').attr('class',function(d,i) {
+			return 'termContainer collapsed termContainer-' + d.type
+		})
 		terms.append('div').text(function(d) { return d.term }).attr('class','term')
 		terms.append('div').text(function(d) { return d.def }).attr('class','def')
+		terms.selectAll('.def').each(function(d) {
+			var defDiv = d3.select(this)
+			var $defDiv = $(this)
+			var h = +$defDiv.outerHeight();
+			defDiv.attr('data-h', h)
+			while(h > defaultDefHeight) {
+				$defDiv.text(function(index, text) {
+					var reg = /\W*\s(\S)*$/
+					return text.replace(reg , '…');
+				})
+				h = + $defDiv.outerHeight()
+			}
+			defDiv.attr('data-placeholder', $defDiv.text())
+				.style('height', defaultDefHeight + 'px')
+		})
+		terms.on('click', clickTerm)
+
+		
 
 		_.defer(function() {
 			var height = $(left[0][0]).height();
@@ -184,9 +204,52 @@
 		})
 
 		var words = div.selectAll('a[data-word]')
-		console.log(words)
-		words.on('click', clickDefInText)
+		.each(function(word) {
+			var word = d3.select(this)
+			word.append('span').text(word.text())
+			word.remove();
+		})
 		
+	}
+	function clickDefType(d) {
+		console.log(this)
+		var div = d3.select(this);
+		var isActive = div.classed('active')
+		right.selectAll('.defLinks li').classed('active', false)
+		if(isActive) {
+			//show all
+			right.selectAll('.termContainer').style('display','block')
+		} else {
+			//show just these
+			right.selectAll('.termContainer').style('display',function(term,i) {
+				if(term.type === d.label) {
+					return 'block'
+				}
+				return 'none'
+			})
+		}
+		div.classed('active', ! isActive)
+	}
+	function clickTerm(d,i) {
+		var container = d3.select(this);
+		var closed = container.classed('collapsed')
+		var defDiv = d3.select(this).select('.def')
+		var animationHeight;
+		if(closed) {
+			var fullHeight = defDiv.attr('data-h')
+			defDiv.text(d.def)
+			animationHeight = fullHeight
+		} else {
+			animationHeight = defaultDefHeight
+		}
+		container.classed('collapsed', !closed)
+		console.log(animationHeight)
+		defDiv.transition().duration(600).style('height', animationHeight + 'px')
+		if(!closed) {
+			setTimeout(function() {
+				defDiv.text(defDiv.attr('data-placeholder'))
+			}, 600)
+		}
 	}
 	function clickDefInText() {
 		var tag = d3.select(this);
