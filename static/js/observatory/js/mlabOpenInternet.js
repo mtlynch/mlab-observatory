@@ -22,12 +22,14 @@
 		
 		timeControl.init();
 		timeControl.hide()
-		controls.init()
 		
 		exploreViz.init()
 		exploreViz.hide()
 		compareViz.init()
 		compareViz.hide()
+
+		controls.init()
+
 		help.init();
 		help.hide()
 		
@@ -58,8 +60,8 @@
 
 	}
 	function switchTab(tab) {
-		console.log(activeTab)
-		console.log(tab)
+		//console.log(activeTab)
+		//console.log(tab)
 		if(activeTab !== null) {
 			//destroy active tab if needed
 			switch(activeTab.id) {

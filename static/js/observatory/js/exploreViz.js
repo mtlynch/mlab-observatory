@@ -125,7 +125,7 @@
 			return d.y
 		}
 		_.each(datasets, function(dataset) {
-			console.log(dataset)
+		//	console.log(dataset)
 			_.each(dataset.data, function(d) {
 				xPoint(d)
 				yPoint(d)
@@ -144,10 +144,10 @@
 			return d.data 
 		}))
 		
-		console.log('allPoints')
-		console.log(allPoints)
+		//console.log('allPoints')
+		//console.log(allPoints)
 		var activePoints = _.filter(allPoints, function(d) { return d.active })
-		console.log(activePoints)
+		//console.log(activePoints)
 		var uniquePoints = d3.nest()
 			.key(function(d) { return d.x + ',' + d.y })
 			.rollup(function(v) { return v[0]; })
@@ -158,7 +158,7 @@
 			.rollup(function(v) { return v[0]; })
 		 	.entries(activePoints)
 			.map(function(d) { return d.values; })
-		console.log(uniquePoints)
+		//console.log(uniquePoints)
 
 		var voronoiGen = d3.geom.voronoi()
 			.x(function(d) { return d.x })
@@ -434,6 +434,18 @@
 		exploreTT.style('opacity',0).transition().duration(0).delay(300).style('display','none')
 
 	}
+	function getSetHidingGreyLines(newVal) {
+		if(typeof newVal === 'undefined') {
+			return hidingGreyLines
+		} else {
+			hidingGreyLines = newVal
+		}
+		div.classed('hideGrey', hidingGreyLines)
+		toggleGreyButton.select('.ul').text(function() {
+			return hidingGreyLines ? 'Show' : 'Hide'
+		})
+
+	}
 
 	if( ! window.mlabOpenInternet) {
 		window.mlabOpenInternet = {}
@@ -442,6 +454,6 @@
 		init: init,
 		show: show,
 		hide: hide,
-		hidingGreyLines: function() { return hidingGreyLines }
+		hidingGreyLines: getSetHidingGreyLines
 	}
 })()

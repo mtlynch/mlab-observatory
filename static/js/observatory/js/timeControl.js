@@ -21,6 +21,8 @@
 	var lineGen;
 	var lineGenDashed;
 	var selectedCombinations;
+	var defaultTime = null
+
 	function init() {
 		div = d3.select('#timeControl')
 		div.append('div').attr('class','timeControlLabel')
@@ -208,6 +210,16 @@
 		dateOptions = opts;
 		if(selectedMonthIndex === null) {
 			selectedMonthIndex = maxMonthIndex
+			if(defaultTime !== null) {
+				//console.log('default')
+				//console.log(defaultTime.format('LLLL'))
+				var defaultTimeIndex = _.findIndex(dateOptions, function(d) {
+					return d.date.isSame(defaultTime)
+				})
+				if(defaultTimeIndex !== -1) {
+					selectedMonthIndex = defaultTimeIndex;
+				}
+			}
 			selectedDate = dateOptions[selectedMonthIndex]
 			//console.log(selectedMonthIndex)
 			var dispMonth = selectedDate.date.clone()
@@ -399,11 +411,19 @@
 
 		return timeHash
 	}
+
+	function setTime(time) {
+		var timeParts = time.split('-')
+		var time = timeParts[0]
+		var momentTime = moment(time, "MMDDYYYY")
+		defaultTime = momentTime
+	}
 	exports.init = init
 	exports.show = show
 	exports.hide = hide;
 	exports.getDeepLinkHash = getDeepLinkHash
 	exports.getSelectedDate = function() { return selectedDate }
+	exports.setTime = setTime
 	if( ! window.mlabOpenInternet){
 		window.mlabOpenInternet = {}
 	}

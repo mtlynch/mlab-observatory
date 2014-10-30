@@ -37,7 +37,7 @@
 	function show() {
 		div.style('display', null)
 		curViewType = mlabOpenInternet.controls.getCompareByView()
-		console.log('show compare');
+		//console.log('show compare');
 		var aggregationSelection = mlabOpenInternet.controls.getCompareAggregationSelection()
 		console.log(aggregationSelection)
 		var view = 'daily'
@@ -45,8 +45,8 @@
 		
 	}
 	function dataLoaded(allCityData) {
-		console.log('all city data loaded')
-		console.log(allCityData)
+		//console.log('all city data loaded')
+		//console.log(allCityData)
 		var dataInTimePeriod = []
 		var curDate = mlabOpenInternet.timeControl.getSelectedDate()
 		var dateToMatch = {
@@ -64,12 +64,12 @@
 			dataInTimePeriod.push({data: timelyData, id: dataset.filenameID, color: dataset.color})
 			numDays = Math.max(numDays, timelyData.length)
 		})
-		console.log(numDays)
+		//console.log(numDays)
 		plot(dataInTimePeriod)
 	}
 	function plot(datasets) {
 		var fullHeight = datasets.length * graphAreaHeight
-		console.log(fullHeight)
+		//console.log(fullHeight)
 		svg.attr('height', fullHeight)
 		focusLine.attr('y2', fullHeight - (graphAreaHeight - graphHeight))
 			.attr('x1', -100).attr('x2', -100)
@@ -83,7 +83,7 @@
 		var maxDatasetLength = 0;
 		var minDate = null;
 		var maxDate = null;
-		console.log(datasets)
+		//console.log(datasets)
 		_.each(datasets, function(dataset) {
 			_.each(dataset.data, function(datum) {
 				if(minDate === null || datum.date < minDate) {

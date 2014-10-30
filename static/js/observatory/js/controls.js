@@ -165,7 +165,7 @@
 
 	}
 	function clickTab(d,i, passEvent) {
-		console.log(arguments)
+		//console.log(arguments)
 		if(typeof passEvent === 'undefined') {
 			passEvent = true;
 		}
@@ -180,7 +180,7 @@
 		selectedTab = d
 		$(div[0][0]).find('.tabs li.active').removeClass('active')
 		dTab.classed('active', true)
-		console.log(d)
+		//console.log(d)
 		if(d.id === 'explore') {
 			showExploreControls();
 		} else if(d.id === 'compare') {
@@ -493,6 +493,8 @@
 			console.log(selectedMetroIndex)
 			if(selectedMetroIndex !== -1) {
 				selectedMetroRegion = metros[selectedMetroIndex]
+				$metroSelect.selectpicker('val', selectedMetroRegion)
+
 			}
 			console.log(selectedMetroRegion)
 			setupComboSelectOptions()
@@ -513,22 +515,48 @@
 			$comboSelect.selectpicker('val', _.map(newCombos, function(d) { return d.label }))
 			selectedCombinations = newCombos
 		}
-		/*
-		if(tab === 'explore') {
-			showExploreControls()
-		} else if(tab === 'compare') {
-			showCompareControls()
-		} else if(tab === 'help') {
-			showHelpControls()
+		if(typeof hashObj['hidingGrey'] !== 'undefined' && hashObj['hidingGrey'] === '1') {
+			mlabOpenInternet.exploreViz.hidingGreyLines(true)
 		}
-		*/
+
+		if(typeof hashObj['time'] !== 'undefined') {
+			mlabOpenInternet.timeControl.setTime(hashObj['time'])
+		}
 		
+		if(typeof hashObj['viewBy'] !== 'undefined') {
+			var viewOptionIndex = _.findIndex(viewByOpts,function(d,i) {
+				return d.replace(/ /g, '') === hashObj['viewBy']
+			})
+			if(viewOptionIndex !== -1) {
+				selectedCompareViewBy = viewByOpts[viewOptionIndex]
+				$compareViewBySelect.selectpicker('val', selectedCompareViewBy)
+				if(selectedCompareViewBy === 'Metro Region') {
+					$metroSelect.next().show();
+					$ispSelect.next().hide()
+				} else if(selectedCompareViewBy === 'ISP') {
+					$metroSelect.next().hide();
+					$ispSelect.next().show();
+				}
+			}
+		}
+		if(typeof hashObj['isp'] !== 'undefined') {
+			var allISPs = mlabOpenInternet.dataLoader.getISPs()
+			var ispIndex = _.findIndex(allISPs, function(d,i) {
+				return d === hashObj['isp']
+			})
+			if(ispIndex !== -1) {
+				selectedISP = allISPs[ispIndex]
+				$ispSelect.selectpicker('val', selectedISP)
+			}
+		}
+
+		populateSelectionLabel()
 
 	}
 	function updateHash() {
 		var hash = getDeepLinkHash()
 		console.log(hash)
-		return
+		
 		if(window.history) {
 			window.history.replaceState(null, null, '#' + hash)
 		}

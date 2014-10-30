@@ -163,9 +163,9 @@
 		return combos
 	}
 	function requestMetroData(metro, dataType, callback) {
-		console.log('request metro')
-		console.log(metro)
-		console.log(dataType)
+		//console.log('request metro')
+		//console.log(metro)
+		//console.log(dataType)
 		loadingDiv.style('display','block')
 		var dataObj = null;
 		if(dataType === 'hourly') {
@@ -230,9 +230,9 @@
 		})
 	}
 	function requestCompareData(aggregationSelection, viewType, dataType, callback) {
-		console.log(viewType)
-		console.log(aggregationSelection)
-		console.log(validMetroRegions)
+		//console.log(viewType)
+		//console.log(aggregationSelection)
+		//console.log(validMetroRegions)
 
 		loadingDiv.style('display','block')
 		var dataToLoad = [];
