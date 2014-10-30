@@ -46,7 +46,7 @@
 	var helpTabs;
 	var selectedHelpTab = null
 	var firstOptionsSet = false;
-
+	var viewingFromDeeplink = false
 	function init() {
 		div = d3.select('#controls')
 
@@ -421,15 +421,14 @@
 		if(selectedTab.id === 'explore') {
 			hashObj['metric'] = selectedMetric.key
 			hashObj['metro'] = selectedMetroRegion.replace(/ /g,'')
-			if(selectedCombinations.length !== 0) {
-				hashObj['combos'] = _.reduce(selectedCombinations, function(out, combo,index) {
-					var o = out + combo.filename
-					if(index != selectedCombinations.length - 1) {
-						o += ','
-					}
-					return o
-				},'')
-			}
+			hashObj['combos'] = _.reduce(selectedCombinations, function(out, combo,index) {
+				var o = out + combo.filename
+				if(index != selectedCombinations.length - 1) {
+					o += ','
+				}
+				return o
+			},'')
+		
 
 			hashObj['time'] = mlabOpenInternet.timeControl.getDeepLinkHash()
 			if(mlabOpenInternet.exploreViz.hidingGreyLines()) {
@@ -463,6 +462,7 @@
 		function getQueryParameters(str) {
 			return (str || document.location.search).replace(/(^\#)/,'').split("&").map(function(n){return n = n.split("="),this[n[0]] = n[1],this}.bind({}))[0];
 		}
+
 		var hashObj = getQueryParameters(hash)
 		console.log(hashObj)
 		if(typeof hashObj['tab'] !== 'undefined') {
@@ -473,6 +473,8 @@
 			if(selectedTabIndex !== -1) {
 				selectedTab = tabData[selectedTabIndex]
 				clickTab(selectedTab, selectedTabIndex, false)
+				viewingFromDeeplink = true;
+
 			}
 		}
 		
@@ -484,6 +486,7 @@
 				selectedMetric = metrics[selectedMetricIndex]
 				$metricsSelect.selectpicker('val', selectedMetric.key)
 				console.log(selectedMetricIndex)
+				viewingFromDeeplink = true;
 			}
 		}
 		if(typeof hashObj['metro'] !== 'undefined') {
@@ -494,6 +497,7 @@
 			if(selectedMetroIndex !== -1) {
 				selectedMetroRegion = metros[selectedMetroIndex]
 				$metroSelect.selectpicker('val', selectedMetroRegion)
+				viewingFromDeeplink = true;
 
 			}
 			console.log(selectedMetroRegion)
@@ -511,16 +515,19 @@
 				if(typeof validCombo !== 'undefined') {
 					newCombos.push(validCombo)
 				}
+				viewingFromDeeplink = true;
 			})
 			$comboSelect.selectpicker('val', _.map(newCombos, function(d) { return d.label }))
 			selectedCombinations = newCombos
 		}
 		if(typeof hashObj['hidingGrey'] !== 'undefined' && hashObj['hidingGrey'] === '1') {
 			mlabOpenInternet.exploreViz.hidingGreyLines(true)
+				viewingFromDeeplink = true;
 		}
 
 		if(typeof hashObj['time'] !== 'undefined') {
 			mlabOpenInternet.timeControl.setTime(hashObj['time'])
+				viewingFromDeeplink = true;
 		}
 		
 		if(typeof hashObj['viewBy'] !== 'undefined') {
@@ -537,6 +544,7 @@
 					$metroSelect.next().hide();
 					$ispSelect.next().show();
 				}
+				viewingFromDeeplink = true;
 			}
 		}
 		if(typeof hashObj['isp'] !== 'undefined') {
@@ -547,9 +555,9 @@
 			if(ispIndex !== -1) {
 				selectedISP = allISPs[ispIndex]
 				$ispSelect.selectpicker('val', selectedISP)
+				viewingFromDeeplink = true;
 			}
 		}
-
 		populateSelectionLabel()
 
 	}
@@ -570,6 +578,7 @@
 	exports.getCompareAggregationSelection = getCompareAggregationSelection
 	exports.getHelpTab = function() { return selectedHelpTab }
 	exports.populateSelectionLabel = populateSelectionLabel
+	exports.isViewingDeeplink = function() { return viewingFromDeeplink }
 	exports.updateHash = updateHash
 	if( ! window.mlabOpenInternet){
 		window.mlabOpenInternet = {}

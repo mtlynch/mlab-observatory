@@ -132,7 +132,8 @@
 			d.classed('active', ! d.classed('active'))
 		})
 		helpModal.selectAll('.helpContent .buttons li').on('click', closeHelpPopup)
-		if(mlabOpenInternet.utils.getCookie(popupDontShowCookiename) !== 'true') {
+		if(mlabOpenInternet.utils.getCookie(popupDontShowCookiename) !== 'true' &&
+			! mlabOpenInternet.controls.isViewingDeeplink() ) {
 			helpModal.style('display','block')
 		}
 		sections = left.selectAll('section').data(sectionData)
