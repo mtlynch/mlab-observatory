@@ -348,7 +348,7 @@
 		var selectedDateLabels = d3.select('#controls .selectedDateLabels')
 		//console.log(selectedDate)
 		var date = selectedDate.date.clone();
-		var lbl = date.format('MMM D – ') + date.daysInMonth()
+		var lbl = date.format('MMM D – ') + date.daysInMonth() + ', ' + date.format('YYYY')
 		selectedDateLabels.text(lbl)
 	}
 	function updatePaths() {

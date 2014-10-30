@@ -215,6 +215,10 @@ Explore Viz
 	position: absolute;
 	display: none;
 	opacity: 0;
+	-webkit-transition: opacity 0.3s ease-in-out;
+	-moz-transition: opacity 0.3s ease-in-out;
+	-o-transition: opacity 0.3s ease-in-out;
+	transition: opacity 0.3s ease-in-out;
 }
 #exploreViz .exploreTTContent {
 	background: #616266;
@@ -263,8 +267,8 @@ Explore Viz
 	text-align: right;
 	cursor: pointer;
 	position: absolute;
-	right: 65px;
-	top:0;
+	right: 90px;
+	top: -48px;
 
 }
 #exploreViz .toggleGrey .ul {
@@ -276,6 +280,19 @@ Explore Viz
 #exploreViz.hideGrey g.lines path.selectedLine {
 	display: inline;
 }
+
+#exploreViz .hoverAreas path {
+	fill: none;
+	pointer-events: all;
+	stroke: none;
+
+}
+/*
+#exploreViz .hoverAreas path:hover {
+	stroke: none;
+	stroke-width: 2px;
+}
+*/
 /*
 Time controller
 */
@@ -474,7 +491,7 @@ Help
 	padding-right: 65px;
 	width: -webkit-calc(34%-1px);
 	width: calc(34% - 1px);
-	overflow-y: scroll;
+	overflow-y: auto;
 }
 
 .helpHeader {
@@ -491,7 +508,7 @@ Help
 #help .right .rightLabel {
 	font-weight: bold;
 	font-size: 26px;
-	margin-bottom: 10px;
+	margin-bottom: 6px;
 }
 #help .right .defTypeLabel {
 	color: #666;
@@ -505,23 +522,24 @@ Help
 }
 #help .right .termContainer {
 	margin-bottom: 1.5em;
+	cursor: pointer;
 }
 #help .right .term {
 	color: #9bd2c7;
-	font-weight: bold;
 	font-size: 18px;
 	line-height: 1.1em;
 
 }
 #help .right .def {
 	color: #666;
+	overflow:hidden;
 }
 
 #help .right .defLinks {
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
-	margin-bottom: 10px;
+	margin-bottom: 20px;
 }
 #help .right .defLinks li {
 	float: left;
@@ -531,13 +549,14 @@ Help
 	border-bottom: 3px solid #fff;
 }
 #help .right .defLinks li a {
-	color: #666;
+	color: #9bd2c7;
+	font-weight: bold;
 }
 #help .right .defLinks li a:hover {
 	text-decoration: none;
 }
 
-#help .right .defLinks li:hover {
+#help .right .defLinks li.active {
 	border-bottom: 3px solid #a7a7a7;
 }
 #help .right .defLinks li:last-child {
