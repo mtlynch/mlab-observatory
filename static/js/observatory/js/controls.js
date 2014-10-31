@@ -47,6 +47,7 @@
 	var selectedHelpTab = null
 	var firstOptionsSet = false;
 	var viewingFromDeeplink = false
+	var shareText = null
 	function init() {
 		div = d3.select('#controls')
 
@@ -69,7 +70,16 @@
 		var selectBar = div.append('div').attr('class','selectBar')
 
 		selectionLabels = div.append('div').attr('class','selectionLabels')
-		selectedDateLabels = div.append('div').attr('class','selectedDateLabels')
+		selectedDateLabels = div.append('div').attr('class','selectedDateLabels cf')
+		var dateLabels = selectedDateLabels.append('div').attr('class','dateLabels')
+		var socialIcons = selectedDateLabels.append('div').attr('class','socialIcons cf')
+		socialIcons.append('div').attr('class','shareLabel').text("Share:")
+		var icons = [
+			'google','fb','twitter'
+		]
+		socialIcons.selectAll('div.icon').data(icons).enter().append('div').attr('class',function(d) {
+			return 'icon icon-' + d
+		}).on('click', clickSocialIcon)
 
 		var metricsSelect = selectBar.append('select').attr('title','Metric')
 		metricsSelectD3 = metricsSelect
@@ -163,6 +173,23 @@
 
 		})
 
+	}
+	function clickSocialIcon(d) {
+		var shareURL = encodeURIComponent(document.location.toString())
+		var fullURL;
+		var text = encodeURIComponent(shareText)
+		switch(d) {
+			case "twitter":
+				fullURL = "https://twitter.com/share?text=" + text + " &url=" + shareURL
+			break;
+			case "google":
+				fullURL = "https://plus.google.com/share?url=" + shareURL
+			break;
+			case "fb":
+				fullURL = "http://www.facebook.com/sharer/sharer.php?u=" + shareURL
+			break
+		}
+		window.open(fullURL)
 	}
 	function clickTab(d,i, passEvent) {
 		//console.log(arguments)
@@ -259,6 +286,8 @@
 	}
 
 	function populateSelectionLabel() {
+		shareText = ""
+		shareText += selectedMetric.name + " "
 		var labelHTML = "";
 		labelHTML += '<span class="b">' + selectedMetric.name + '</span>'
 		labelHTML += ' for '
@@ -305,6 +334,7 @@
 			}
 			labelHTML += 'in '
 			labelHTML += '<span class="b">' + selectedMetroRegion + '</span>'
+			shareText += "in " + selectedMetroRegion
 		} else if(selectedTab.id === 'compare') {
 			var color = null;
 			if(selectedCompareViewBy === 'ISP') {
@@ -313,6 +343,7 @@
 			labelHTML += '<span class="b"' + (color !== null ? ' style="color:#' + color + '"' : '') + '>'
 			if(selectedCompareViewBy === 'Metro Region') {
 				labelHTML += selectedMetroRegion
+				shareText += "in " + selectedMetroRegion
 			} else if(selectedCompareViewBy === 'ISP') {
 				var ispMap = mlabOpenInternet.dataLoader.getISPNameMap();
 				var isp = selectedISP
@@ -320,6 +351,7 @@
 					isp = ispMap[isp]
 				}
 				labelHTML += isp
+				shareText += "on " + isp
 			}
 			labelHTML += '</span>'
 		}
@@ -430,7 +462,10 @@
 			},'')
 		
 
-			hashObj['time'] = mlabOpenInternet.timeControl.getDeepLinkHash()
+			var time = mlabOpenInternet.timeControl.getDeepLinkHash()
+			if(time !== null) {
+				hashObj['time'] = time
+			}
 			if(mlabOpenInternet.exploreViz.hidingGreyLines()) {
 				hashObj['hidingGrey'] = '1'
 			}
@@ -443,7 +478,10 @@
 			} else if(selectedCompareViewBy === 'ISP') {
 				hashObj['isp'] = selectedISP
 			}
-			hashObj['time'] = mlabOpenInternet.timeControl.getDeepLinkHash()
+			var time = mlabOpenInternet.timeControl.getDeepLinkHash()
+			if(time !== null) {
+				hashObj['time'] = time
+			}
 		}
 		var hash = _.reduce(hashObj, function(hashVal, value, key) {
 		//	console.log(key + " " + value)

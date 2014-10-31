@@ -357,7 +357,7 @@
 		updateDateLabels()
 	}
 	function updateDateLabels() {
-		var selectedDateLabels = d3.select('#controls .selectedDateLabels')
+		var selectedDateLabels = d3.select('#controls .selectedDateLabels .dateLabels')
 		//console.log(selectedDate)
 		var date = selectedDate.date.clone();
 		var lbl = date.format('MMM D – ') + date.daysInMonth() + ', ' + date.format('YYYY')
@@ -403,6 +403,9 @@
 		div.style('display','none')
 	}
 	function getDeepLinkHash() {
+		if(selectedDate === null) {
+			return null
+		}
 		var date = selectedDate.date.clone()
 		var timeHash = date.format('MMDDYYYY')
 		timeHash += '-'
