@@ -172,6 +172,7 @@ Controls
 }
 #controls .socialIcons {
 	margin-left: 50px;
+	margin-top: 3px;
 	float: left;
 }
 #controls .socialIcons .icon {
@@ -194,14 +195,17 @@ Controls
 #controls .socialIcons .icon-google {
 	width: 15px;
 	background-position: 0px 0px;
+	margin-right: 10px;
 }
 #controls .socialIcons .icon-fb {
 	width: 11px;
 	background-position: -15px 0px;
+	margin-top: 1px;
 }
 #controls .socialIcons .icon-twitter {
 	width: 17px;
 	background-position:-28px 0px;
+	margin-top: 2px;
 }
 #controls .dropdown-menu li a:hover {
 	color: white !important;
