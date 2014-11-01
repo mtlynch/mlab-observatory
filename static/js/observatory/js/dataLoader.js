@@ -59,7 +59,6 @@
 		d3.xhr(validExploreCodesFile, loadExploreCodes)
 	}
 	function loadExploreCodes(err, data) {
-		console.log(data)
 		var response = data.response.split('\n')
 		_.each(response, function(code) {
 			if(code === '') {
@@ -125,6 +124,7 @@
 		metrics.sort(function(a,b) {
 			return a.name > b.name
 		})
+		loadingDiv.style('display','none')
 		exports.emitEvent('loaded')
 	}
 	function getCombinations(metro) {
@@ -158,12 +158,14 @@
 			}
 		})
 		labels.sort();
-		console.log(labels)
-		console.log(combos)
+		//console.log(labels)
+		//console.log(combos)
 		return combos
 	}
 	function requestMetroData(metro, dataType, callback) {
-
+		//console.log('request metro')
+		//console.log(metro)
+		//console.log(dataType)
 		loadingDiv.style('display','block')
 		var dataObj = null;
 		if(dataType === 'hourly') {
@@ -175,7 +177,7 @@
 			return
 		}
 		var combos = getCombinations(metro);
-		console.log(combos)
+		//console.log(combos)
 		var numCombosLoaded = 0;
 		_.each(combos, function(combo) {
 			if(typeof dataObj[combo.filename] === 'undefined') {
@@ -228,9 +230,9 @@
 		})
 	}
 	function requestCompareData(aggregationSelection, viewType, dataType, callback) {
-		console.log(viewType)
-		console.log(aggregationSelection)
-		console.log(validMetroRegions)
+		//console.log(viewType)
+		//console.log(aggregationSelection)
+		//console.log(validMetroRegions)
 
 		loadingDiv.style('display','block')
 		var dataToLoad = [];
@@ -250,7 +252,7 @@
 				}
 			})
 		}
-		console.log(dataToLoad)
+		//console.log(dataToLoad)
 
 
 		var dataObj = null;

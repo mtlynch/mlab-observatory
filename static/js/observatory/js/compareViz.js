@@ -4,8 +4,9 @@
 		w: 824 - margin.left - margin.right,
 	}
 	
-	var graphAreaHeight = 140;
+	var graphAreaHeight = 150;
 	var graphHeight = 60
+	var topPadding = 20;
 
 	var svg;
 	var chart;
@@ -36,7 +37,7 @@
 	function show() {
 		div.style('display', null)
 		curViewType = mlabOpenInternet.controls.getCompareByView()
-		console.log('show compare');
+		//console.log('show compare');
 		var aggregationSelection = mlabOpenInternet.controls.getCompareAggregationSelection()
 		console.log(aggregationSelection)
 		var view = 'daily'
@@ -44,8 +45,8 @@
 		
 	}
 	function dataLoaded(allCityData) {
-		console.log('all city data loaded')
-		console.log(allCityData)
+		//console.log('all city data loaded')
+		//console.log(allCityData)
 		var dataInTimePeriod = []
 		var curDate = mlabOpenInternet.timeControl.getSelectedDate()
 		var dateToMatch = {
@@ -63,12 +64,12 @@
 			dataInTimePeriod.push({data: timelyData, id: dataset.filenameID, color: dataset.color})
 			numDays = Math.max(numDays, timelyData.length)
 		})
-		console.log(numDays)
+		//console.log(numDays)
 		plot(dataInTimePeriod)
 	}
 	function plot(datasets) {
 		var fullHeight = datasets.length * graphAreaHeight
-		console.log(fullHeight)
+		//console.log(fullHeight)
 		svg.attr('height', fullHeight)
 		focusLine.attr('y2', fullHeight - (graphAreaHeight - graphHeight))
 			.attr('x1', -100).attr('x2', -100)
@@ -82,7 +83,7 @@
 		var maxDatasetLength = 0;
 		var minDate = null;
 		var maxDate = null;
-		console.log(datasets)
+		//console.log(datasets)
 		_.each(datasets, function(dataset) {
 			_.each(dataset.data, function(datum) {
 				if(minDate === null || datum.date < minDate) {
@@ -118,7 +119,7 @@
 		datasetGroups.enter().append('g').attr('class','dataset')
 		datasetGroups.exit().remove()
 		datasetGroups.attr("transform",function(d,i) {
-			var y = i * graphAreaHeight
+			var y = i * graphAreaHeight + (topPadding)
 			var x = 0
 			return 'translate(' + x + ',' + y + ')'
 		})
@@ -235,10 +236,17 @@
 		var ttContent = [
 			'ttLabel ttMetricLabel',
 			'ttValue ttMetric',
+			'ttLabel ttSampleSizeLabel',
+			'ttValue ttSampleSize',
 			'ttLabel ttDate'
 		]
 		content.selectAll('div').data(ttContent)
 			.enter().append('div').attr('class',String)
+			.text(function(d,i) {
+				if(d === 'ttLabel ttSampleSizeLabel') {
+					return 'Sample Size'
+				}
+			})
 		/* y ticks */
 		var lineTickArray = [0, 0.5, 1]
 		var lineTicks = datasetGroups.selectAll('line.yScaleGuide').data(lineTickArray)
@@ -255,7 +263,8 @@
 		/* xaxis */
 		chart.selectAll('.axis').remove()
 		var xAxis = d3.svg.axis().scale(xScale).orient('bottom')
-			.tickFormat(d3.time.format("%e %b")).ticks(6);
+			.tickFormat(d3.time.format("%e %b")).ticks(6)
+			.outerTickSize(0);
 		datasetGroups.append('g').attr('class','xAxis axis').attr('transform', 'translate(0,' + graphHeight +')')
 			.call(xAxis)
 
@@ -315,19 +324,11 @@
 
 				return metroName
 			}
-		}).attr('x', 0).attr('y', yScale(0) + 40)
+		}).attr('x', 0).attr('y', -15)
 
 		dotGroup.moveToFront()
-		/*
-		.style('fill', function(d) {
-			
-			console.log(curViewType)
-			if(curViewType === 'Metro Region') {
-				return d.color
-			}
-			return null;
-		})
-		*/
+
+		mlabOpenInternet.controls.updateHash()
 
 	}
 	function hide() {
@@ -378,6 +379,10 @@
 		tooltips.select('.ttMetricLabel').text(function(d) {
 			return curMetric.name
 		})
+		tooltips.select('.ttSampleSize').text(function(d,i) {
+			var sampleSize = d.data[xIndex][curMetric.key + "_n"]
+			return sampleSize
+		})
 		tooltips.select('.ttDate').text(momentNearest.format('M/D/YYYY'))
 		var activeWidthCutoffPct = 0.2;
 		tooltips.style('display','block').classed('onLeft', function(d,i) {
@@ -413,9 +418,10 @@
 			}
 			return x + 'px'
 		}).style('top', function(d) {
-			var ttHeight = $(this).height();
+			var ttHeight = $(this).outerHeight();
 			var y = d.tooltipY
 			y -= ttHeight / 2
+			y += topPadding
 			return y + 'px'
 		})
 		chart.selectAll('circle.dot').style('opacity',0)

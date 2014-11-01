@@ -87,7 +87,7 @@ Controls
 	outline: none;
 	font-weight: bold;
 	color: #8c8c8c;
-	
+
 	-webkit-transition: none !important;
 	-moz-transition: none !important;
 	-o-transition: none !important;
@@ -167,6 +167,46 @@ Controls
 	color: #8b8b8b;
 	margin-bottom: 30px;
 }
+#controls .selectedDateLabels .dateLabels {
+	float: left;
+}
+#controls .socialIcons {
+	margin-left: 50px;
+	margin-top: 3px;
+	float: left;
+}
+#controls .socialIcons .icon {
+	float: left;
+	margin-right: 15px;
+	height: 15px;
+	background: #fff url('../../observatory/images/socialIcons.png') 0 0 no-repeat;
+	margin-top: 2px;
+	cursor: pointer;
+}
+#controls .socialIcons .shareLabel {
+	float: left;
+	font-size: 13px;
+	margin-right: 15px;
+	text-transform: none;
+	color: #cbcbcb;
+	font-weight: normal;
+}
+
+#controls .socialIcons .icon-google {
+	width: 15px;
+	background-position: 0px 0px;
+	margin-right: 10px;
+}
+#controls .socialIcons .icon-fb {
+	width: 11px;
+	background-position: -15px 0px;
+	margin-top: 1px;
+}
+#controls .socialIcons .icon-twitter {
+	width: 17px;
+	background-position:-28px 0px;
+	margin-top: 2px;
+}
 #controls .dropdown-menu li a:hover {
 	color: white !important;
 }
@@ -215,6 +255,10 @@ Explore Viz
 	position: absolute;
 	display: none;
 	opacity: 0;
+	-webkit-transition: opacity 0.3s ease-in-out;
+	-moz-transition: opacity 0.3s ease-in-out;
+	-o-transition: opacity 0.3s ease-in-out;
+	transition: opacity 0.3s ease-in-out;
 }
 #exploreViz .exploreTTContent {
 	background: #616266;
@@ -257,15 +301,38 @@ Explore Viz
 }
 
 #exploreViz .toggleGrey {
+	display: none;
 	color: #8b8b8b;
 	font-size: 13px;
 	text-align: right;
 	cursor: pointer;
+	position: absolute;
+	right: 90px;
+	top: -48px;
 
 }
 #exploreViz .toggleGrey .ul {
 	text-decoration: underline;
 }
+#exploreViz.hideGrey g.lines path {
+	display: none;
+}
+#exploreViz.hideGrey g.lines path.selectedLine {
+	display: inline;
+}
+
+#exploreViz .hoverAreas path {
+	fill: none;
+	pointer-events: all;
+	stroke: none;
+
+}
+/*
+#exploreViz .hoverAreas path:hover {
+	stroke: none;
+	stroke-width: 2px;
+}
+*/
 /*
 Time controller
 */
@@ -413,7 +480,7 @@ compare
 #compareViz .graphLabel {
 	fill: #808284;
 	font-weight: bold;
-	font-size: 17px;
+	font-size: 16px;
 }
 #compareViz .xAxis .tick text {
 	fill: #808284;
@@ -464,7 +531,7 @@ Help
 	padding-right: 65px;
 	width: -webkit-calc(34%-1px);
 	width: calc(34% - 1px);
-	overflow-y: scroll;
+	overflow-y: auto;
 }
 
 .helpHeader {
@@ -481,12 +548,12 @@ Help
 #help .right .rightLabel {
 	font-weight: bold;
 	font-size: 26px;
-	margin-bottom: 10px;
+	margin-bottom: 6px;
 }
 #help .right .defTypeLabel {
 	color: #666;
 	font-weight: bold;
-	font-size: 20px;
+	font-size: 16px;
 	margin-bottom:  1em;
 	display: block;
 }
@@ -495,23 +562,24 @@ Help
 }
 #help .right .termContainer {
 	margin-bottom: 1.5em;
+	cursor: pointer;
 }
 #help .right .term {
 	color: #9bd2c7;
-	font-weight: bold;
 	font-size: 18px;
 	line-height: 1.1em;
 
 }
 #help .right .def {
 	color: #666;
+	overflow:hidden;
 }
 
 #help .right .defLinks {
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
-	margin-bottom: 10px;
+	margin-bottom: 20px;
 }
 #help .right .defLinks li {
 	float: left;
@@ -521,13 +589,14 @@ Help
 	border-bottom: 3px solid #fff;
 }
 #help .right .defLinks li a {
-	color: #666;
+	color: #9bd2c7;
+	font-weight: bold;
 }
 #help .right .defLinks li a:hover {
 	text-decoration: none;
 }
 
-#help .right .defLinks li:hover {
+#help .right .defLinks li.active {
 	border-bottom: 3px solid #a7a7a7;
 }
 #help .right .defLinks li:last-child {

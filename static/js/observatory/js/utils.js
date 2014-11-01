@@ -7,7 +7,7 @@ d3.selection.prototype.moveToFront = function() {
 if(typeof console === 'undefined') {
 	console = {}
 }
-console.log = function() {};
+//console.log = function() {};
 (function() {
 	var exports = new EventEmitter()
 	

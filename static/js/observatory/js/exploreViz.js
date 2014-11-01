@@ -1,5 +1,5 @@
 (function() {
-	var margin = {top: 5, right: 20, bottom: 25, left: 60}
+	var margin = {top: 15, right: 20, bottom: 25, left: 60}
 	var exploreDimensions = {
 		w: 824 - margin.left - margin.right,
 		h: 441 - margin.top - margin.bottom
@@ -14,23 +14,28 @@
 		"#4bb84b", "#dc4d3b", "#997edf", "#a3417f", "#548bd7", "#bdcb29", "#d68a1e",
 		"#93d49c", "#eq9489", "#c2b2ec", "#c88db2", "#98b9e7", "#d7e07f", "#efb978"
 	]
+	var toggleGreyButton;
+	var hidingGreyLines = false;
+	var lastActiveTooltipData = null;
 	function init() {
 		div = d3.select('#exploreViz')
 		
-		/*
-		var toggleGreyButton = div.append('div').attr('class','toggleGrey')
+		
+		toggleGreyButton = div.append('div').attr('class','toggleGrey')
 		toggleGreyButton.append('span').text('Hide').attr('class','ul')
 		toggleGreyButton.append('span').text(' all other lines')
-		*/
+		toggleGreyButton.on('click', toggleGreyLines)
 
 		exploreTT = div.append('div').attr('class','exploreTTContainer')
 		exploreTT.call(createTT)
+		exploreTT.on('mouseover', mouseOverTT).on('mouseout', mouseOutTT)
 		svg = div.append('svg')
 			.attr('width', exploreDimensions.w + margin.left + margin.right)
 			.attr('height', exploreDimensions.h + margin.top + margin.bottom)
 		chart = svg.append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 		chart.append('g').attr('class','lines')
 		chart.append('g').attr('class','dots')
+		chart.append('g').attr('class','hoverAreas')
 
 	}
 	function show() {
@@ -41,8 +46,8 @@
 		
 	}
 	function dataLoaded(allMetroData) {
-		console.log('all metro data loaded')
-		console.log(allMetroData)
+		//console.log('all metro data loaded')
+		//console.log(allMetroData)
 		var dataInTimePeriod = []
 		var curDate = mlabOpenInternet.timeControl.getSelectedDate()
 		var dateToMatch = {
@@ -64,13 +69,22 @@
 		var metric = mlabOpenInternet.controls.getSelectedMetric();
 		curMetric = metric;
 		var selectedCombinations = mlabOpenInternet.controls.getSelectedCombinations()
+		if(selectedCombinations.length === 0) {
+			toggleGreyButton.style('display','none')
+			toggleGreyButton.select('.ul').text('Hide')
+			hidingGreyLines = false
+			div.classed('hideGrey', hidingGreyLines)
+
+		} else {
+			toggleGreyButton.style('display','block')
+		}
 		var metricKey = metric.key;
 		var minDataValue = Number.MAX_VALUE;
 		var maxDataValue = -Number.MIN_VALUE;
 		var maxDatasetLength = 0;
 		var minDate = null;
 		var maxDate = null;
-		console.log(datasets)
+		//console.log(datasets)
 		_.each(datasets, function(dataset) {
 			_.each(dataset.data, function(datum) {
 				
@@ -95,21 +109,83 @@
 				}
 			})
 		})
-		console.log(minDataValue + ' ' + maxDataValue)
-		console.log(minDate + " " + maxDate)
+		//console.log(minDataValue + ' ' + maxDataValue)
+		//console.log(minDate + " " + maxDate)
 		yScale = d3.scale.linear().domain([0, maxDataValue])
 			.range([exploreDimensions.h, 0])
 		//var xScale = d3.scale.linear().domain([0, maxDatasetLength - 1]).range([0, exploreDimensions.w])
 		xScale = d3.time.scale().domain([minDate, maxDate]).range([0, exploreDimensions.w])
 		var paths = svg.select('g.lines').selectAll('path.full').data(datasets)
-		var lineGen = d3.svg.line()
-			.x(function(d,i) {
-				return xScale(d.date)
+		var xPoint = function(d,i) {
+			d.x = xScale(d.date)
+			return d.x
+		}
+		var yPoint = function(d,i) {
+			d.y = yScale(d[metricKey])
+			return d.y
+		}
+		_.each(datasets, function(dataset) {
+		//	console.log(dataset)
+			_.each(dataset.data, function(d) {
+				xPoint(d)
+				yPoint(d)
 			})
-			.y(function(d,i) {
-				var yVal = yScale(d[metricKey])
-				return yScale(d[metricKey])
-			}).defined(function(d,i) {
+		})
+		var allPoints = d3.merge(_.map(datasets, function(d) { 
+			_.each(d.data, function(dd) { 
+				var active = _.find(selectedCombinations, function(combo) {
+					return combo.filename === d.id
+				})
+				dd.dataID = d.id
+				dd.color = d.color
+					
+				dd.active =  typeof active !== 'undefined'
+			} )
+			return d.data 
+		}))
+		
+		//console.log('allPoints')
+		//console.log(allPoints)
+		var activePoints = _.filter(allPoints, function(d) { return d.active })
+		//console.log(activePoints)
+		var uniquePoints = d3.nest()
+			.key(function(d) { return d.x + ',' + d.y })
+			.rollup(function(v) { return v[0]; })
+		 	.entries(allPoints)
+			.map(function(d) { return d.values; })
+		var uniqueActivePoints = d3.nest()
+			.key(function(d) { return d.x + ',' + d.y })
+			.rollup(function(v) { return v[0]; })
+		 	.entries(activePoints)
+			.map(function(d) { return d.values; })
+		//console.log(uniquePoints)
+
+		var voronoiGen = d3.geom.voronoi()
+			.x(function(d) { return d.x })
+			.y(function(d) { return d.y })
+			.clipExtent([
+				[-margin.left , -margin.top],
+				[
+				exploreDimensions.w + margin.left + margin.right,
+				exploreDimensions.h + margin.top + margin.bottom
+				]
+				])
+
+//		var allVoronoiData = voronoiGen(uniquePoints)
+//		var activeVoronoiData = voronoiGen(uniqueActivePoints)
+
+		var dotPointsToUse;
+		if(hidingGreyLines) {
+			dotPointsToUse = uniqueActivePoints
+		} else {
+			dotPointsToUse = uniquePoints
+		}
+		var voronoiData = voronoiGen(dotPointsToUse)
+
+		var lineGen = d3.svg.line()
+			.x(function(d) { return d.x })
+			.y(function(d) { return d.y })
+			.defined(function(d,i) {
 				return d[metricKey+"_n"] >= mlabOpenInternet.dataLoader.getMinSampleSize()
 			})
 		var dotData = []
@@ -128,8 +204,8 @@
 				return null
 			} else {
 				d.active = true;
-				console.log('active dataset');
-				console.log(d)
+				//console.log('active dataset');
+				//console.log(d)
 
 				_.each(d.data, function(dotDataPoint) {
 					dotDataPoint.dataID = d.id
@@ -144,15 +220,16 @@
 			} else {
 				return null
 			}
+		}).classed('selectedLine', function(d,i) {
+			return d.active
 		})
+
+
 		var pathsDashed = svg.select('g.lines').selectAll('path.dashed').data(datasets)
 		var lineGen = d3.svg.line()
-			.x(function(d,i) {
-				return xScale(d.date)
-			})
-			.y(function(d,i) {
-				return yScale(d[metricKey])
-			})
+			.x(function(d) { return d.x })
+			.y(function(d) { return d.y })
+			
 		pathsDashed.enter().append('path');
 		pathsDashed.exit().remove()
 		pathsDashed.attr('class',function(d,i) {
@@ -176,6 +253,8 @@
 			} else {
 				return null
 			}
+		}).classed('selectedLine', function(d,i) {
+			return d.active
 		})
 
 		_.each(datasets, function(dataset) {
@@ -184,11 +263,13 @@
 			}
 		})
 
-		console.log(dotData)
+		//console.log(dotData)
 		var dotSize = 5;
-		var dots = svg.select('g.dots').selectAll('g.dot').data(dotData)
+		var dots = svg.select('g.dots').selectAll('g.dot').data(dotPointsToUse)
 		dots.enter().append('g').attr('class','dot')
 		dots.attr('transform', function(d) {
+				d.dot = this
+				//console.log(d)
 				var x = xScale(d.date);
 				var y = yScale(d[metricKey])
 				return 'translate(' + x + ',' + y + ')'
@@ -198,15 +279,28 @@
 		hitDot.enter().append('circle').attr('class','hitDot')
 			.attr('r', 13)
 			.attr('opacity',0)
-		hitDot.on('mouseover', mouseOverDot)
-			.on('mouseout', mouseOutDot)
+		//hitDot.on('mouseover', mouseOverDot)
+		//	.on('mouseout', mouseOutDot)
 		var fillDot = dots.selectAll('.fillDot').data(function(d) { return [d] })
 		fillDot.enter().append('circle').attr('class','fillDot')
 			.attr('r', dotSize)
-		fillDot.style('fill', function(d) { return d.color })
-			.style('opacity',0)
+		fillDot.style('fill', function(d) { 
+			if(d.active) {
+				return d.color
+			}
+			return '#ccc'
+		})
+		.style('opacity',0)
 
-
+		var voronoiGroup = chart.select('.hoverAreas')
+		var vPaths = voronoiGroup.selectAll("path").data(voronoiData)
+		vPaths.enter().append("path")
+		vPaths.exit().remove()
+		vPaths.attr("d", function(d) { return "M" + d.join("L") + "Z"; })
+			.datum(function(d) { return d.point; })
+			.on("mouseover", mouseOverDot)
+			.on("mouseout", mouseOutDot);
+	
 
 		chart.selectAll('.axis').remove()
 		var xAxis = d3.svg.axis().scale(xScale).orient('bottom')
@@ -220,7 +314,7 @@
 			}).ticks(5)
 		chart.append('g').attr('class','yAxis axis').call(yAxis)
 		var numTextItems = chart.select('.yAxis').selectAll('text')[0].length
-		console.log(numTextItems)
+		//console.log(numTextItems)
 		chart.select('.yAxis').selectAll('text').attr('x', -margin.left).style('text-anchor','initial')
 			.text(function(d,i) {
 				var curText = d3.select(this).text();
@@ -230,9 +324,29 @@
 				var textParts = curText.split(' ')
 				return textParts[0]
 			})
+
+		mlabOpenInternet.controls.populateSelectionLabel()
+		mlabOpenInternet.controls.updateHash()
+		$(window).off('mousemove', mouseMoveDoc).on('mousemove', mouseMoveDoc)
+	}
+	function mouseMoveDoc(e) {
+		var mouseY =  e.pageY
+		var graphOffset = $(div[0][0]).offset().top
+		if(mouseY < graphOffset) {
+			mouseOutDot()
+		}
 	}
 	function hide() {
 		div.style('display','none')
+		$(window).off('mousemove', mouseMoveDoc)
+	}
+	function toggleGreyLines(d,i) {
+		hidingGreyLines = !hidingGreyLines
+		div.classed('hideGrey', hidingGreyLines)
+		toggleGreyButton.select('.ul').text(
+			hidingGreyLines ? "Show" : "Hide"
+		)
+		show()
 	}
 	function createTT() {
 		exploreTT.style('opacity',0).style('display','none')
@@ -247,12 +361,25 @@
 		content.append('div').attr('class','ttValue dateValue')
 
 	}
+	function mouseOverTT() {
+		mouseOverDot(lastActiveTooltipData)
+	}
+	function mouseOutTT() {
+		mouseOutDot(lastActiveTooltipData)
+	}
 	function mouseOverDot(d,i) {
+		if(typeof d === 'undefined') {
+			d = lastActiveTooltipData
+		}
+		if(d === null) {
+			return
+		}
+		lastActiveTooltipData = d
 		//console.log(d)
 
-		var dot = d3.select(this.parentNode).select('.fillDot')
+		var dot = d3.select(d.dot).select('.fillDot')
 		dot.style('opacity',1)
-		exploreTT.style('opacity',1).style('display','block')
+		exploreTT.transition().duration(0).style('display','block')
 		var idParts = d.dataID.split('_')
 		var code = idParts[0];
 		var isp = idParts[1]
@@ -292,12 +419,31 @@
 
 
 		exploreTT.style('left', x + 'px').style('top', y + 'px')
+		exploreTT.style('opacity',1)
 		
 	}
 	function mouseOutDot(d,i) {
-		var dot = d3.select(this.parentNode).select('.fillDot')
+		if(typeof d === 'undefined') {
+			d = lastActiveTooltipData
+		}
+		if(d === null) {
+			return
+		}
+		var dot = d3.select(d.dot).select('.fillDot')
 		dot.style('opacity',0)
-		exploreTT.style('opacity',0).style('display','none')
+		exploreTT.style('opacity',0).transition().duration(0).delay(300).style('display','none')
+
+	}
+	function getSetHidingGreyLines(newVal) {
+		if(typeof newVal === 'undefined') {
+			return hidingGreyLines
+		} else {
+			hidingGreyLines = newVal
+		}
+		div.classed('hideGrey', hidingGreyLines)
+		toggleGreyButton.select('.ul').text(function() {
+			return hidingGreyLines ? 'Show' : 'Hide'
+		})
 
 	}
 
@@ -307,6 +453,7 @@
 	window.mlabOpenInternet.exploreViz = {
 		init: init,
 		show: show,
-		hide: hide
-    }
+		hide: hide,
+		hidingGreyLines: getSetHidingGreyLines
+	}
 })()
