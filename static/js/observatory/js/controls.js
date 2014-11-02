@@ -77,8 +77,8 @@
 		var icons = [
 			'google','fb','twitter'
 		]
-		socialIcons.selectAll('div.icon').data(icons).enter().append('div').attr('class',function(d) {
-			return 'icon icon-' + d
+		socialIcons.selectAll('div.socialIcon').data(icons).enter().append('div').attr('class',function(d) {
+			return 'socialIcon socialIcon-' + d
 		}).on('click', clickSocialIcon)
 
 		var metricsSelect = selectBar.append('select').attr('title','Metric')
