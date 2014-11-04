@@ -31,6 +31,7 @@ def readCombos():
 	print(validIDs)
 	validKeys = open(outputFolder + 'validKeys.txt', 'w+')
 	for key,years in validIDs.iteritems():
+		key = key.replace('&', '')
 		validKeys.write(key + "\n");
 		daily = open(outputFolder + key + '_daily.csv', 'w')
 		hourly = open(outputFolder + key + '_hourly.csv', 'w')
