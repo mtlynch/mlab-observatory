@@ -10,7 +10,7 @@ from pytz import timezone
 from datetime import timedelta
 
 np.seterr(divide='ignore', invalid='ignore')
-cityListFile = '../../../data/siteMapFiles/US_mlab-sites-transit-provider.csv'
+cityListFile = 'agg_timezone.csv'
 folderName = 'updatedData-2014-10-24'
 #folderName = 'testInput'
 outputFolder = "outputCompare_2014-10-24"
