@@ -485,6 +485,7 @@
 			if(mlabOpenInternet.exploreViz.hidingGreyLines()) {
 				hashObj['hidingGrey'] = '1'
 			}
+			hashObj['timeView'] = selectedTimeView.toLowerCase()
 
 		} else if(selectedTab.id === 'compare') {
 			hashObj['metric'] = selectedMetric.key
@@ -498,6 +499,7 @@
 			if(time !== null) {
 				hashObj['time'] = time
 			}
+			hashObj['timeView'] = selectedTimeView.toLowerCase()
 		}
 		var hash = _.reduce(hashObj, function(hashVal, value, key) {
 		//	console.log(key + " " + value)
@@ -610,6 +612,17 @@
 				selectedISP = allISPs[ispIndex]
 				$ispSelect.selectpicker('val', selectedISP)
 				viewingFromDeeplink = true;
+			}
+		}
+		if(typeof hashObj['timeView'] !== 'undefined') {
+			var timeViewIndex = _.findIndex(timeViewOptions, function(d,i) {
+				return d.toLowerCase() === hashObj['timeView']
+			})
+			if(timeViewIndex !== -1) {
+				selectedTimeView = timeViewOptions[timeViewIndex]
+				timeViewButtons.classed('selected', function(d,i) {
+					return timeViewIndex === i
+				})
 			}
 		}
 		populateSelectionLabel()

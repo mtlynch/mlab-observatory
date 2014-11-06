@@ -69,7 +69,7 @@
 						numMoved ++;
 						if(typeof d.dateShifted === 'undefined') {
 							d.dateShifted = true;
-							d.moment.add('hours', 24)
+							d.moment.add(24, 'hours')
 							d.date = d.moment.toDate()							
 						}
 					}

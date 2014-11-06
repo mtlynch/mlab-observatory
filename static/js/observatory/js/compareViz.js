@@ -68,13 +68,14 @@
 				_.each(timelyData, function(d) {
 					if( + d.hour < 6) {
 						numMoved ++;
-						if(typeof dataset.dateShifted === 'undefined') {
+						if(typeof d.dateShifted === 'undefined') {
 							d.dateShifted = true;
 							d.moment.add(24,'hours')
 							d.date = d.moment.toDate()
 						}
 					}
 				})
+				//console.log(numMoved)
 				for(var i = 0; i < numMoved; i++) {
 					timelyData.push(timelyData.shift())
 				}
@@ -127,8 +128,8 @@
 				}
 			})
 		})
-		console.log(minDataValue + " " + maxDataValue)
-
+		//console.log(minDataValue + " " + maxDataValue)
+		//console.log(minDate + " " + maxDate)
 		/* setup scales */
 		yScale = d3.scale.linear().domain([0, maxDataValue])
 			.range([graphHeight, 0])
