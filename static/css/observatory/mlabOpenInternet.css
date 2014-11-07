@@ -169,6 +169,7 @@ Controls
 }
 #controls .selectedDateLabels .dateLabels {
 	float: left;
+	width: 140px;
 }
 #controls .socialIcons {
 	margin-left: 50px;
@@ -321,6 +322,7 @@ Explore Viz
 }
 #exploreViz .exploreTTContainer .dateValue {
 	color: #c2c2c2;
+	font-size: 11px;
 }
 
 #exploreViz .toggleGrey {
@@ -388,7 +390,7 @@ Time controller
 }
 #timeControl .timeControlLabel {
 	font-size: 11px;
-	color: #616266;
+	color: #8b8b8b;
 	margin-bottom: 0.7em;
 }
 /*

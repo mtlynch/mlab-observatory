@@ -281,7 +281,16 @@
 				console.error('dataset missing xvalues, x scale will be off')
 			}
 		})
-
+		pathsDashed.each(function(d,i) {
+			if(d.active) {
+				d3.select(this).moveToFront()
+			}
+		})
+		paths.each(function(d,i) {
+			if(d.active) {
+				d3.select(this).moveToFront()
+			}
+		})
 		//console.log(dotData)
 		var dots = svg.select('g.dots').selectAll('g.dot').data(dotPointsToUse)
 		dots.enter().append('g').attr('class','dot')
@@ -322,7 +331,11 @@
 			return '#ccc'
 		})
 		.style('opacity',dotOpacityFunction)
-
+		dots.each(function(d,i) {
+			if(d.active) {
+				d3.select(this).moveToFront()
+			}
+		})
 		var voronoiGroup = chart.select('.hoverAreas')
 		var vPaths = voronoiGroup.selectAll("path").data(voronoiData)
 		vPaths.enter().append("path")
@@ -437,7 +450,7 @@
 			isp = ispNameMap[isp]
 		}
 		var tp = mlabOpenInternet.dataLoader.getTPForCode(code)
-		exploreTT.select('.ttTitle').text(isp + ", " + tp)
+		exploreTT.select('.ttTitle').text(isp + " x " + tp)
 		exploreTT.select('.valueLabel').text(curMetric.name)
 		exploreTT.select('.valueValue').text(d[curMetric.key] + " " + curMetric.units)
 		exploreTT.select('.sampleSizeValue').text(d[curMetric.key + '_n'])

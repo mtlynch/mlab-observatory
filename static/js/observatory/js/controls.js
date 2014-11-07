@@ -178,12 +178,12 @@
 		populateSelectionLabel()
 
 		showExploreControls();
-		
 
 		var hash = document.location.hash;
 		
 		populateFromHash(hash)
 
+		div.selectAll('button.selectpicker').attr('title',null)
 		_.defer(function() {
 			exports.emitEvent('switchTab', [selectedTab])
 
@@ -295,6 +295,8 @@
 
 		$comboSelect.selectpicker('val', selectedOpts);
 		$comboSelect.selectpicker('refresh')
+		div.selectAll('button.selectpicker').attr('title',null)
+
 		$comboSelect.next().width(168)
 		selectedCombinations = _.filter(currentCombinationOptions, function(d) {
 			return selectedOpts.indexOf(d.label) !== -1
@@ -380,7 +382,7 @@
 			d3.select('#exploreViz .lines').selectAll('path').transition().duration(300)
 				.style('stroke-width',function(d,i) {
 					if(d.id === id) {
-						return 6
+						return 4.5
 					} else if(d.active) {
 						return 3;
 					}
@@ -410,6 +412,7 @@
 		selectionLabels.style('display','block')
 		selectedDateLabels.style('display','block')
 		helpTabsList.style('display','none')
+		div.selectAll('.selectedTime').style('display','block')
 
 	}
 	function showCompareControls() {
@@ -420,6 +423,7 @@
 		selectionLabels.style('display','block')
 		selectedDateLabels.style('display','block')
 		helpTabsList.style('display','none')
+		div.selectAll('.selectedTime').style('display','block')
 
 	}
 	function showHelpControls() {

@@ -329,7 +329,7 @@
 		maxYScale.enter().append('text').attr('class','yScaleMax')
 		maxYScale.text(function(d) {
 			return d + " " + metric.units
-		}).attr('x', dimensions.w).attr('y', yScale(maxDataValue) + 4)
+		}).attr('x', dimensions.w).attr('y', yScale(maxDataValue) - 6)
 		.each(function(d) {
 			textSize = this.getBBox()
 		})
