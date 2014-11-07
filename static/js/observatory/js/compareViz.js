@@ -21,6 +21,7 @@
 	var tooltips;
 	var numDays;
 	var curTimeViewType;
+	var lastMouseOverEvent = null
 	function init() {
 		div = d3.select('#compareViz')
 		svg = div.append('svg')
@@ -252,6 +253,7 @@
 		content = tooltips.selectAll('div.content').data(arrayIdent)
 		content.enter().append('div').attr('class','content')
 		tooltips.style('display','none')
+		tooltips.on('mouseover',mouseOverTT)
 		tooltips.selectAll('div.rightArrow').data(arrayIdent)
 			.enter().append('div').attr('class','rightArrow arrow')
 		var ttContent = [
@@ -374,8 +376,14 @@
 		div.style('display','none')
 	}
 
-	function mouseOverGraph() {
-		var e = d3.event
+	function mouseOverGraph(event) {
+		var e;
+		if(typeof event === 'undefined') {
+			e = d3.event
+		} else {
+			e = event
+		}
+		lastMouseOverEvent = e;
 		var x = (e.offsetX || e.clientX - $(e.target).offset().left);
 		var y = (e.offsetY || e.clientY - $(e.target).offset().top);
 
@@ -496,9 +504,15 @@
 
 	}
 	function mouseOutGraph() {
+		tooltips.style('display','none')
+		focusLine.transition().duration(0).attr('x1', -100).attr('x2', -100)
+		if(curTimeViewType === 'daily') {
+			chart.selectAll('circle.dot').style('opacity',0)
+		}
+		
 	}
-	function hideTT() {
-
+	function mouseOverTT() {
+		mouseOverGraph(lastMouseOverEvent)
 	}
 	function dotOpacityFunction(d,i) {
 		if(curTimeViewType === 'daily') {
