@@ -207,7 +207,7 @@
 		var words = div.selectAll('a[data-word]')
 		.each(function(word) {
 			var word = d3.select(this)
-			word.append('span').text(word.text())
+			$("<span>" + word.text() + "</span>").insertAfter(this)
 			word.remove();
 		})
 		
