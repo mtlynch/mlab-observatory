@@ -1,3 +1,8 @@
+/*
+Main MLab Application.
+
+Gets everything going
+*/
 (function() {
 
 	var dataLoader = mlabOpenInternet.dataLoader;
@@ -6,19 +11,19 @@
 	var compareViz = mlabOpenInternet.compareViz;
 	var filters = mlabOpenInternet.filters;
 	var list = mlabOpenInternet.list;
-	var about = mlabOpenInternet.about;
 	var controls = mlabOpenInternet.controls
 	var timeControl = mlabOpenInternet.timeControl
 	var help = mlabOpenInternet.help
 	var activeTab = null;
+
+	/* request initial data to build controls */
 	function init() {
-		about.init();
 		dataLoader.on('loaded', loaded)
 		dataLoader.init();
 	}
+
+	/* once data is loaded, setup each element of visual */
 	function loaded() {
-		//console.log('loaded')
-		//console.log(controls);
 		
 		timeControl.init();
 		timeControl.hide()
@@ -33,12 +38,13 @@
 		help.init();
 		help.hide()
 		
+		/* event listeners for changing controls */
 		controls.addListener('switchTab', switchTab)
 		controls.addListener('selectionChanged', selectionChanged)
 		timeControl.addListener('timeChanged', timeChanged)
-		//timeControl.show()
-		//exploreViz.show()
 	}
+
+	/* update visualization once time slider control changes */
 	function timeChanged(e) {
 		if(activeTab.id === 'explore') {
 			exploreViz.show()
@@ -47,6 +53,8 @@
 		}
 
 	}
+
+	/* update visualization based on any other time of control change */
 	function selectionChanged(e) {
 		if(activeTab.id === 'explore') {
 			timeControl.show()
@@ -59,9 +67,9 @@
 		}
 
 	}
+
+	/* if we switch tabs, switch out the visible view */
 	function switchTab(tab) {
-		//console.log(activeTab)
-		//console.log(tab)
 		if(activeTab !== null) {
 			//destroy active tab if needed
 			switch(activeTab.id) {

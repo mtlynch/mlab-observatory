@@ -169,16 +169,15 @@ Controls
 }
 #controls .selectedDateLabels .dateLabels {
 	float: left;
-	width: 140px;
 }
 #controls .socialIcons {
-	margin-left: 50px;
+	margin-right: 65px;
 	margin-top: 3px;
-	float: left;
+	float: right;
 }
 #controls .socialIcons .socialIcon {
 	float: left;
-	margin-right: 15px;
+	margin-left: 15px;
 	height: 15px;
 	background: #fff url('../../observatory/images/socialIcons.png') 0 0 no-repeat;
 	margin-top: 2px;
@@ -333,7 +332,7 @@ Explore Viz
 	cursor: pointer;
 	position: absolute;
 	right: 90px;
-	top: -48px;
+	top: -18px;
 
 }
 #exploreViz .toggleGrey .ul {
@@ -711,30 +710,6 @@ Loading
 	padding-top: 165px;
 	box-sizing: border-box;
 }
-
-/***************
-  ABOUT
-***************/
-
-.aboutModal {
-  display: none;
-  position: fixed;
-  width: 960px;
-  height: 100%;
-  background-color: rgba(0,0,0,0.2);
-  top: 0;
-  left: 0;
-  z-index: 50;
-}
-.aboutContent {
-  background: white;
-  padding: 30px;
-  color: #767676;
-  width: 70%;
-  margin: 200px auto;
-}
-
-
 
 
 .cf:before,

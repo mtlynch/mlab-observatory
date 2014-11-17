@@ -1,3 +1,6 @@
+/*
+viz file for the comapre visualizations
+*/
 (function() {
 	var margin = {top: 10, right: 5, bottom: 0, left: 5}
 	var dimensions = {
@@ -22,6 +25,8 @@
 	var numDays;
 	var curTimeViewType;
 	var lastMouseOverEvent = null
+
+	/* initalize dom elements for compare */
 	function init() {
 		div = d3.select('#compareViz')
 		svg = div.append('svg')
@@ -36,6 +41,8 @@
 		svg.on('mouseout', mouseOutGraph)
 		svg.on('mousemove', mouseOverGraph)
 	}
+
+	/* show compare DOM elements and request data */
 	function show() {
 		div.style('display', null)
 		curViewType = mlabOpenInternet.controls.getCompareByView()
@@ -47,6 +54,8 @@
 		mlabOpenInternet.dataLoader.requestCompareData(aggregationSelection, curViewType, curTimeViewType, dataLoaded)
 		
 	}
+
+	//data received, filter out data that is not in the currently selected time period
 	function dataLoaded(allCityData) {
 		//console.log('all city data loaded')
 		//console.log(allCityData)
@@ -89,6 +98,10 @@
 		//console.log(numDays)
 		plot(dataInTimePeriod)
 	}
+
+	/*
+	plot all the compare graphs. sets up lines, dots, scales, labels etc
+	*/
 	function plot(datasets) {
 		var fullHeight = datasets.length * graphAreaHeight
 		//console.log(fullHeight)
@@ -204,6 +217,8 @@
 					console.log(d)
 				}
 				return yScale(d[metricKey])
+			}).defined(function(d) {
+				return d[metricKey+"_n"] > 0
 			})
 		pathsDashed.enter().append('path').attr('class','dashed');
 		pathsDashed.exit().remove()
@@ -372,10 +387,17 @@
 		mlabOpenInternet.controls.updateHash()
 
 	}
+
+	/*
+	hides the compare viz dom elements
+	*/
 	function hide() {
 		div.style('display','none')
 	}
 
+	/*
+	compare viz mouse handler to create tooltip
+	*/
 	function mouseOverGraph(event) {
 		var e;
 		if(typeof event === 'undefined') {
@@ -503,6 +525,10 @@
 		}
 
 	}
+
+	/*
+	hides tooltip
+	*/
 	function mouseOutGraph() {
 		tooltips.style('display','none')
 		focusLine.transition().duration(0).attr('x1', -100).attr('x2', -100)
@@ -511,9 +537,14 @@
 		}
 		
 	}
+
+	/* helper function to ensure tooltip doesn't hide when you mouse over it
+	*/
 	function mouseOverTT() {
 		mouseOverGraph(lastMouseOverEvent)
 	}
+
+	/* helper function to define dot opacity */
 	function dotOpacityFunction(d,i) {
 		if(curTimeViewType === 'daily') {
 			return 0;

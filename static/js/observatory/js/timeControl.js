@@ -1,3 +1,6 @@
+/*
+control for the time control slider/visual
+*/
 (function() {
 	var exports = new EventEmitter()
 	var div;
@@ -23,10 +26,13 @@
 	var selectedCombinations;
 	var defaultTime = null
 
+	/*
+	setup inital dom elements for time control
+	*/
 	function init() {
 		div = d3.select('#timeControl')
 		div.append('div').attr('class','timeControlLabel')
-			.text('Click and drag left or right to adjust monthly date range')
+			.text('Click and drag left or right to change selected month')
 		svg = div.append('svg')
 			.attr('width', svgDimensions.width + margin.left + margin.right)
 			.attr('height', svgDimensions.height + margin.top + margin.bottom)
@@ -57,6 +63,12 @@
 			.attr('y1', svgDimensions.height).attr('y2', svgDimensions.height)
 
 	}
+
+	/*
+	show the time control DOM elements and request data for it
+
+	the data requested for it is the same as the Daily Explore or Daily Compare data
+	*/
 	function show() {
 		div.style('display',null)
 		var view = 'daily'
@@ -72,6 +84,10 @@
 			
 		}
 	}
+
+	/*
+	plot the requested data, works very similar to the explore plots
+	*/
 	function dataLoaded(allMetroData) {
 		//plot the entire dataset of selected cities (or all cities if none selected)
 		//console.log('time control data loaded')
@@ -289,7 +305,7 @@
 				if(d.monthIndex === numMonths - 1 || d.monthIndex === numMonths - 2) {
 					return false;
 				}
-				return true
+				return d[metricKey+"_n"] > 0
 			})
 		pathsDashed.enter().append('path').attr('class','dashed');
 		pathsDashed.exit().remove()
@@ -356,13 +372,24 @@
 		svg.call(drag)
 		updateDateLabels()
 	}
+
+	//update the currently selected date labels
 	function updateDateLabels() {
 		var selectedDateLabels = d3.select('#controls .selectedDateLabels .dateLabels')
 		//console.log(selectedDate)
 		var date = selectedDate.date.clone();
-		var lbl = date.format('MMM D – ') + date.daysInMonth() + ', ' + date.format('YYYY')
+		var baseLabel = "";
+		var curTimeView = mlabOpenInternet.controls.getSelectedTimeView().toLowerCase()
+		if(curTimeView === "daily") {
+			baseLabel = "Daily Median Within "
+		} else if(curTimeView === "hourly") {
+			baseLabel = "Hourly Median For "
+		}
+		var lbl = baseLabel + date.format('MMM YYYY')
 		selectedDateLabels.text(lbl)
 	}
+
+	//update strokes of paths based on what is currently selected
 	function updatePaths() {
 		var strokeFunc = function(d,i) {
 			//console.log(d)
@@ -386,6 +413,8 @@
 			return lineGenDashed(d.data)
 		}).style('stroke', strokeFunc)
 	}
+
+	// create some fake data from times where we are missing data
 	function nullData(startDate, monthIndex) {
 		startDate = startDate.clone().toDate()
 		var numDays = getDaysInMonth(startDate)
@@ -395,13 +424,19 @@
 		})
 		return arr
 	}
+
+	//return the number of days in the month of the given date
 	function getDaysInMonth(date) {
 		var d= new Date(date.getFullYear(), date.getMonth()+1, 0);
 		return d.getDate();
 	}
+
+	//hide the time control
 	function hide() {
 		div.style('display','none')
 	}
+
+	//return the currently selected time used for the deep linking
 	function getDeepLinkHash() {
 		if(selectedDate === null) {
 			return null
@@ -415,6 +450,7 @@
 		return timeHash
 	}
 
+	//sets the currently selected time based on the deeplink
 	function setTime(time) {
 		var timeParts = time.split('-')
 		var time = timeParts[0]

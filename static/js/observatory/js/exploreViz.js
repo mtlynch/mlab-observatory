@@ -1,3 +1,6 @@
+/*
+viz file for the explore type visualizations
+*/
 (function() {
 	var margin = {top: 15, right: 20, bottom: 25, left: 60}
 	var exploreDimensions = {
@@ -18,6 +21,8 @@
 	var hidingGreyLines = false;
 	var lastActiveTooltipData = null;
 	var curViewType = null
+
+	/* setup initial dom elements of our charts */
 	function init() {
 		div = d3.select('#exploreViz')
 		
@@ -39,6 +44,9 @@
 		chart.append('g').attr('class','hoverAreas')
 
 	}
+	/* make this chart's dom elements visible
+	request data for the current viz state's data
+	*/
 	function show() {
 		div.style('display', null)
 		var curMetro = mlabOpenInternet.controls.getSelectedMetro()
@@ -47,6 +55,10 @@
 		mlabOpenInternet.dataLoader.requestMetroData(curMetro, curViewType, dataLoaded)
 		
 	}
+	/*
+	data has been returned form data loader
+	filter out data that is not part of the current selected time
+	*/
 	function dataLoaded(allMetroData) {
 		//console.log('all metro data loaded')
 		//console.log(allMetroData)
@@ -84,6 +96,10 @@
 		})
 		plot(dataInTimePeriod)
 	}
+
+	/* function to draw the explore plots
+	sets up lines, dots, and voronois for hover and labels
+	*/
 	function plot(datasets) {
 		var metric = mlabOpenInternet.controls.getSelectedMetric();
 		curMetric = metric;
@@ -114,11 +130,7 @@
 					maxDate = datum.date
 				}
 				var sampleSize = +datum[metricKey + "_n"]
-				/*
-				if(sampleSize < mlabOpenInternet.dataLoader.getMinSampleSize()) {
-					return
-				}
-				*/
+				
 				var metricValue = +datum[metricKey]
 				if(metricValue < minDataValue) {
 					minDataValue = metricValue
@@ -132,7 +144,6 @@
 		//console.log(minDate + " " + maxDate)
 		yScale = d3.scale.linear().domain([0, maxDataValue])
 			.range([exploreDimensions.h, 0])
-		//var xScale = d3.scale.linear().domain([0, maxDatasetLength - 1]).range([0, exploreDimensions.w])
 		xScale = d3.time.scale().domain([minDate, maxDate]).range([0, exploreDimensions.w])
 		var paths = svg.select('g.lines').selectAll('path.full').data(datasets)
 		var xPoint = function(d,i) {
@@ -190,8 +201,6 @@
 				]
 				])
 
-//		var allVoronoiData = voronoiGen(uniquePoints)
-//		var activeVoronoiData = voronoiGen(uniqueActivePoints)
 
 		var dotPointsToUse;
 		if(hidingGreyLines) {
@@ -248,7 +257,9 @@
 		var lineGen = d3.svg.line()
 			.x(function(d) { return d.x })
 			.y(function(d) { return d.y })
-			
+			.defined(function(d) {
+				return d[metricKey+"_n"] > 0
+			})
 		pathsDashed.enter().append('path');
 		pathsDashed.exit().remove()
 		pathsDashed.attr('class',function(d,i) {
@@ -302,14 +313,7 @@
 				return 'translate(' + x + ',' + y + ')'
 			})
 		dots.exit().remove();
-		/*
-		var hitDot = dots.selectAll('.hitDot').data(function(d) { return [d] })
-		hitDot.enter().append('circle').attr('class','hitDot')
-			.attr('r', 13)
-			.attr('opacity',0)
-		//hitDot.on('mouseover', mouseOverDot)
-		//	.on('mouseout', mouseOutDot)
-		*/
+		
 		var dotSize = 5;
 
 		var fillDot = dots.selectAll('.fillDot').data(function(d) { return [d] })
@@ -391,6 +395,10 @@
 		mlabOpenInternet.controls.updateHash()
 		$(window).off('mousemove', mouseMoveDoc).on('mousemove', mouseMoveDoc)
 	}
+
+	/*
+	extra mouse handler to hide tooltips when mouse in certain spots
+	*/
 	function mouseMoveDoc(e) {
 		var mouseY =  e.pageY
 		var graphOffset = $(div[0][0]).offset().top
@@ -398,10 +406,17 @@
 			mouseOutDot()
 		}
 	}
+	/*
+	hide dom elements for this viz
+	*/
 	function hide() {
 		div.style('display','none')
 		$(window).off('mousemove', mouseMoveDoc)
 	}
+
+	/*
+	toggle the grey lines (unselected lines) visibility
+	*/
 	function toggleGreyLines(d,i) {
 		hidingGreyLines = !hidingGreyLines
 		div.classed('hideGrey', hidingGreyLines)
@@ -410,6 +425,10 @@
 		)
 		show()
 	}
+
+	/*
+	function to create TT dom
+	*/
 	function createTT() {
 		exploreTT.style('opacity',0).style('display','none')
 		var content = exploreTT.append('div').attr('class','exploreTTContent')
@@ -423,12 +442,20 @@
 		content.append('div').attr('class','ttValue dateValue')
 
 	}
+
+	/*
+	tooltip helpers for when you mouse over the tooltip
+	*/
 	function mouseOverTT() {
 		mouseOverDot(lastActiveTooltipData)
 	}
 	function mouseOutTT() {
 		mouseOutDot(lastActiveTooltipData)
 	}
+
+	/*
+	mouse over a dot (or a voronoi path) to display a tooltip for that datum
+	*/
 	function mouseOverDot(d,i) {
 		if(typeof d === 'undefined') {
 			d = lastActiveTooltipData
@@ -490,6 +517,9 @@
 		exploreTT.style('opacity',1)
 		
 	}
+	/*
+	hide the tooltip
+	*/
 	function mouseOutDot(d,i) {
 		if(typeof d === 'undefined') {
 			d = lastActiveTooltipData
@@ -503,6 +533,9 @@
 		exploreTT.style('opacity',0).transition().duration(0).delay(300).style('display','none')
 
 	}
+	/*
+	method to toggle grey lines externally, used for permalink
+	*/
 	function getSetHidingGreyLines(newVal) {
 		if(typeof newVal === 'undefined') {
 			return hidingGreyLines
@@ -515,6 +548,9 @@
 		})
 
 	}
+	/*
+	helper function to determine dot opacity
+	*/
 	function dotOpacityFunction(d,i) {
 		if(curViewType === 'daily') {
 			return 0;

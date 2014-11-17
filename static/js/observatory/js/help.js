@@ -1,3 +1,7 @@
+/*
+defines the help content
+pretty straight forward
+*/
 (function() {
 	var exports = new EventEmitter()
 	var div;

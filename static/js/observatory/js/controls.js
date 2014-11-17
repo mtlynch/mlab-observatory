@@ -1,18 +1,29 @@
+/*
+functions that define the top controls of the visualization.
+includes the tabs, and all dropdown controls and a few others
+*/
+
 (function() {
 	var exports = new EventEmitter()
 	var div;
+	//data for dropdown arrow
 	var arrowURL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAJCAYAAADkZNYtAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAALdJREFUeNpi7OnpYQACSSB+CcT/GLADAyD+ygQkEoD4KRCvBWIWLAqjgfgcEJ8GKZYAYkYgDgDiRUDMjKTQCYjnQeWfghT3AfEWqGQkEM+ESmoC8TogZgPij0AcCrL2FxCHQDW4AHEy1O2OQMwPlQ8C4mtMUBN/ArE/EB+B8lOBWAWI/wNxEhDvAwkyIbnvGxD7gDyCJNYIxEthHHTfg9zmBTXpEhA3IUtiC6o30FD4BHUGHAAEGADvDSRjAuRkzAAAAABJRU5ErkJggg=='
+	//different tabs available
 	var tabData = [
 		{lbl: 'Explore', id: 'explore'},
 		{lbl: 'Compare', id: 'compare'},
 		{lbl: 'How this works', id: 'help'} 
 	]
+	//help sections
 	var helpTabs = [
 		'Our Tool', 'The Internet'
 	]
+
+	//stores our metrics and metro regions loaded from data
 	var metrics;
 	var metros;
 
+	//stores data on the currently selected items
 	var selectedMetric;
 	var selectedMetroRegion;
 	var selectedCombinations;
@@ -23,6 +34,7 @@
 
 	var currentCombinationOptions;
 
+	//d3 and jquery selections of our various controls
 	var metricsSelectD3;
 	var $metricsSelect;
 
@@ -53,6 +65,10 @@
 	var firstOptionsSet = false;
 	var viewingFromDeeplink = false
 	var shareText = null
+
+	/*
+	sets up DOM elements for each of the different controls, tabs, dropdowns and others
+	*/
 	function init() {
 		div = d3.select('#controls')
 
@@ -64,7 +80,7 @@
 		selectedCombinations = []
 
 		console.log(selectedMetric)
-
+		//setup tabs
 		var tabContainer = div.append('ul').attr('class','tabs cf')
 		var tabs = tabContainer.selectAll('li').data(tabData)
 		tabs.enter().append('li').text(function(d) { return d.lbl})
@@ -72,11 +88,15 @@
 				return i === 0
 			})
 			.on('click', clickTab)
+
+		//selectBar contains all the dropdowns
 		var selectBar = div.append('div').attr('class','selectBar')
 
+		// these contain text descriptions of the current selection
 		selectionLabels = div.append('div').attr('class','selectionLabels')
 		selectedDateLabels = div.append('div').attr('class','selectedDateLabels cf')
 		var dateLabels = selectedDateLabels.append('div').attr('class','dateLabels')
+		//social icons for sharing
 		var socialIcons = selectedDateLabels.append('div').attr('class','socialIcons cf')
 		socialIcons.append('div').attr('class','shareLabel').text("Share:")
 		var icons = [
@@ -86,6 +106,7 @@
 			return 'socialIcon socialIcon-' + d
 		}).on('click', clickSocialIcon)
 
+		//setup up metric dropdown
 		var metricsSelect = selectBar.append('select').attr('title','Metric')
 		metricsSelectD3 = metricsSelect
 		var metricOpts = metricsSelect.selectAll('option').data(metrics)
@@ -100,6 +121,7 @@
 		$metricsSelect = $(metricsSelect[0][0]).selectpicker({selectedTextFormat: 'static'}).on('change', changeMetric)
 		$metricsSelect.next().width(95)
 
+		//setup "View By" dropdown used for Compare viz only
 		compareViewBySelectD3 = selectBar.append('select').attr('title', 'View By')
 		var viewByOptions = compareViewBySelectD3.selectAll('option').data(viewByOpts)
 		viewByOptions.enter().append('option').text(String).attr('value', String)
@@ -112,6 +134,7 @@
 		$compareViewBySelect = $(compareViewBySelectD3[0][0]).selectpicker({selectedTextFormat: 'static'}).on('change', changeCompareViewBy)
 		$compareViewBySelect.next().width(107)
 
+		//setup metro select dropdown
 		var metroSelect = selectBar.append('select').attr('title', 'Metro Region')
 		metroSelectD3 = metroSelect;
 		var metroOpts = metroSelect.selectAll('option').data(metros)
@@ -125,6 +148,7 @@
 		$metroSelect = $(metroSelect[0][0]).selectpicker({selectedTextFormat: 'static'}).on('change', changeMetro)
 		$metroSelect.next().width(140)
 
+		//setup ISP select dropdown used for Compare only
 		ispSelectD3 = selectBar.append('select').attr('title','ISP')
 		var ispOptsArray = mlabOpenInternet.dataLoader.getISPs();
 		var ispOpts = ispSelectD3.selectAll('option').data(ispOptsArray)
@@ -139,18 +163,23 @@
 		selectedISP = ispOptsArray[0]
 		$ispSelect.next().width(75)
 
+		//setup dropdown for the ISPxTP dropdowns
+		//this dropdown options changes depending on the currently selected metro region
 		var comboSelect = selectBar.append('select')
 			.attr('multiple','multiple').attr('title','ISP Combinations')
 			.attr('data-max-options', 3)
 		comboSelectD3 = comboSelect
 		$comboSelect = $(comboSelect[0][0]).selectpicker({selectedTextFormat: 'static'}).on('change', changeCombinations)
+		//populate this dropdown with it's currently available options
 		setupComboSelectOptions()
 
+		//add "caret" arrow to each dropdown
 		div.selectAll('.caret')
 			.classed('caret', false)
 			.append('img')
 			.attr('src', arrowURL)
 
+		//create the tabs for the diff help sections
 		helpTabsList = selectBar.append('div').attr('class','btn-group helpTabs')
 			.style('display','none')
 		helpTab = helpTabsList.selectAll('button').data(helpTabs)
@@ -162,6 +191,7 @@
 		helpTab.append('div').text(String).attr('class','text')
 		helpTab.append('div').attr('class','underline')
 
+		//add in controls to select between Daily & Hourly
 		var timeViewContainer = selectBar.append('div').attr('class','selectedTime')
 		timeViewContainer.append('div').text('View:')
 		timeViewButtons = timeViewContainer.append('ul').selectAll('li').data(timeViewOptions)
@@ -171,25 +201,30 @@
 				return i === 0
 			}).on('click', clickTimeView)
 
+		//initialize controls to their default states
 		selectedTimeView = timeViewOptions[0]
 
 		selectedTab = tabData[0]
 		selectedHelpTab = helpTabs[0]
 		populateSelectionLabel()
 
+		//default to showing explore controls as that is the default viz
 		showExploreControls();
 
+		//if we have a permalink passed in, update controls based on the permalink
 		var hash = document.location.hash;
-		
 		populateFromHash(hash)
 
 		div.selectAll('button.selectpicker').attr('title',null)
 		_.defer(function() {
+			//inform app viz that we are ready to go
 			exports.emitEvent('switchTab', [selectedTab])
 
 		})
 
 	}
+
+	/* open a share link based on current state */
 	function clickSocialIcon(d) {
 		var shareURL = encodeURIComponent(document.location.toString())
 		var fullURL;
@@ -207,6 +242,11 @@
 		}
 		window.open(fullURL)
 	}
+
+	/*
+	swap the current tab
+	showing the appropriate controls for the current tabs
+	*/
 	function clickTab(d,i, passEvent) {
 		//console.log(arguments)
 		if(typeof passEvent === 'undefined') {
@@ -236,6 +276,8 @@
 			exports.emitEvent('switchTab', [d])
 		}
 	}
+
+	/* metric updated event handler */
 	function changeMetric(event) {
 		var newMetric = _.find(metrics, function(d) { return d.key === $metricsSelect.val() } )
 		if(newMetric.key === selectedMetric.key) {
@@ -245,6 +287,8 @@
 		populateSelectionLabel()
 		exports.emitEvent('selectionChanged')
 	}
+
+	/* metro updated event handler */
 	function changeMetro(event) {
 		var newMetro = $metroSelect.val();
 		if(newMetro === selectedMetroRegion) {
@@ -256,6 +300,8 @@
 		exports.emitEvent('selectionChanged')
 
 	}
+
+	/* IP x TSP combinations event handler */
 	function changeCombinations(event) {
 		console.log('change combos')
 		console.log($comboSelect.val())
@@ -271,6 +317,10 @@
 		exports.emitEvent('selectionChanged')
 
 	}
+
+	/* populate the IP x TSP combination dropdown based on the combinations available in 
+	   the currently selected region
+	*/
 	function setupComboSelectOptions() {
 		var options = mlabOpenInternet.dataLoader.getCombinations(selectedMetroRegion);
 		currentCombinationOptions = options
@@ -303,6 +353,9 @@
 		})
 	}
 
+	/* populate the label indicating the current selection.
+	   this varies greatly depending on the currently selected tab & dropdown selections
+	*/
 	function populateSelectionLabel() {
 		shareText = ""
 		shareText += selectedMetric.name + " "
@@ -402,6 +455,11 @@
 		})
 
 	}
+
+	/*
+	hide the non-explore controls.
+	show the explore controls
+	*/
 	function showExploreControls() {
 		$compareViewBySelect.next().hide() //kind of odd 
 		$comboSelect.next().show()
@@ -415,6 +473,10 @@
 		div.selectAll('.selectedTime').style('display','block')
 
 	}
+	/*
+	hide the non compare controls
+	show the compare controls
+	*/
 	function showCompareControls() {
 		$compareViewBySelect.next().show()
 		changeCompareViewBy()
@@ -426,12 +488,20 @@
 		div.selectAll('.selectedTime').style('display','block')
 
 	}
+	/*
+	hide the non help controls
+	show the help tabs
+	*/
 	function showHelpControls() {
 		div.selectAll('.selectBar > *').style('display','none')
 		selectionLabels.style('display','none')
 		selectedDateLabels.style('display','none')
 		helpTabsList.style('display','inline-block')
 	}
+
+	/*
+	compare view by control event handler
+	*/
 	function changeCompareViewBy() {
 		var compareSelectType = $compareViewBySelect.val()
 		selectedCompareViewBy = compareSelectType
@@ -447,26 +517,30 @@
 		exports.emitEvent('selectionChanged')
 
 	}
+
+	/*
+	isp select event handler
+	*/
 	function changeCompareISP() {
 		selectedISP = $ispSelect.val()
 		populateSelectionLabel()
 
 		exports.emitEvent('selectionChanged')
 	}
-	function getCompareAggregationSelection() {
-		var viewType = $compareViewBySelect.val()
-		if(viewType === 'Metro Region') {
-			return $metroSelect.val();
-		} else if(viewType === 'ISP') {
-			return $ispSelect.val()
-		}
-	}
+
+	/*
+	help tab change event handler
+	*/
 	function clickHelpTab(d) {
 		helpTabsList.selectAll('.active').classed('active', false)
 		d3.select(this).classed('active', true)
 		selectedHelpTab = d
 		exports.emitEvent('selectionChanged')
 	}
+
+	/*
+	create the deep link hash for the current state of the visualization
+	*/
 	function getDeepLinkHash() {
 		var hashObj = {}
 		hashObj['tab'] = selectedTab.id
@@ -515,6 +589,9 @@
 		return hash
 	}
 
+	/*
+	update control state based upon the passed in permalink hash
+	*/
 	function populateFromHash(hash) {
 		if(hash === '') {
 			return
@@ -632,6 +709,10 @@
 		populateSelectionLabel()
 
 	}
+
+	/*
+	update hash based on the current viz state
+	*/
 	function updateHash() {
 		var hash = getDeepLinkHash()
 		console.log(hash)
@@ -641,6 +722,9 @@
 		}
 	}
 
+	/*
+	event handler for currently selected time view, dailiy or hourly
+	*/
 	function clickTimeView(d,i) {
 		console.log(d)
 		if(d === selectedTimeView) {
@@ -652,7 +736,20 @@
 		
 		exports.emitEvent('selectionChanged')
 	}
+
+	/* get the current compare view by type */
+	function getCompareAggregationSelection() {
+		var viewType = $compareViewBySelect.val()
+		if(viewType === 'Metro Region') {
+			return $metroSelect.val();
+		} else if(viewType === 'ISP') {
+			return $ispSelect.val()
+		}
+	}
+
+	
 	exports.init = init
+	/* getters for the currently selected control state */
 	exports.getSelectedMetro = function() { return selectedMetroRegion }
 	exports.getSelectedMetric = function() { return selectedMetric }
 	exports.getSelectedCombinations = function() { return selectedCombinations }
