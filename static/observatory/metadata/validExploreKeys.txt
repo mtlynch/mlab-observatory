@@ -1,9 +1,12 @@
+atl01_att
 atl01_comcast
 atl01_twc
+dfw01_att
 dfw01_centurylink
 dfw01_comcast
 dfw01_cox
 dfw01_twc
+lax01_att
 lax01_comcast
 lax01_cox
 lax01_twc
@@ -13,8 +16,11 @@ lga01_verizon
 lga02_comcast
 lga02_twc
 lga02_verizon
+mia01_att
 mia01_comcast
+nuq01_att
 nuq01_comcast
+ord01_att
 ord01_centurylink
 ord01_comcast
 ord01_twc
