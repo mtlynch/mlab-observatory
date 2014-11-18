@@ -6,11 +6,10 @@ DFW_centurylink
 DFW_comcast
 DFW_cox
 DFW_twc
-DFW_verizon
 LAX_att
 LAX_comcast
 LAX_cox
-LGA_cablevision
+LAX_twc
 LGA_comcast
 LGA_twc
 LGA_verizon
