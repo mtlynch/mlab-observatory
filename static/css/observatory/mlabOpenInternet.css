@@ -161,7 +161,6 @@ Controls
 }
 #controls .selectedDateLabels {
 	margin-left: 65px;
-	font-weight: bold;
 	font-size: 15px;
 	text-transform: uppercase;
 	color: #8b8b8b;
@@ -169,6 +168,9 @@ Controls
 }
 #controls .selectedDateLabels .dateLabels {
 	float: left;
+}
+#controls .selectedDateLabels .b {
+	font-weight: bold;
 }
 #controls .socialIcons {
 	margin-right: 65px;

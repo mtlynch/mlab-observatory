@@ -471,11 +471,11 @@ viz file for the comapre visualizations
 		})
 		var dateFormat;
 		if(curTimeViewType === 'daily') {
-			dateFormat = 'M/D/YYYY'
+			dateFormat = 'MMM D, YYYY'
 		} else if(curTimeViewType === 'hourly') {
-			dateFormat = 'MMM \'YY h A'
+			dateFormat = 'h A<br />MMM YYYY'
 		}
-		tooltips.select('.ttDate').text(momentNearest.format(dateFormat))
+		tooltips.select('.ttDate').html(momentNearest.format(dateFormat))
 		var activeWidthCutoffPct = 0.2;
 		tooltips.style('display','block').classed('onLeft', function(d,i) {
 			if(tooltipsOnLeft) {

@@ -381,12 +381,13 @@ control for the time control slider/visual
 		var baseLabel = "";
 		var curTimeView = mlabOpenInternet.controls.getSelectedTimeView().toLowerCase()
 		if(curTimeView === "daily") {
-			baseLabel = "Daily Median Within "
+			baseLabel = "<span class='b'>Daily</span> Median Within "
 		} else if(curTimeView === "hourly") {
-			baseLabel = "Hourly Median For "
+			baseLabel = "<span class='b'>Hourly</span> Median For "
 		}
-		var lbl = baseLabel + date.format('MMM YYYY')
-		selectedDateLabels.text(lbl)
+		var lbl = baseLabel + '<span class="b">' + date.format('MMM YYYY') + '</span>'
+
+		selectedDateLabels.html(lbl)
 	}
 
 	//update strokes of paths based on what is currently selected

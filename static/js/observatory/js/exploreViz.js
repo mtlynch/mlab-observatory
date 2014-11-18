@@ -484,11 +484,11 @@ viz file for the explore type visualizations
 		var momentDate = moment(d.date)
 		var dateFormat;
 		if(curViewType === 'daily') {
-			dateFormat = 'M/D/YYYY'
+			dateFormat = 'MMM D, YYYY'
 		} else if(curViewType === 'hourly') {
-			dateFormat = 'MMM \'YY h A'
+			dateFormat = 'h A<br />MMM YYYY'
 		}
-		exploreTT.select('.dateValue').text(momentDate.format(dateFormat).toUpperCase())
+		exploreTT.select('.dateValue').html(momentDate.format(dateFormat).toUpperCase())
 		//console.log(d.date)
 		var graphXPos = Math.round(xScale(d.date))
 		//console.log(graphXPos)
