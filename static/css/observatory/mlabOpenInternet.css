@@ -217,6 +217,29 @@ Controls
 	transition: none !important;
 }
 
+#controls .selectedTime {
+	float: right;
+	margin-top: 15px;
+	display: inline-block;
+	color: #8c8c8c;
+	font-weight: bold;
+}
+#controls .selectedTime > * {
+	float: left;
+}
+#controls .selectedTime ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+#controls .selectedTime ul li {
+	float: left;
+	margin-left: 20px;
+	cursor: pointer;
+}
+#controls .selectedTime ul li.selected {
+	border-bottom: 3px solid #8c8c8c;
+}
 
 /***********
 Explore Viz

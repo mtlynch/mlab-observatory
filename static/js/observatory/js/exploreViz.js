@@ -17,6 +17,7 @@
 	var toggleGreyButton;
 	var hidingGreyLines = false;
 	var lastActiveTooltipData = null;
+	var curViewType = null
 	function init() {
 		div = d3.select('#exploreViz')
 		
@@ -41,8 +42,9 @@
 	function show() {
 		div.style('display', null)
 		var curMetro = mlabOpenInternet.controls.getSelectedMetro()
-		var view = 'daily'
-		mlabOpenInternet.dataLoader.requestMetroData(curMetro, view, dataLoaded)
+		curViewType = mlabOpenInternet.controls.getSelectedTimeView().toLowerCase()
+		console.log(curViewType)
+		mlabOpenInternet.dataLoader.requestMetroData(curMetro, curViewType, dataLoaded)
 		
 	}
 	function dataLoaded(allMetroData) {
@@ -60,6 +62,23 @@
 			var timelyData = _.filter(dataset.data, function(d) {
 				return d.month == dateToMatch.month && d.year == dateToMatch.year
 			})
+			if(curViewType === 'hourly') {
+				var numMoved = 0
+				_.each(timelyData, function(d) {
+					if( + d.hour < 6) {
+						numMoved ++;
+						if(typeof d.dateShifted === 'undefined') {
+							d.dateShifted = true;
+							d.moment.add(24, 'hours')
+							d.date = d.moment.toDate()							
+						}
+					}
+				})
+				for(var i = 0; i < numMoved; i++) {
+					timelyData.push(timelyData.shift())
+				}
+				dataset.dateShifted = true;
+			}
 			//console.log(timelyData)
 			dataInTimePeriod.push({data: timelyData, id: dataset.filenameID, color: dataset.color})
 		})
@@ -264,7 +283,6 @@
 		})
 
 		//console.log(dotData)
-		var dotSize = 5;
 		var dots = svg.select('g.dots').selectAll('g.dot').data(dotPointsToUse)
 		dots.enter().append('g').attr('class','dot')
 		dots.attr('transform', function(d) {
@@ -275,22 +293,35 @@
 				return 'translate(' + x + ',' + y + ')'
 			})
 		dots.exit().remove();
+		/*
 		var hitDot = dots.selectAll('.hitDot').data(function(d) { return [d] })
 		hitDot.enter().append('circle').attr('class','hitDot')
 			.attr('r', 13)
 			.attr('opacity',0)
 		//hitDot.on('mouseover', mouseOverDot)
 		//	.on('mouseout', mouseOutDot)
+		*/
+		var dotSize = 5;
+
 		var fillDot = dots.selectAll('.fillDot').data(function(d) { return [d] })
 		fillDot.enter().append('circle').attr('class','fillDot')
-			.attr('r', dotSize)
-		fillDot.style('fill', function(d) { 
+		fillDot.attr('r', function(d,i) {
+				if(curViewType === 'daily') {
+					return dotSize
+				} else if(curViewType === 'hourly') {
+					if(d.active) {
+						return dotSize;
+					} else {
+						return 2
+					}
+				}
+			}).style('fill', function(d) { 
 			if(d.active) {
 				return d.color
 			}
 			return '#ccc'
 		})
-		.style('opacity',0)
+		.style('opacity',dotOpacityFunction)
 
 		var voronoiGroup = chart.select('.hoverAreas')
 		var vPaths = voronoiGroup.selectAll("path").data(voronoiData)
@@ -303,9 +334,18 @@
 	
 
 		chart.selectAll('.axis').remove()
+		var format;
+		var numTicks;
+		if(curViewType === 'daily') {
+			format = '%e %b'
+			numTicks = 5
+		} else if(curViewType === 'hourly') {
+			format = '%I %p'
+			numTicks = 10;
+		}
 		var xAxis = d3.svg.axis().scale(xScale).orient('bottom')
-			.tickFormat(d3.time.format("%e %b"))
-			.ticks(5)
+			.tickFormat(d3.time.format(format))
+			.ticks(numTicks)
 		chart.append('g').attr('class','xAxis axis').attr('transform', 'translate(0,' + exploreDimensions.h +')')
 			.call(xAxis)
 		var yAxis = d3.svg.axis().scale(yScale).orient('left')
@@ -324,7 +364,16 @@
 				var textParts = curText.split(' ')
 				return textParts[0]
 			})
-
+		if(curViewType === 'hourly') {
+			chart.select('.xAxis').selectAll('text')
+				.text(function(d,i) {
+					var curText = d3.select(this).text();
+					if(curText[0] === '0') {
+						return curText.substr(1)
+					}
+					return curText
+				})
+		}
 		mlabOpenInternet.controls.populateSelectionLabel()
 		mlabOpenInternet.controls.updateHash()
 		$(window).off('mousemove', mouseMoveDoc).on('mousemove', mouseMoveDoc)
@@ -393,7 +442,13 @@
 		exploreTT.select('.valueValue').text(d[curMetric.key] + " " + curMetric.units)
 		exploreTT.select('.sampleSizeValue').text(d[curMetric.key + '_n'])
 		var momentDate = moment(d.date)
-		exploreTT.select('.dateValue').text(momentDate.format('M/D/YYYY'))
+		var dateFormat;
+		if(curViewType === 'daily') {
+			dateFormat = 'M/D/YYYY'
+		} else if(curViewType === 'hourly') {
+			dateFormat = 'MMM \'YY h A'
+		}
+		exploreTT.select('.dateValue').text(momentDate.format(dateFormat).toUpperCase())
 		//console.log(d.date)
 		var graphXPos = Math.round(xScale(d.date))
 		//console.log(graphXPos)
@@ -430,7 +485,8 @@
 			return
 		}
 		var dot = d3.select(d.dot).select('.fillDot')
-		dot.style('opacity',0)
+		var opacity = dotOpacityFunction(d,i)
+		dot.style('opacity', opacity)
 		exploreTT.style('opacity',0).transition().duration(0).delay(300).style('display','none')
 
 	}
@@ -446,7 +502,13 @@
 		})
 
 	}
-
+	function dotOpacityFunction(d,i) {
+		if(curViewType === 'daily') {
+			return 0;
+		} else if(curViewType === 'hourly') {
+			return 1
+		}
+	}
 	if( ! window.mlabOpenInternet) {
 		window.mlabOpenInternet = {}
 	}

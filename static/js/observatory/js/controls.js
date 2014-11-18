@@ -42,6 +42,11 @@
 	var selectionLabels;
 	var selectedDateLabels;
 
+	var timeViewOptions = ['Daily','Hourly']
+	var selectedTimeView;
+	var timeViewButtons;
+	var $timeViewButtons;
+
 	var helpTabsList;
 	var helpTabs;
 	var selectedHelpTab = null
@@ -156,6 +161,17 @@
 			.on('click', clickHelpTab)
 		helpTab.append('div').text(String).attr('class','text')
 		helpTab.append('div').attr('class','underline')
+
+		var timeViewContainer = selectBar.append('div').attr('class','selectedTime')
+		timeViewContainer.append('div').text('View:')
+		timeViewButtons = timeViewContainer.append('ul').selectAll('li').data(timeViewOptions)
+		timeViewButtons.enter().append('li')
+		timeViewButtons.text(String)
+			.classed('selected', function(d,i) {
+				return i === 0
+			}).on('click', clickTimeView)
+
+		selectedTimeView = timeViewOptions[0]
 
 		selectedTab = tabData[0]
 		selectedHelpTab = helpTabs[0]
@@ -469,6 +485,7 @@
 			if(mlabOpenInternet.exploreViz.hidingGreyLines()) {
 				hashObj['hidingGrey'] = '1'
 			}
+			hashObj['timeView'] = selectedTimeView.toLowerCase()
 
 		} else if(selectedTab.id === 'compare') {
 			hashObj['metric'] = selectedMetric.key
@@ -482,6 +499,7 @@
 			if(time !== null) {
 				hashObj['time'] = time
 			}
+			hashObj['timeView'] = selectedTimeView.toLowerCase()
 		}
 		var hash = _.reduce(hashObj, function(hashVal, value, key) {
 		//	console.log(key + " " + value)
@@ -596,6 +614,17 @@
 				viewingFromDeeplink = true;
 			}
 		}
+		if(typeof hashObj['timeView'] !== 'undefined') {
+			var timeViewIndex = _.findIndex(timeViewOptions, function(d,i) {
+				return d.toLowerCase() === hashObj['timeView']
+			})
+			if(timeViewIndex !== -1) {
+				selectedTimeView = timeViewOptions[timeViewIndex]
+				timeViewButtons.classed('selected', function(d,i) {
+					return timeViewIndex === i
+				})
+			}
+		}
 		populateSelectionLabel()
 
 	}
@@ -607,12 +636,25 @@
 			window.history.replaceState(null, null, '#' + hash)
 		}
 	}
+
+	function clickTimeView(d,i) {
+		console.log(d)
+		if(d === selectedTimeView) {
+			return
+		}
+		timeViewButtons.classed('selected', false)
+		d3.select(this).classed('selected', true)
+		selectedTimeView = d
+		
+		exports.emitEvent('selectionChanged')
+	}
 	exports.init = init
 	exports.getSelectedMetro = function() { return selectedMetroRegion }
 	exports.getSelectedMetric = function() { return selectedMetric }
 	exports.getSelectedCombinations = function() { return selectedCombinations }
 	exports.getCompareByView = function() { return selectedCompareViewBy }
 	exports.getSelectedTab = function() { return selectedTab }
+	exports.getSelectedTimeView = function() { return selectedTimeView }
 	exports.getCompareAggregationSelection = getCompareAggregationSelection
 	exports.getHelpTab = function() { return selectedHelpTab }
 	exports.populateSelectionLabel = populateSelectionLabel

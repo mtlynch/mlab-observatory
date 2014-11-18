@@ -20,6 +20,7 @@
 	var tooltipContainer; 
 	var tooltips;
 	var numDays;
+	var curTimeViewType;
 	function init() {
 		div = d3.select('#compareViz')
 		svg = div.append('svg')
@@ -40,8 +41,9 @@
 		//console.log('show compare');
 		var aggregationSelection = mlabOpenInternet.controls.getCompareAggregationSelection()
 		console.log(aggregationSelection)
-		var view = 'daily'
-		mlabOpenInternet.dataLoader.requestCompareData(aggregationSelection, curViewType, view, dataLoaded)
+		curTimeViewType = mlabOpenInternet.controls.getSelectedTimeView().toLowerCase()
+
+		mlabOpenInternet.dataLoader.requestCompareData(aggregationSelection, curViewType, curTimeViewType, dataLoaded)
 		
 	}
 	function dataLoaded(allCityData) {
@@ -60,6 +62,25 @@
 			var timelyData = _.filter(dataset.data, function(d) {
 				return d.month == dateToMatch.month && d.year == dateToMatch.year
 			})
+
+			if(curTimeViewType === 'hourly') {
+				var numMoved = 0
+				_.each(timelyData, function(d) {
+					if( + d.hour < 6) {
+						numMoved ++;
+						if(typeof d.dateShifted === 'undefined') {
+							d.dateShifted = true;
+							d.moment.add(24,'hours')
+							d.date = d.moment.toDate()
+						}
+					}
+				})
+				//console.log(numMoved)
+				for(var i = 0; i < numMoved; i++) {
+					timelyData.push(timelyData.shift())
+				}
+				dataset.dateShifted = true;
+			}
 			//console.log(timelyData)
 			dataInTimePeriod.push({data: timelyData, id: dataset.filenameID, color: dataset.color})
 			numDays = Math.max(numDays, timelyData.length)
@@ -107,8 +128,8 @@
 				}
 			})
 		})
-		console.log(minDataValue + " " + maxDataValue)
-
+		//console.log(minDataValue + " " + maxDataValue)
+		//console.log(minDate + " " + maxDate)
 		/* setup scales */
 		yScale = d3.scale.linear().domain([0, maxDataValue])
 			.range([graphHeight, 0])
@@ -219,7 +240,7 @@
 			.style('fill',function(d) {
 				return d.dataset.color
 			})
-			.style('opacity',0)
+			.style('opacity', dotOpacityFunction)
 		dots.exit().remove();
 
 		tooltips = tooltipContainer.selectAll('div.compareTooltip').data(datasets)
@@ -262,8 +283,17 @@
 
 		/* xaxis */
 		chart.selectAll('.axis').remove()
+		var format;
+		var numTicks;
+		if(curTimeViewType === 'daily') {
+			format = '%e %b'
+			numTicks = 6
+		} else if(curTimeViewType === 'hourly') {
+			format = '%I %p'
+			numTicks = 10;
+		}
 		var xAxis = d3.svg.axis().scale(xScale).orient('bottom')
-			.tickFormat(d3.time.format("%e %b")).ticks(6)
+			.tickFormat(d3.time.format(format)).ticks(numTicks)
 			.outerTickSize(0);
 		datasetGroups.append('g').attr('class','xAxis axis').attr('transform', 'translate(0,' + graphHeight +')')
 			.call(xAxis)
@@ -283,7 +313,16 @@
 					tick.select('text').style('text-anchor','middle')
 				}
 			})
-
+		if(curTimeViewType === 'hourly') {
+			chart.selectAll('.xAxis').selectAll('text')
+				.text(function(d,i) {
+					var curText = d3.select(this).text();
+					if(curText[0] === '0') {
+						return curText.substr(1)
+					}
+					return curText
+				})
+		}
 		/* yscale text label */
 		var textSize;
 		var maxYScale = datasetGroups.selectAll('text.yScaleMax').data([maxDataValue])
@@ -343,27 +382,44 @@
 		//console.log(d3.event)
 		var off = $(div[0][0]).offset();
 		y -= margin.top
-		var mouseDate = xScale.invert(x)
-		var day = mouseDate.getDate() + (mouseDate.getHours() >= 12 ? 1 : 0)
-		var nearestDay = new Date(mouseDate.getFullYear(), mouseDate.getMonth(), day)
-		//console.log(x)
-		//console.log(mouseDate);
-
-		//console.log(nearestDay)
-		var momentNearest = moment(nearestDay)
-		var xPos = xScale(nearestDay)
-		var xIndex = ~~ (( xPos / dimensions.w ) * numDays)
-		if(xIndex === numDays) {
-			xIndex --
+		var xPos, xIndex, momentNearest, nextFocusDate;
+		if(curTimeViewType === 'daily') {
+			var mouseDate = xScale.invert(x)
+			var day = mouseDate.getDate() + (mouseDate.getHours() >= 12 ? 1 : 0)
+			var nearestDay = new Date(mouseDate.getFullYear(), mouseDate.getMonth(), day)
+			//console.log(x)
+			//console.log(mouseDate);
+			nextFocusDate = day
+			//console.log(nearestDay)
+			momentNearest = moment(nearestDay)
+			xPos = xScale(nearestDay)
+			xIndex = ~~ (( xPos / dimensions.w ) * numDays)
+			if(xIndex === numDays) {
+				xIndex --
+			}
+			
+		} else if(curTimeViewType === 'hourly') {
+			var mouseHour = xScale.invert(x)
+			//console.log(mouseHour)
+			var hour = mouseHour.getHours() + (mouseHour.getMinutes() >= 30 ? 1 : 0)
+			nextFocusDate = hour
+			var nearestHour = new Date(mouseHour.getFullYear(), mouseHour.getMonth(), mouseHour.getDate(), hour)
+			xPos = xScale(nearestHour)
+			xIndex = ~~ (( xPos / dimensions.w ) * numDays)
+			momentNearest = moment(nearestHour)
+			if(xIndex === numDays) {
+				xIndex --
+			}
 		}
 		//console.log(xIndex)
-		if(curFocusDay === null || curFocusDay !== day) {
+		if(curFocusDay === null || curFocusDay !== nextFocusDate) {
 			focusLine.transition().duration(450).ease('cubic-out')
 				.attr('x1', xPos).attr('x2', xPos)
-			curFocusDay = day
+			curFocusDay = nextFocusDate
 		}
+		
 
-		//console.log(xPos)
+		//console.log(xPos + " " + xIndex)
 		var yIndex = ~~(y / graphAreaHeight)
 		//console.log(y + " " + yIndex)
 		var tooltipsOnLeft = xPos > dimensions.w / 2;
@@ -383,7 +439,13 @@
 			var sampleSize = d.data[xIndex][curMetric.key + "_n"]
 			return sampleSize
 		})
-		tooltips.select('.ttDate').text(momentNearest.format('M/D/YYYY'))
+		var dateFormat;
+		if(curTimeViewType === 'daily') {
+			dateFormat = 'M/D/YYYY'
+		} else if(curTimeViewType === 'hourly') {
+			dateFormat = 'MMM \'YY h A'
+		}
+		tooltips.select('.ttDate').text(momentNearest.format(dateFormat))
 		var activeWidthCutoffPct = 0.2;
 		tooltips.style('display','block').classed('onLeft', function(d,i) {
 			if(tooltipsOnLeft) {
@@ -424,15 +486,26 @@
 			y += topPadding
 			return y + 'px'
 		})
-		chart.selectAll('circle.dot').style('opacity',0)
-		chart.selectAll('g.dataset')
-			.selectAll('circle.dot:nth-child(' + (xIndex + 1) + ')')
-			.style('opacity',1)
+		if(curTimeViewType === 'daily') {
+			chart.selectAll('circle.dot').style('opacity',0)
+
+			chart.selectAll('g.dataset')
+				.selectAll('circle.dot:nth-child(' + (xIndex + 1) + ')')
+				.style('opacity',1)
+		}
+
 	}
 	function mouseOutGraph() {
 	}
 	function hideTT() {
 
+	}
+	function dotOpacityFunction(d,i) {
+		if(curTimeViewType === 'daily') {
+			return 0;
+		} else if(curTimeViewType === 'hourly') {
+			return 1
+		}
 	}
 	if( ! window.mlabOpenInternet) {
 		window.mlabOpenInternet = {}

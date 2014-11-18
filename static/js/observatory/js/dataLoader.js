@@ -314,10 +314,12 @@
 			//console.log(dataType)
 			if(typeof dataType !== 'undefined') {
 				//console.log(rtnObj)
-				var dateRange = dateExtent(rtnObj)
+				var dateRange = dateExtent(rtnObj, dataType)
 				//console.log(dateRange)
 				_.each(rtnObj, function(dataset) {
-					dataset.data = setupDates(dataset.data, dataType, dateRange[0], dateRange[1])
+					if(typeof dataset.dateShifted === 'undefined') {
+						dataset.data = setupDates(dataset.data, dataType, dateRange[0], dateRange[1])
+					}
 				})
 			}
 
@@ -330,12 +332,14 @@
 	function dateExtent(datasets, dataType) {
 		var minDate = null;
 		var maxDate = null;
-		if(dataType === 'hourly') {
-			console.error('hourly not setup')
-		}
 		_.each(datasets, function(dataset) {
 			_.each(dataset.data, function(d) {
-				var date = new Date(d['year'], d['month'] - 1, d['day'])
+				var date = null
+				if(dataType === 'hourly') {
+					date = new Date(d['year'], d['month'] - 1, 1, d['hour'])
+				} else if(dataType === 'daily') {
+					date = new Date(d['year'], d['month'] - 1, d['day'])
+				}
 				if(minDate === null || date < minDate) {
 					minDate = date;
 				}
@@ -351,32 +355,42 @@
 		_.each(data, function(datum) {
 			var date;
 			if(dataType === 'hourly') {
-				//dunno
-				console.error('setup hourly data')
+				date = new Date(datum['year'], datum['month'] - 1, 1, datum['hour'])
 			} else if(dataType === 'daily') {
 				date = new Date(datum['year'], datum['month'] - 1, datum['day'])
 			}
+			//if(typeof datum.date === 'undefined' && typeof datum.moment === 'undefined') {
 			datum.date = date
 			datum.moment = moment(date);
+			//}
 		})
+		function dateSort(a,b) {
+			if(a.date > b.date) {
+				return 1
+			} else if(a.date < b.date) {
+				return -1;
+			} else {
+				return 0
+			}
+		}
 		//console.log(minDate, maxDate)
 		if(dataType === 'hourly') {
-			console.error('setup hourly data')
+			var momentMin = moment(minDate);
+			var momentMax = moment(maxDate);
+			data.sort(dateSort)
+			var numHours = momentMax.diff(momentMin, 'hours', true)
+			// console.log(minDate);
+			// console.log(maxDate)
+			// console.log('num hours ' + numHours)
+			//hmm
+			return data
 		} else {
 
 			var momentMin = moment(minDate)
 			var momentMax = moment(maxDate)
 			//console.log(minDate + " " + maxDate)
 			//sort data
-			data.sort(function(a,b) {
-				if(a.date > b.date) {
-					return 1
-				} else if(a.date < b.date) {
-					return -1;
-				} else {
-					return 0
-				}
-			})
+			data.sort(dateSort)
 			var numDays = momentMax.diff(momentMin, 'days', true) + 1
 			//console.log('num days ' + numDays)
 			var dataWithGaps = new Array(numDays)
