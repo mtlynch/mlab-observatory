@@ -1,3 +1,6 @@
+/*
+viz file for the comapre visualizations
+*/
 (function() {
 	var margin = {top: 10, right: 5, bottom: 0, left: 5}
 	var dimensions = {
@@ -21,6 +24,9 @@
 	var tooltips;
 	var numDays;
 	var curTimeViewType;
+	var lastMouseOverEvent = null
+
+	/* initalize dom elements for compare */
 	function init() {
 		div = d3.select('#compareViz')
 		svg = div.append('svg')
@@ -35,6 +41,8 @@
 		svg.on('mouseout', mouseOutGraph)
 		svg.on('mousemove', mouseOverGraph)
 	}
+
+	/* show compare DOM elements and request data */
 	function show() {
 		div.style('display', null)
 		curViewType = mlabOpenInternet.controls.getCompareByView()
@@ -46,6 +54,8 @@
 		mlabOpenInternet.dataLoader.requestCompareData(aggregationSelection, curViewType, curTimeViewType, dataLoaded)
 		
 	}
+
+	//data received, filter out data that is not in the currently selected time period
 	function dataLoaded(allCityData) {
 		//console.log('all city data loaded')
 		//console.log(allCityData)
@@ -88,6 +98,10 @@
 		//console.log(numDays)
 		plot(dataInTimePeriod)
 	}
+
+	/*
+	plot all the compare graphs. sets up lines, dots, scales, labels etc
+	*/
 	function plot(datasets) {
 		var fullHeight = datasets.length * graphAreaHeight
 		//console.log(fullHeight)
@@ -190,6 +204,31 @@
 		}).style('stroke', function(d) {
 			return d.color
 		})
+
+
+		var areaGen = d3.svg.area()
+			.x(function(d,i) {
+				return xScale(d.date)
+			})
+			.y(function(d,i) {
+				return yScale(d[metricKey])
+			})
+			.y0(graphHeight)
+			//.defined(function(d) { return d[metricKey + "_n"] >= mlabOpenInternet.dataLoader.getMinSampleSize()
+
+		var areaFill = datasetGroups.selectAll('path.fill')
+			.data(curTimeViewType === "hourly" ? function(d) { return [d] } : [])
+		areaFill.enter().append('path')
+		areaFill.exit().remove();
+		areaFill.attr('class',function(d,i) {
+			return 'fill fill-'+ d.id
+		}).attr('d', function(d) {
+			return areaGen(d.data)
+		}).style('fill', function(d,i) {
+			return d.color
+		}).style('stroke','none')
+		.style('opacity', 0.25)
+
 		/* add in the dashed line */
 		var pathsDashed = datasetGroups.selectAll('path.dashed').data(function(d) { return [d] })
 		var lineGen = d3.svg.line()
@@ -203,6 +242,8 @@
 					console.log(d)
 				}
 				return yScale(d[metricKey])
+			}).defined(function(d) {
+				return d[metricKey+"_n"] > 0
 			})
 		pathsDashed.enter().append('path').attr('class','dashed');
 		pathsDashed.exit().remove()
@@ -252,6 +293,7 @@
 		content = tooltips.selectAll('div.content').data(arrayIdent)
 		content.enter().append('div').attr('class','content')
 		tooltips.style('display','none')
+		tooltips.on('mouseover',mouseOverTT)
 		tooltips.selectAll('div.rightArrow').data(arrayIdent)
 			.enter().append('div').attr('class','rightArrow arrow')
 		var ttContent = [
@@ -329,7 +371,7 @@
 		maxYScale.enter().append('text').attr('class','yScaleMax')
 		maxYScale.text(function(d) {
 			return d + " " + metric.units
-		}).attr('x', dimensions.w).attr('y', yScale(maxDataValue) + 4)
+		}).attr('x', dimensions.w).attr('y', yScale(maxDataValue) - 6)
 		.each(function(d) {
 			textSize = this.getBBox()
 		})
@@ -370,12 +412,25 @@
 		mlabOpenInternet.controls.updateHash()
 
 	}
+
+	/*
+	hides the compare viz dom elements
+	*/
 	function hide() {
 		div.style('display','none')
 	}
 
-	function mouseOverGraph() {
-		var e = d3.event
+	/*
+	compare viz mouse handler to create tooltip
+	*/
+	function mouseOverGraph(event) {
+		var e;
+		if(typeof event === 'undefined') {
+			e = d3.event
+		} else {
+			e = event
+		}
+		lastMouseOverEvent = e;
 		var x = (e.offsetX || e.clientX - $(e.target).offset().left);
 		var y = (e.offsetY || e.clientY - $(e.target).offset().top);
 
@@ -441,11 +496,11 @@
 		})
 		var dateFormat;
 		if(curTimeViewType === 'daily') {
-			dateFormat = 'M/D/YYYY'
+			dateFormat = 'MMM D, YYYY'
 		} else if(curTimeViewType === 'hourly') {
-			dateFormat = 'MMM \'YY h A'
+			dateFormat = 'h A<br />MMM YYYY'
 		}
-		tooltips.select('.ttDate').text(momentNearest.format(dateFormat))
+		tooltips.select('.ttDate').html(momentNearest.format(dateFormat))
 		var activeWidthCutoffPct = 0.2;
 		tooltips.style('display','block').classed('onLeft', function(d,i) {
 			if(tooltipsOnLeft) {
@@ -495,11 +550,26 @@
 		}
 
 	}
-	function mouseOutGraph() {
-	}
-	function hideTT() {
 
+	/*
+	hides tooltip
+	*/
+	function mouseOutGraph() {
+		tooltips.style('display','none')
+		focusLine.transition().duration(0).attr('x1', -100).attr('x2', -100)
+		if(curTimeViewType === 'daily') {
+			chart.selectAll('circle.dot').style('opacity',0)
+		}
+		
 	}
+
+	/* helper function to ensure tooltip doesn't hide when you mouse over it
+	*/
+	function mouseOverTT() {
+		mouseOverGraph(lastMouseOverEvent)
+	}
+
+	/* helper function to define dot opacity */
 	function dotOpacityFunction(d,i) {
 		if(curTimeViewType === 'daily') {
 			return 0;

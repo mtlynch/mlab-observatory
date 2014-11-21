@@ -1,3 +1,6 @@
+/*
+file that handles all data loading
+*/
 (function() {
 	var colorMap;
 	var exports = new EventEmitter()
@@ -28,36 +31,30 @@
 	var regionsToIgnore = ['Washington DC']
 	var filenameToColorMap = {}
 	var loadingDiv;
-	/*
-	var ispList = [];
-	var codeList = [];
-
-	var codeCity = {};
-	var codeTP = {};
-	var cityCode = {};
-
-	var years = [2012, 2013, 2014];
-	var ynums = [366, 365, 243];
-
-	var pathList = [];
-	var dataAccessMap = {};
-
-	var aggDailyData = [];
-	var aggHourlyData = [];
-	*/
+	
+	//kick off data loading
 	function init() {
 		loadingDiv = d3.select('#loading')
 		loadingDiv.append('img').attr('src', 'static/observatory/images/loading.gif')
 		d3.json(metadatafolder + 'ispMap.json', loadISPNameMap)
 	}
+	/*
+	load the isp names
+	*/
 	function loadISPNameMap(err, map) {
 		ispNameMap = map;
 		d3.json(metadatafolder + "colors.json", loadColors)
 	}
+	/*
+	load isp colors
+	*/
 	function loadColors(err, colors) {
 		colorMap = colors
 		d3.xhr(validExploreCodesFile, loadExploreCodes)
 	}
+	/*
+	load the valid explore combiations
+	*/
 	function loadExploreCodes(err, data) {
 		var response = data.response.split('\n')
 		_.each(response, function(code) {
@@ -84,6 +81,9 @@
 		d3.xhr(validCompareCodesFile, loadCompareCodes)
 
 	}
+	/*
+	load the valid compare combinations
+	*/
 	function loadCompareCodes(err, data) {
 		var response = data.response.split('\n')
 		_.each(response, function(code) {
@@ -93,7 +93,9 @@
 		})
 		d3.csv(mapFile, loadCodeMappings)
 	}
-
+	/*
+	load data describing each mlab site
+	*/
 	function loadCodeMappings(err, data) {
 		siteMappings = data;
 		_.each(data, function(mapping) {
@@ -114,6 +116,9 @@
 
 		d3.json(metricFile, loadMetrics);
 	}
+	/*
+	load names and metadata about each metric
+	*/
 	function loadMetrics(err, data) {
 		if(err) {
 			console.error('error loading metrics file')
@@ -127,6 +132,10 @@
 		loadingDiv.style('display','none')
 		exports.emitEvent('loaded')
 	}
+
+	/*
+	method to indicate which IPxTSP combo is valid for given metro region
+	*/
 	function getCombinations(metro) {
 		var mLabSites = _.select(siteMappings, function(d) { return d.MetroArea === metro })
 		var combos = []
@@ -162,6 +171,14 @@
 		//console.log(combos)
 		return combos
 	}
+
+	/*
+	data loader for explore visuals
+
+	requires a given metro
+	and a dataType, either 'daily' or 'hourly'
+	also takes a callback function that is called with an array of the requested data
+	*/
 	function requestMetroData(metro, dataType, callback) {
 		//console.log('request metro')
 		//console.log(metro)
@@ -203,15 +220,7 @@
 					//console.log(requestData)
 					numCombosLoaded ++;
 					checkIfAllDataLoaded(numCombosLoaded, combos, requestData.callbacks, dataObj, dataType)
-					/*
-					if(numCombosLoaded === combos.length) {
-						var rtnObj = [];
-						_.each(combos, function(c) {
-							rtnObj.push(dataObj[c.filename])
-						})
-						callback(rtnObj)
-					}
-					*/
+					
 				})
 			} else {
 				//data has either been requested and we are waiting for a response
@@ -229,6 +238,16 @@
 			} 
 		})
 	}
+
+	/*
+	requests compare data based on current selection
+
+	
+	aggregationSelection is the currently selected ISP or selected Metro
+	viewType defines if we are comparing by Metro Region or by ISP
+	dataType again defines 'daily' or 'hourly' data
+	callback again gets passed the data once it is ready
+	*/
 	function requestCompareData(aggregationSelection, viewType, dataType, callback) {
 		//console.log(viewType)
 		//console.log(aggregationSelection)
@@ -304,6 +323,13 @@
 		})
 
 	}
+
+	/*
+	determines if all the data that has been requested has been loaded. 
+
+	if it has, we ensure there are no gaps in the data
+	and then pass that data to our callback
+*/
 	function checkIfAllDataLoaded(numLoaded, combos, callbacks, dataObj, dataType) {
 		var numExpected = combos.length
 		if(numLoaded === numExpected) {
@@ -329,6 +355,10 @@
 			})
 		}
 	}
+
+	/*
+	determines the date range of the current datasets
+	*/
 	function dateExtent(datasets, dataType) {
 		var minDate = null;
 		var maxDate = null;
@@ -351,6 +381,10 @@
 
 		return [minDate, maxDate]
 	}
+
+	/*
+	fills in any gaps in the date ranges
+	*/
 	function setupDates(data, dataType, minDate,maxDate) {
 		_.each(data, function(datum) {
 			var date;
@@ -359,10 +393,8 @@
 			} else if(dataType === 'daily') {
 				date = new Date(datum['year'], datum['month'] - 1, datum['day'])
 			}
-			//if(typeof datum.date === 'undefined' && typeof datum.moment === 'undefined') {
 			datum.date = date
 			datum.moment = moment(date);
-			//}
 		})
 		function dateSort(a,b) {
 			if(a.date > b.date) {
@@ -382,7 +414,6 @@
 			// console.log(minDate);
 			// console.log(maxDate)
 			// console.log('num hours ' + numHours)
-			//hmm
 			return data
 		} else {
 
@@ -431,6 +462,9 @@
 
 		}
 	}
+	/*
+	ensures if there are any missing metrics, we fill them in with dummy data
+	*/
 	function checkMetrics(data) {
 		_.each(data, function(d) {
 			_.each(metrics, function(metric) {
@@ -440,13 +474,21 @@
 			})
 		})
 	}
+	/*
+	gets the Transit Provider data for a given TP code
+	*/
 	function getTPForCode(code) {
 		var mapping = mlabSitesByCode[code]
 		return mapping['TransitProvider']
 	}
+	/*
+	gets a defined coloring for the given dataset by filename
+	*/
 	function getColorForFilename(filename) {
 		return filenameToColorMap[filename]
 	}
+	/* various getters for the loaded data
+	*/
 	exports.init = init
 	exports.getMetrics = function() { return metrics }
 	exports.getMetroRegions = function() { return validMetroRegions }

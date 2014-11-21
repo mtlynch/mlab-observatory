@@ -1,13 +1,20 @@
+//d3 helper to move selection to front
 d3.selection.prototype.moveToFront = function() {
   return this.each(function(){
     this.parentNode.appendChild(this);
   });
 };
 
+
+//ensure console doesn't break anything
 if(typeof console === 'undefined') {
 	console = {}
 }
-//console.log = function() {};
+if(typeof console.log === 'undefined') {
+	console.log = function() {};
+}
+
+//cookie utils, used for displaying help just once
 (function() {
 	var exports = new EventEmitter()
 	

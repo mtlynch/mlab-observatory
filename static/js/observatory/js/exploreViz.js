@@ -1,3 +1,6 @@
+/*
+viz file for the explore type visualizations
+*/
 (function() {
 	var margin = {top: 15, right: 20, bottom: 25, left: 60}
 	var exploreDimensions = {
@@ -18,6 +21,8 @@
 	var hidingGreyLines = false;
 	var lastActiveTooltipData = null;
 	var curViewType = null
+
+	/* setup initial dom elements of our charts */
 	function init() {
 		div = d3.select('#exploreViz')
 		
@@ -34,19 +39,27 @@
 			.attr('width', exploreDimensions.w + margin.left + margin.right)
 			.attr('height', exploreDimensions.h + margin.top + margin.bottom)
 		chart = svg.append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+		chart.append('g').attr('class','fills')
 		chart.append('g').attr('class','lines')
 		chart.append('g').attr('class','dots')
 		chart.append('g').attr('class','hoverAreas')
 
 	}
+	/* make this chart's dom elements visible
+	request data for the current viz state's data
+	*/
 	function show() {
 		div.style('display', null)
 		var curMetro = mlabOpenInternet.controls.getSelectedMetro()
 		curViewType = mlabOpenInternet.controls.getSelectedTimeView().toLowerCase()
 		console.log(curViewType)
 		mlabOpenInternet.dataLoader.requestMetroData(curMetro, curViewType, dataLoaded)
-		
+
 	}
+	/*
+	data has been returned form data loader
+	filter out data that is not part of the current selected time
+	*/
 	function dataLoaded(allMetroData) {
 		//console.log('all metro data loaded')
 		//console.log(allMetroData)
@@ -84,11 +97,15 @@
 		})
 		plot(dataInTimePeriod)
 	}
+
+	/* function to draw the explore plots
+	sets up lines, dots, and voronois for hover and labels
+	*/
 	function plot(datasets) {
 		var metric = mlabOpenInternet.controls.getSelectedMetric();
 		curMetric = metric;
 		var selectedCombinations = mlabOpenInternet.controls.getSelectedCombinations()
-		if(selectedCombinations.length === 0) {
+		if(selectedCombinations.length === 0 || curViewType === 'hourly') {
 			toggleGreyButton.style('display','none')
 			toggleGreyButton.select('.ul').text('Hide')
 			hidingGreyLines = false
@@ -114,11 +131,7 @@
 					maxDate = datum.date
 				}
 				var sampleSize = +datum[metricKey + "_n"]
-				/*
-				if(sampleSize < mlabOpenInternet.dataLoader.getMinSampleSize()) {
-					return
-				}
-				*/
+				
 				var metricValue = +datum[metricKey]
 				if(metricValue < minDataValue) {
 					minDataValue = metricValue
@@ -132,7 +145,6 @@
 		//console.log(minDate + " " + maxDate)
 		yScale = d3.scale.linear().domain([0, maxDataValue])
 			.range([exploreDimensions.h, 0])
-		//var xScale = d3.scale.linear().domain([0, maxDatasetLength - 1]).range([0, exploreDimensions.w])
 		xScale = d3.time.scale().domain([minDate, maxDate]).range([0, exploreDimensions.w])
 		var paths = svg.select('g.lines').selectAll('path.full').data(datasets)
 		var xPoint = function(d,i) {
@@ -190,11 +202,9 @@
 				]
 				])
 
-//		var allVoronoiData = voronoiGen(uniquePoints)
-//		var activeVoronoiData = voronoiGen(uniqueActivePoints)
 
 		var dotPointsToUse;
-		if(hidingGreyLines) {
+		if(hidingGreyLines || (curViewType === 'hourly' && selectedCombinations.length !== 0)) {
 			dotPointsToUse = uniqueActivePoints
 		} else {
 			dotPointsToUse = uniquePoints
@@ -207,7 +217,6 @@
 			.defined(function(d,i) {
 				return d[metricKey+"_n"] >= mlabOpenInternet.dataLoader.getMinSampleSize()
 			})
-		var dotData = []
 		paths.enter().append('path');
 		paths.exit().remove()
 		paths.attr('class',function(d,i) {
@@ -220,17 +229,12 @@
 			})
 			if(typeof active === 'undefined') {
 				d.active = false
+				if(curViewType === 'hourly' && selectedCombinations.length !== 0) {
+					return 'none'
+				}
 				return null
 			} else {
 				d.active = true;
-				//console.log('active dataset');
-				//console.log(d)
-
-				_.each(d.data, function(dotDataPoint) {
-					dotDataPoint.dataID = d.id
-					dotDataPoint.color = d.color
-					dotData.push(dotDataPoint)
-				})
 				return d.color;
 			}
 		}).style('stroke-width', function(d) {
@@ -244,11 +248,49 @@
 		})
 
 
+		var areaGen = d3.svg.area()
+			.x(function(d) { return d.x })
+			.y(function(d) { return d.y })
+			.y0(exploreDimensions.h)
+			//.defined(function(d) { return d[metricKey + "_n"] >= mlabOpenInternet.dataLoader.getMinSampleSize()
+
+		var areaFill = svg.select('g.fills').selectAll('path.fill')
+			.data(curViewType === "hourly" ? datasets : [])
+		areaFill.enter().append('path')
+		areaFill.exit().remove();
+		areaFill.attr('class',function(d,i) {
+			return 'fill fill-'+ d.id
+		}).attr('d', function(d) {
+			return areaGen(d.data)
+		}).style('fill', function(d,i) {
+			if(d.active) {
+				return d.color
+			} else {
+				return 'none'
+			}
+		}).style('stroke','none')
+		.style('opacity', 0.25)
+		.each(function(d) {
+			var areaSize = 0;
+			if(d.active) {
+				_.each(d.data, function(datum) {
+					areaSize += +datum[metricKey]
+				})
+				console.log(d)
+				console.log(areaSize)
+			}
+			d.areaSize = areaSize
+		}).sort(function(a,b) {
+			return b.areaSize - a.areaSize
+		})
+
 		var pathsDashed = svg.select('g.lines').selectAll('path.dashed').data(datasets)
 		var lineGen = d3.svg.line()
 			.x(function(d) { return d.x })
 			.y(function(d) { return d.y })
-			
+			.defined(function(d) {
+				return d[metricKey+"_n"] > 0
+			})
 		pathsDashed.enter().append('path');
 		pathsDashed.exit().remove()
 		pathsDashed.attr('class',function(d,i) {
@@ -261,6 +303,9 @@
 			})
 			if(typeof active === 'undefined') {
 				d.active = false
+				if(curViewType === 'hourly' && selectedCombinations.length !== 0) {
+					return 'none'
+				}
 				return null
 			} else {
 				d.active = true;
@@ -281,8 +326,16 @@
 				console.error('dataset missing xvalues, x scale will be off')
 			}
 		})
-
-		//console.log(dotData)
+		pathsDashed.each(function(d,i) {
+			if(d.active) {
+				d3.select(this).moveToFront()
+			}
+		})
+		paths.each(function(d,i) {
+			if(d.active) {
+				d3.select(this).moveToFront()
+			}
+		})
 		var dots = svg.select('g.dots').selectAll('g.dot').data(dotPointsToUse)
 		dots.enter().append('g').attr('class','dot')
 		dots.attr('transform', function(d) {
@@ -293,14 +346,7 @@
 				return 'translate(' + x + ',' + y + ')'
 			})
 		dots.exit().remove();
-		/*
-		var hitDot = dots.selectAll('.hitDot').data(function(d) { return [d] })
-		hitDot.enter().append('circle').attr('class','hitDot')
-			.attr('r', 13)
-			.attr('opacity',0)
-		//hitDot.on('mouseover', mouseOverDot)
-		//	.on('mouseout', mouseOutDot)
-		*/
+		
 		var dotSize = 5;
 
 		var fillDot = dots.selectAll('.fillDot').data(function(d) { return [d] })
@@ -322,7 +368,11 @@
 			return '#ccc'
 		})
 		.style('opacity',dotOpacityFunction)
-
+		dots.each(function(d,i) {
+			if(d.active) {
+				d3.select(this).moveToFront()
+			}
+		})
 		var voronoiGroup = chart.select('.hoverAreas')
 		var vPaths = voronoiGroup.selectAll("path").data(voronoiData)
 		vPaths.enter().append("path")
@@ -378,6 +428,10 @@
 		mlabOpenInternet.controls.updateHash()
 		$(window).off('mousemove', mouseMoveDoc).on('mousemove', mouseMoveDoc)
 	}
+
+	/*
+	extra mouse handler to hide tooltips when mouse in certain spots
+	*/
 	function mouseMoveDoc(e) {
 		var mouseY =  e.pageY
 		var graphOffset = $(div[0][0]).offset().top
@@ -385,10 +439,17 @@
 			mouseOutDot()
 		}
 	}
+	/*
+	hide dom elements for this viz
+	*/
 	function hide() {
 		div.style('display','none')
 		$(window).off('mousemove', mouseMoveDoc)
 	}
+
+	/*
+	toggle the grey lines (unselected lines) visibility
+	*/
 	function toggleGreyLines(d,i) {
 		hidingGreyLines = !hidingGreyLines
 		div.classed('hideGrey', hidingGreyLines)
@@ -397,6 +458,10 @@
 		)
 		show()
 	}
+
+	/*
+	function to create TT dom
+	*/
 	function createTT() {
 		exploreTT.style('opacity',0).style('display','none')
 		var content = exploreTT.append('div').attr('class','exploreTTContent')
@@ -410,12 +475,20 @@
 		content.append('div').attr('class','ttValue dateValue')
 
 	}
+
+	/*
+	tooltip helpers for when you mouse over the tooltip
+	*/
 	function mouseOverTT() {
 		mouseOverDot(lastActiveTooltipData)
 	}
 	function mouseOutTT() {
 		mouseOutDot(lastActiveTooltipData)
 	}
+
+	/*
+	mouse over a dot (or a voronoi path) to display a tooltip for that datum
+	*/
 	function mouseOverDot(d,i) {
 		if(typeof d === 'undefined') {
 			d = lastActiveTooltipData
@@ -437,18 +510,18 @@
 			isp = ispNameMap[isp]
 		}
 		var tp = mlabOpenInternet.dataLoader.getTPForCode(code)
-		exploreTT.select('.ttTitle').text(isp + ", " + tp)
+		exploreTT.select('.ttTitle').text(isp + " x " + tp)
 		exploreTT.select('.valueLabel').text(curMetric.name)
 		exploreTT.select('.valueValue').text(d[curMetric.key] + " " + curMetric.units)
 		exploreTT.select('.sampleSizeValue').text(d[curMetric.key + '_n'])
 		var momentDate = moment(d.date)
 		var dateFormat;
 		if(curViewType === 'daily') {
-			dateFormat = 'M/D/YYYY'
+			dateFormat = 'MMM D, YYYY'
 		} else if(curViewType === 'hourly') {
-			dateFormat = 'MMM \'YY h A'
+			dateFormat = 'h A<br />MMM YYYY'
 		}
-		exploreTT.select('.dateValue').text(momentDate.format(dateFormat).toUpperCase())
+		exploreTT.select('.dateValue').html(momentDate.format(dateFormat).toUpperCase())
 		//console.log(d.date)
 		var graphXPos = Math.round(xScale(d.date))
 		//console.log(graphXPos)
@@ -477,6 +550,9 @@
 		exploreTT.style('opacity',1)
 		
 	}
+	/*
+	hide the tooltip
+	*/
 	function mouseOutDot(d,i) {
 		if(typeof d === 'undefined') {
 			d = lastActiveTooltipData
@@ -490,6 +566,9 @@
 		exploreTT.style('opacity',0).transition().duration(0).delay(300).style('display','none')
 
 	}
+	/*
+	method to toggle grey lines externally, used for permalink
+	*/
 	function getSetHidingGreyLines(newVal) {
 		if(typeof newVal === 'undefined') {
 			return hidingGreyLines
@@ -502,6 +581,9 @@
 		})
 
 	}
+	/*
+	helper function to determine dot opacity
+	*/
 	function dotOpacityFunction(d,i) {
 		if(curViewType === 'daily') {
 			return 0;

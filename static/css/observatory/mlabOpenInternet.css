@@ -161,7 +161,6 @@ Controls
 }
 #controls .selectedDateLabels {
 	margin-left: 65px;
-	font-weight: bold;
 	font-size: 15px;
 	text-transform: uppercase;
 	color: #8b8b8b;
@@ -170,14 +169,17 @@ Controls
 #controls .selectedDateLabels .dateLabels {
 	float: left;
 }
+#controls .selectedDateLabels .b {
+	font-weight: bold;
+}
 #controls .socialIcons {
-	margin-left: 50px;
+	margin-right: 65px;
 	margin-top: 3px;
-	float: left;
+	float: right;
 }
 #controls .socialIcons .socialIcon {
 	float: left;
-	margin-right: 15px;
+	margin-left: 15px;
 	height: 15px;
 	background: #fff url('../../observatory/images/socialIcons.png') 0 0 no-repeat;
 	margin-top: 2px;
@@ -195,7 +197,6 @@ Controls
 #controls .socialIcons .socialIcon-google {
 	width: 15px;
 	background-position: 0px 0px;
-	margin-right: 10px;
 }
 #controls .socialIcons .socialIcon-fb {
 	width: 11px;
@@ -321,6 +322,7 @@ Explore Viz
 }
 #exploreViz .exploreTTContainer .dateValue {
 	color: #c2c2c2;
+	font-size: 11px;
 }
 
 #exploreViz .toggleGrey {
@@ -330,8 +332,8 @@ Explore Viz
 	text-align: right;
 	cursor: pointer;
 	position: absolute;
-	right: 90px;
-	top: -48px;
+	left: 65px;
+	top: -17px;
 
 }
 #exploreViz .toggleGrey .ul {
@@ -388,7 +390,7 @@ Time controller
 }
 #timeControl .timeControlLabel {
 	font-size: 11px;
-	color: #616266;
+	color: #8b8b8b;
 	margin-bottom: 0.7em;
 }
 /*
@@ -709,30 +711,6 @@ Loading
 	padding-top: 165px;
 	box-sizing: border-box;
 }
-
-/***************
-  ABOUT
-***************/
-
-.aboutModal {
-  display: none;
-  position: fixed;
-  width: 960px;
-  height: 100%;
-  background-color: rgba(0,0,0,0.2);
-  top: 0;
-  left: 0;
-  z-index: 50;
-}
-.aboutContent {
-  background: white;
-  padding: 30px;
-  color: #767676;
-  width: 70%;
-  margin: 200px auto;
-}
-
-
 
 
 .cf:before,
