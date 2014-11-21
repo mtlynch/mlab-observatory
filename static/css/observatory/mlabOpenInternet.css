@@ -197,7 +197,6 @@ Controls
 #controls .socialIcons .socialIcon-google {
 	width: 15px;
 	background-position: 0px 0px;
-	margin-right: 10px;
 }
 #controls .socialIcons .socialIcon-fb {
 	width: 11px;
@@ -333,8 +332,8 @@ Explore Viz
 	text-align: right;
 	cursor: pointer;
 	position: absolute;
-	right: 90px;
-	top: -18px;
+	left: 65px;
+	top: -17px;
 
 }
 #exploreViz .toggleGrey .ul {

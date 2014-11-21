@@ -204,6 +204,31 @@ viz file for the comapre visualizations
 		}).style('stroke', function(d) {
 			return d.color
 		})
+
+
+		var areaGen = d3.svg.area()
+			.x(function(d,i) {
+				return xScale(d.date)
+			})
+			.y(function(d,i) {
+				return yScale(d[metricKey])
+			})
+			.y0(graphHeight)
+			//.defined(function(d) { return d[metricKey + "_n"] >= mlabOpenInternet.dataLoader.getMinSampleSize()
+
+		var areaFill = datasetGroups.selectAll('path.fill')
+			.data(curTimeViewType === "hourly" ? function(d) { return [d] } : [])
+		areaFill.enter().append('path')
+		areaFill.exit().remove();
+		areaFill.attr('class',function(d,i) {
+			return 'fill fill-'+ d.id
+		}).attr('d', function(d) {
+			return areaGen(d.data)
+		}).style('fill', function(d,i) {
+			return d.color
+		}).style('stroke','none')
+		.style('opacity', 0.25)
+
 		/* add in the dashed line */
 		var pathsDashed = datasetGroups.selectAll('path.dashed').data(function(d) { return [d] })
 		var lineGen = d3.svg.line()

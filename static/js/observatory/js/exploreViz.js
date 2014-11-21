@@ -39,6 +39,7 @@ viz file for the explore type visualizations
 			.attr('width', exploreDimensions.w + margin.left + margin.right)
 			.attr('height', exploreDimensions.h + margin.top + margin.bottom)
 		chart = svg.append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+		chart.append('g').attr('class','fills')
 		chart.append('g').attr('class','lines')
 		chart.append('g').attr('class','dots')
 		chart.append('g').attr('class','hoverAreas')
@@ -53,7 +54,7 @@ viz file for the explore type visualizations
 		curViewType = mlabOpenInternet.controls.getSelectedTimeView().toLowerCase()
 		console.log(curViewType)
 		mlabOpenInternet.dataLoader.requestMetroData(curMetro, curViewType, dataLoaded)
-		
+
 	}
 	/*
 	data has been returned form data loader
@@ -104,7 +105,7 @@ viz file for the explore type visualizations
 		var metric = mlabOpenInternet.controls.getSelectedMetric();
 		curMetric = metric;
 		var selectedCombinations = mlabOpenInternet.controls.getSelectedCombinations()
-		if(selectedCombinations.length === 0) {
+		if(selectedCombinations.length === 0 || curViewType === 'hourly') {
 			toggleGreyButton.style('display','none')
 			toggleGreyButton.select('.ul').text('Hide')
 			hidingGreyLines = false
@@ -203,7 +204,7 @@ viz file for the explore type visualizations
 
 
 		var dotPointsToUse;
-		if(hidingGreyLines) {
+		if(hidingGreyLines || (curViewType === 'hourly' && selectedCombinations.length !== 0)) {
 			dotPointsToUse = uniqueActivePoints
 		} else {
 			dotPointsToUse = uniquePoints
@@ -216,7 +217,6 @@ viz file for the explore type visualizations
 			.defined(function(d,i) {
 				return d[metricKey+"_n"] >= mlabOpenInternet.dataLoader.getMinSampleSize()
 			})
-		var dotData = []
 		paths.enter().append('path');
 		paths.exit().remove()
 		paths.attr('class',function(d,i) {
@@ -229,17 +229,12 @@ viz file for the explore type visualizations
 			})
 			if(typeof active === 'undefined') {
 				d.active = false
+				if(curViewType === 'hourly' && selectedCombinations.length !== 0) {
+					return 'none'
+				}
 				return null
 			} else {
 				d.active = true;
-				//console.log('active dataset');
-				//console.log(d)
-
-				_.each(d.data, function(dotDataPoint) {
-					dotDataPoint.dataID = d.id
-					dotDataPoint.color = d.color
-					dotData.push(dotDataPoint)
-				})
 				return d.color;
 			}
 		}).style('stroke-width', function(d) {
@@ -252,6 +247,42 @@ viz file for the explore type visualizations
 			return d.active
 		})
 
+
+		var areaGen = d3.svg.area()
+			.x(function(d) { return d.x })
+			.y(function(d) { return d.y })
+			.y0(exploreDimensions.h)
+			//.defined(function(d) { return d[metricKey + "_n"] >= mlabOpenInternet.dataLoader.getMinSampleSize()
+
+		var areaFill = svg.select('g.fills').selectAll('path.fill')
+			.data(curViewType === "hourly" ? datasets : [])
+		areaFill.enter().append('path')
+		areaFill.exit().remove();
+		areaFill.attr('class',function(d,i) {
+			return 'fill fill-'+ d.id
+		}).attr('d', function(d) {
+			return areaGen(d.data)
+		}).style('fill', function(d,i) {
+			if(d.active) {
+				return d.color
+			} else {
+				return 'none'
+			}
+		}).style('stroke','none')
+		.style('opacity', 0.25)
+		.each(function(d) {
+			var areaSize = 0;
+			if(d.active) {
+				_.each(d.data, function(datum) {
+					areaSize += +datum[metricKey]
+				})
+				console.log(d)
+				console.log(areaSize)
+			}
+			d.areaSize = areaSize
+		}).sort(function(a,b) {
+			return b.areaSize - a.areaSize
+		})
 
 		var pathsDashed = svg.select('g.lines').selectAll('path.dashed').data(datasets)
 		var lineGen = d3.svg.line()
@@ -272,6 +303,9 @@ viz file for the explore type visualizations
 			})
 			if(typeof active === 'undefined') {
 				d.active = false
+				if(curViewType === 'hourly' && selectedCombinations.length !== 0) {
+					return 'none'
+				}
 				return null
 			} else {
 				d.active = true;
@@ -302,7 +336,6 @@ viz file for the explore type visualizations
 				d3.select(this).moveToFront()
 			}
 		})
-		//console.log(dotData)
 		var dots = svg.select('g.dots').selectAll('g.dot').data(dotPointsToUse)
 		dots.enter().append('g').attr('class','dot')
 		dots.attr('transform', function(d) {
