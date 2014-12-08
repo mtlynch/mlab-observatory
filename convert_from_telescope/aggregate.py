@@ -16,7 +16,6 @@
 # limitations under the License.
 
 import datetime
-import pytz
 
 
 # Note: All functions in this module return datetimes in timezone-naive format.
@@ -30,159 +29,165 @@ import pytz
 
 
 def aggregate_by_month(results):
-  """ Aggregate test results by month.
+  """Aggregate test results by month.
 
-      Args:
-        results (list): A list of 2-tuples where the first entry is a datetime
-          and the second is a float. For example:
-          [(<datetime-2014-10-05>, 24.1), (<datetime-2014-11-02>, 90.2), ...]
+  Args:
+    results: (list) A list of 2-tuples where the first entry is a datetime and
+      the second is a float. For example:
+      [(<datetime-2014-10-05>, 24.1), (<datetime-2014-11-02>, 90.2), ...]
 
-      Returns:
-        (dict) A dictionary of lists, keyed by datetime. Each key is a datetime
-        rounded to midnight on the first day of the month. For example:
-        {
-          <datetime-2014-10-01@00:00:00>: [24.1, 35.8, 16.6, ...],
-          <datetime-2014-11-01@00:00:00>: [92.2, 100.3, 23.0, ...],
-          <datetime-2014-12-01@00:00:00>: [18.0, 19.8, 97.6, ...],
-          ...
-        }
+  Returns:
+    (dict) A dictionary of lists, keyed by datetime. Each key is a datetime
+    rounded to midnight on the first day of the month. For example:
+    {
+      <datetime-2014-10-01@00:00:00>: [24.1, 35.8, 16.6, ...],
+      <datetime-2014-11-01@00:00:00>: [92.2, 100.3, 23.0, ...],
+      <datetime-2014-12-01@00:00:00>: [18.0, 19.8, 97.6, ...],
+      ...
+    }
   """
   aggregation_func = lambda result_datetime: (
-      datetime.datetime(year = result_datetime.year,
-                        month = result_datetime.month,
-                        day = 1))
+      datetime.datetime(year=result_datetime.year,
+                        month=result_datetime.month,
+                        day=1))
   return _aggregate_results(results, aggregation_func)
 
 
 def aggregate_by_day(results):
-  """ Aggregate test results by day.
+  """Aggregate test results by day.
 
-      Args:
-        results (list): A list of 2-tuples where the first entry is a datetime
-          and the second is a float. For example:
-          [(<datetime-2014-10-05>, 24.1), (<datetime-2014-11-02>, 90.2), ...]
+  Args:
+    results: (list) A list of 2-tuples where the first entry is a datetime and
+      the second is a float. For example:
+      [(<datetime-2014-10-05>, 24.1), (<datetime-2014-11-02>, 90.2), ...]
 
-      Returns:
-        (dict) A dictionary of lists, keyed by datetime. Each key is a datetime
-        rounded to midnight of the given day. For example:
-        {
-          <datetime-2014-10-16@00:00:00>: [24.1, 35.8, 16.6, ...],
-          <datetime-2014-10-17@00:00:00>: [92.2, 100.3, 23.0, ...],
-          <datetime-2014-10-25@00:00:00>: [18.0, 19.8, 97.6, ...],
-          ...
-        }
+  Returns:
+    (dict) A dictionary of lists, keyed by datetime. Each key is a datetime
+    rounded to midnight of the given day. For example:
+    {
+      <datetime-2014-10-16@00:00:00>: [24.1, 35.8, 16.6, ...],
+      <datetime-2014-10-17@00:00:00>: [92.2, 100.3, 23.0, ...],
+      <datetime-2014-10-25@00:00:00>: [18.0, 19.8, 97.6, ...],
+      ...
+    }
   """
   aggregation_func = lambda result_datetime: (
-      datetime.datetime(year = result_datetime.year,
-                        month = result_datetime.month,
-                        day = result_datetime.day))
+      datetime.datetime(year=result_datetime.year,
+                        month=result_datetime.month,
+                        day=result_datetime.day))
   return _aggregate_results(results, aggregation_func)
 
 
 def aggregate_by_hour_of_day(results):
-  """ Aggregate test results by hour of day (e.g. all results from 2-3 PM are
-      aggregated together, even if the results occurred on different days).
-      Note that this differs from the aggregate_by_hour function.
+  """Aggregate test results by hour of day.
 
-      Args:
-        results (list): A list of 2-tuples where the first entry is a datetime
-          and the second is a float. For example:
-          [(<datetime-2014-10-05>, 24.1), (<datetime-2014-11-02>, 90.2), ...]
+  Aggregate together all tests that occur in the same hour of day (e.g. all
+  results from 2-3 PM are aggregated together, even if the results occurred on
+  different days). Note that this differs from the aggregate_by_hour function.
 
-      Returns:
-        (dict) A dictionary of lists, keyed by int. Each key is the hour in
-        which a result occurred (in the range 0...23). For example:
-        {
-          0: [24.1, 35.8, 16.6, ...],
-          1: [92.2, 100.3, 23.0, ...],
-          2: [18.0, 19.8, 97.6, ...],
-          ...
-        }
+  Args:
+    results: (list) A list of 2-tuples where the first entry is a datetime
+      and the second is a float. For example:
+      [(<datetime-2014-10-05>, 24.1), (<datetime-2014-11-02>, 90.2), ...]
+
+  Returns:
+    (dict) A dictionary of lists, keyed by int. Each key is the hour in
+    which a result occurred (in the range 0...23). For example:
+    {
+      0: [24.1, 35.8, 16.6, ...],
+      1: [92.2, 100.3, 23.0, ...],
+      2: [18.0, 19.8, 97.6, ...],
+      ...
+    }
   """
   aggregation_func = lambda result_datetime: result_datetime.hour
   return _aggregate_results(results, aggregation_func)
 
 
 def aggregate_by_hour_of_day_per_month(results):
-  """ Aggregate test results by hour of day for each month (e.g. all results
-      from 2-3 PM in March 2014 are aggregated together, even if they occurred
-      on different days, while results from 2-3 PM in April 2014 are aggregated
-      separately from the March 2014 results).
+  """Aggregate test results by hour of day for each month.
 
-      Args:
-        results (list): A list of 2-tuples where the first entry is a datetime
-          and the second is a float. For example:
-          [(<datetime-2014-10-05>, 24.1), (<datetime-2014-11-02>, 90.2), ...]
+  Aggregate together all tests each month that occur in the same hour of day
+  (e.g. all results from 2-3 PM in March 2014 are aggregated together, even if
+  they occurred on different days, while results from 2-3 PM in April 2014 are
+  aggregated separately from the March 2014 results).
 
-      Returns:
-        (dict) A dictionary of lists, keyed by datetime. Each key is a datetime
-        rounded to the first day of the month and to the start of the hour. For
-        example:
-        {
-          <datetime-2014-10-01@00:00:00>: [24.1, 35.8, 16.6, ...],
-          <datetime-2014-10-01@01:00:00>: [92.2, 100.3, 23.0, ...],
-          <datetime-2014-10-01@02:00:00>: [18.2, 101.9, 9.2, ...],
-          ...
-          <datetime-2014-11-01@00:00:00>: [14.2, 84.2, 23.5, ...],
-          <datetime-2014-11-01@01:00:00>: [86.3, 29.2, 18.0, ...],
-          ...
-        }
+  Args:
+    results: (list) A list of 2-tuples where the first entry is a datetime
+      and the second is a float. For example:
+      [(<datetime-2014-10-05>, 24.1), (<datetime-2014-11-02>, 90.2), ...]
+
+  Returns:
+    (dict) A dictionary of lists, keyed by datetime. Each key is a datetime
+    rounded to the first day of the month and to the start of the hour. For
+    example:
+    {
+      <datetime-2014-10-01@00:00:00>: [24.1, 35.8, 16.6, ...],
+      <datetime-2014-10-01@01:00:00>: [92.2, 100.3, 23.0, ...],
+      <datetime-2014-10-01@02:00:00>: [18.2, 101.9, 9.2, ...],
+      ...
+      <datetime-2014-11-01@00:00:00>: [14.2, 84.2, 23.5, ...],
+      <datetime-2014-11-01@01:00:00>: [86.3, 29.2, 18.0, ...],
+      ...
+    }
   """
   aggregation_func = lambda result_datetime: (
-      datetime.datetime(year = result_datetime.year,
-                        month = result_datetime.month,
-                        day = 1,
-                        hour = result_datetime.hour))
+      datetime.datetime(year=result_datetime.year,
+                        month=result_datetime.month,
+                        day=1,
+                        hour=result_datetime.hour))
   return _aggregate_results(results, aggregation_func)
 
 
 def aggregate_by_hour(results):
-  """ Aggregate test results by hour (e.g. all results from 2-3 PM on
-      2014/05/14 are aggregated together, all results from 3-4 PM on
-      2014/05/14 are aggregated together).
+  """Aggregate test results by hour each day.
 
-      Args:
-        results (list): A list of 2-tuples where the first entry is a datetime
-          and the second is a float. For example:
-          [(<datetime-2014-10-05>, 24.1), (<datetime-2014-11-02>, 90.2), ...]
+  Aggregate test results by hour (e.g. all results from 2-3 PM on 2014/05/14
+  are aggregated together, all results from 3-4 PM on 2014/05/14 are
+  aggregated together).
 
-      Returns:
-        (dict) A dictionary of lists, keyed by datetime. Each key is a datetime
-        rounded to the first day of the month and to the start of the hour. For
-        example:
-        {
-          <datetime-2014-10-12@00:00:00>: [24.1, 35.8, 16.6, ...],
-          <datetime-2014-10-12@01:00:00>: [92.2, 100.3, 23.0, ...],
-          <datetime-2014-10-12@02:00:00>: [18.2, 101.9, 9.2, ...],
-          ...
-          <datetime-2014-11-03@00:00:00>: [14.2, 84.2, 23.5, ...],
-          <datetime-2014-11-03@01:00:00>: [86.3, 29.2, 18.0, ...],
-          ...
-        }
+  Args:
+    results: (list) A list of 2-tuples where the first entry is a datetime
+      and the second is a float. For example:
+      [(<datetime-2014-10-05>, 24.1), (<datetime-2014-11-02>, 90.2), ...]
+
+  Returns:
+    (dict) A dictionary of lists, keyed by datetime. Each key is a datetime
+    rounded to the first day of the month and to the start of the hour. For
+    example:
+    {
+      <datetime-2014-10-12@00:00:00>: [24.1, 35.8, 16.6, ...],
+      <datetime-2014-10-12@01:00:00>: [92.2, 100.3, 23.0, ...],
+      <datetime-2014-10-12@02:00:00>: [18.2, 101.9, 9.2, ...],
+      ...
+      <datetime-2014-11-03@00:00:00>: [14.2, 84.2, 23.5, ...],
+      <datetime-2014-11-03@01:00:00>: [86.3, 29.2, 18.0, ...],
+      ...
+    }
   """
   aggregation_func = lambda result_datetime: (
-      datetime.datetime(year = result_datetime.year,
-                        month = result_datetime.month,
-                        day = result_datetime.day,
-                        hour = result_datetime.hour))
+      datetime.datetime(year=result_datetime.year,
+                        month=result_datetime.month,
+                        day=result_datetime.day,
+                        hour=result_datetime.hour))
   return _aggregate_results(results, aggregation_func)
 
 
 def _aggregate_results(results, aggregation_func):
-  """ Aggregate test results according to the given aggregation function.
+  """Aggregate test results according to the given aggregation function.
 
-      Args:
-        results (list): A list of 2-tuples where the first entry is a datetime
-          and the second is a float. For example:
-          [(<datetime-2014-10-05>, 24.1), (<datetime-2014-11-02>, 90.2), ...]
+  Args:
+    results: (list) A list of 2-tuples where the first entry is a datetime and
+      the second is a float. For example:
+      [(<datetime-2014-10-05>, 24.1), (<datetime-2014-11-02>, 90.2), ...]
 
-        aggregation_func (function): An aggregation function responsible for
-        translating a datetime object into an aggregation key.
+    aggregation_func: (function) An aggregation function responsible for
+      translating a datetime object into an aggregation key.
 
-      Returns:
-        (dict) A dictionary of lists, where each list includes all results in
-        that aggregation unit (float values), keyed by whatever type
-        aggregation_func outputs as an aggregation key.
+  Returns:
+    (dict) A dictionary of lists, where each list includes all results in that
+    aggregation unit (float values), keyed by whatever type aggregation_func
+    outputs as an aggregation key.
   """
   aggregated_data = {}
 
