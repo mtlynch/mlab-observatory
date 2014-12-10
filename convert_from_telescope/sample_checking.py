@@ -17,6 +17,7 @@
 
 """Check that Telescope datasets meet sample size thresholds."""
 
+import collections
 import logging
 
 import aggregate
@@ -34,7 +35,7 @@ class SampleCounter(object):
   """Tracks the number of samples per day in a collection of datasets."""
 
   def __init__(self):
-    self.sample_counts = {}
+    self.sample_counts = collections.defaultdict(lambda: {})
 
   def add_to_counts(self, metadata, results):
     """Add result data to overall sample counts.
@@ -46,28 +47,13 @@ class SampleCounter(object):
 
       results: (list) A list of (datetime, value) pairs representing Telescope
         results for the given metadata.
-
-    Raises:
-      ValueError: If the metadata parameter does not specify
-        'download_throughput' as the value of the 'metric' key.
     """
-    if metadata['metric_name'] != 'download_throughput':
-      raise ValueError('Results must be for download_throughput metric.')
-
     counts_key = self._hash_key_from_metadata(metadata)
-
-    try:
-      sample_counts_for_key = self.sample_counts[counts_key]
-    except KeyError:
-      self.sample_counts[counts_key] = {}
-      sample_counts_for_key = self.sample_counts[counts_key]
 
     aggregated_by_day = aggregate.aggregate_by_day(results)
     for day, values in aggregated_by_day.iteritems():
-      try:
-        sample_counts_for_key[day] += len(values)
-      except KeyError:
-        sample_counts_for_key[day] = len(values)
+      current_count = self.sample_counts[counts_key].get(day, 0)
+      self.sample_counts[counts_key][day] = current_count + len(values)
 
   def get_per_day_counts(self, metadata):
     hash_key = self._hash_key_from_metadata(metadata)
@@ -82,7 +68,8 @@ class SampleCounter(object):
     Returns:
       (str) Key of the form '[site]-[isp]', for example: 'lga01-comcast'.
     """
-    hash_key = '%s-%s' % (metadata['site_name'], metadata['isp'])
+    hash_key = '%s-%s-%s' % (metadata['site_name'], metadata['isp'],
+                             metadata['metric_name'])
     return hash_key
 
 
@@ -98,7 +85,9 @@ class SampleCountChecker(object):
 
       sample_period_end: (datetime.datetime) Time at which the relevant period
         of sample counts ends (i.e. samples after this date are not considered
-        when checking against requirements).
+        when checking against requirements). Note: There is no explicit
+        sample_period_start because we use the earliest sample in the dataset
+        as the implicit start of the sample period.
 
       min_samples_per_day: (int) The minimum number of samples a dataset must
         have in a day for the day to be considered statistically valid.
@@ -181,7 +170,9 @@ class DataFileBlacklister(object):
     Args:
       sample_period_end: (datetime.datetime) Time at which the relevant period
         of sample counts ends (i.e. samples after this date are not considered
-        when checking against requirements).
+        when checking against requirements). Note: There is no explicit
+        sample_period_start because we use the earliest sample in the dataset
+        as the implicit start of the sample period.
 
       min_samples_per_day: (int) The minimum number of samples a dataset must
         have in a day for the day to be considered statistically valid.
@@ -225,7 +216,13 @@ class DataFileBlacklister(object):
     """
     parsed_metadata = telescope_data_parser.parse_filename_for_metadata(
         filename)
-    self._sample_count_checker.has_enough_samples(parsed_metadata)
+
+    # This is a workaround because Observatory currently can't exclude datasets
+    # on a per-metric basis, so we use download_throughput as a lowest common
+    # denominator.
+    parsed_metadata['metric_name'] = 'download_throughput'
+
+    return self._sample_count_checker.has_enough_samples(parsed_metadata)
 
   def _add_file(self, filename):
     """Adds the provided filename to blacklist database.
@@ -240,12 +237,14 @@ class DataFileBlacklister(object):
     parsed_metadata = telescope_data_parser.parse_filename_for_metadata(
         filename)
 
-    # only base list on download throughput
+    # This is a performance optimization due to the workaround in
+    # is_blacklisted(). Because we don't use any metric except download
+    # throughput, there is no need to waste time parsing the data for other
+    # metrics.
     if parsed_metadata['metric_name'] != 'download_throughput':
       return
 
     with open(filename, 'r') as data_file:
       parsed_data = telescope_data_parser.parse_data_file(data_file)
-
-    self._sample_counter.add_to_counts(parsed_metadata, parsed_data)
+      self._sample_counter.add_to_counts(parsed_metadata, parsed_data)
 
