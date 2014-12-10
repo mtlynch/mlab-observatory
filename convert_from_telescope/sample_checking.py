@@ -66,7 +66,8 @@ class SampleCounter(object):
       metadata: (dict) A dictionary of metadata describing Telescope results.
 
     Returns:
-      (str) Key of the form '[site]-[isp]', for example: 'lga01-comcast'.
+      (str) Key of the form '[site]-[isp]-[metric]', for example:
+      'lga01-comcast-minimum_rtt'.
     """
     hash_key = '%s-%s-%s' % (metadata['site_name'], metadata['isp'],
                              metadata['metric_name'])
