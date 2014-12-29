@@ -31,7 +31,7 @@ sys.path.insert(1,
 import telescope.utils
 
 
-def parse_filename_for_metadata(file_path):
+def _parse_filename_for_metadata(file_path):
   """Parses a telescope file path for metadata.
 
   Args:
@@ -50,7 +50,8 @@ def parse_filename_for_metadata(file_path):
       site_name: (str) Site name associated with this file (e.g. 'lax01').
       start_date: (datetime.datetime) The start time as a datetime object in
         UTC time.
-      start_date_string: (str) The start date in its original string form.i
+      start_date_string: (str) The start date in its original string form.
+
   Raises:
     ValueError: The filename was in unexpected format.
   """
@@ -79,7 +80,7 @@ def parse_filename_for_metadata(file_path):
   return parsed
 
 
-def parse_data_file(telescope_file):
+def _parse_data_file(telescope_file):
   """Parses the content of a Telescope output file.
 
   Parses a data file output from Telescope into a list of (timestamp, value)
@@ -105,4 +106,53 @@ def parse_data_file(telescope_file):
     rows.append((time_as_datetime, float(row['result'])))
 
   return rows
+
+
+class TelescopeResultReader(object):
+  """Base class for reading Telescope result files."""
+
+  def read_rows(self):
+    raise NotImplementedError('Subclasses must implement this function.')
+
+  def get_metadata(self):
+    raise NotImplementedError('Subclasses must implement this function.')
+
+
+class SingleTelescopeResultReader(TelescopeResultReader):
+  """Reads a single Telescope result file."""
+
+  def __init__(self, result_filename):
+    self._result_filename = result_filename
+
+  def read_rows(self):
+    with open(self._result_filename, 'r') as data_file:
+      return _parse_data_file(data_file)
+
+  def get_metadata(self):
+    return _parse_filename_for_metadata(self._result_filename)
+
+
+class MergedTelescopeResultReader(TelescopeResultReader):
+  """Reads a series of Telescope result files.
+
+  This result reader reads a series of Telescope result files, presenting them
+  as a single, aggregated Telescope result.
+  """
+
+  def __init__(self, result_readers):
+    self._result_readers = result_readers
+
+  def read_rows(self):
+    merged_rows = []
+    for reader in self._result_readers:
+      merged_rows.extend(reader.read_rows())
+    return merged_rows
+
+  def get_metadata(self):
+    # We are pretending that the first reader represents the metadata for the
+    # whole set, which is technically wrong because even in properly merged
+    # results, values such as start_time will differ. The current implementation
+    # suits our needs so we are opting against a more complex but technically
+    # correct implementation.
+    return self._result_readers[0].get_metadata()
 

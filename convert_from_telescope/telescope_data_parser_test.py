@@ -16,19 +16,20 @@
 # limitations under the License.
 
 import datetime
-import StringIO
+import io
 import unittest
 
+import mock
 import pytz
 
 import telescope_data_parser
 
 
-class TelescopeDataParserTest(unittest.TestCase):
+class SingleTelescopeResultReaderTest(unittest.TestCase):
 
-  def test_parse_filename_for_metadata_year_border(self):
+  def test_get_metadata_year_border(self):
     filename = '2012-01-01-000000+366d_atl01_at&t_average_rtt-raw.csv'
-    parsed_expected = {
+    metadata_expected = {
         'start_date_string': '2012-01-01-000000',
         'start_date': datetime.datetime(2012, 1, 1, tzinfo=pytz.utc),
         'duration_string': '366',
@@ -37,12 +38,14 @@ class TelescopeDataParserTest(unittest.TestCase):
         'isp': 'at&t',
         'metric_name': 'average_rtt',
         }
-    parsed_actual = telescope_data_parser.parse_filename_for_metadata(filename)
-    self.assertDictEqual(parsed_expected, parsed_actual)
+    reader = telescope_data_parser.SingleTelescopeResultReader(filename)
+    metadata_actual = reader.get_metadata()
+    self.assertDictEqual(metadata_expected, metadata_actual)
 
-  def test_parse_filename_for_metadata_arbitrary_start_time(self):
-    filename = '2013-05-15-133506+21d_lga02_comcast_download_throughput-raw.csv'
-    parsed_expected = {
+  def test_get_metadata_arbitrary_start_time(self):
+    filename = (
+        '2013-05-15-133506+21d_lga02_comcast_download_throughput-raw.csv')
+    metadata_expected = {
         'start_date_string': '2013-05-15-133506',
         'start_date': datetime.datetime(2013, 5, 15, 13, 35, 6,
                                         tzinfo=pytz.utc),
@@ -52,21 +55,52 @@ class TelescopeDataParserTest(unittest.TestCase):
         'isp': 'comcast',
         'metric_name': 'download_throughput',
         }
-    parsed_actual = telescope_data_parser.parse_filename_for_metadata(filename)
-    self.assertDictEqual(parsed_expected, parsed_actual)
+    reader = telescope_data_parser.SingleTelescopeResultReader(filename)
+    metadata_actual = reader.get_metadata()
+    self.assertDictEqual(metadata_expected, metadata_actual)
 
-  def test_parse_data_file(self):
+  @mock.patch('__builtin__.open')
+  def test_read_rows(self, mock_open):
     file_contents = '\n'.join((
         '1416501638,15.9014',
         '1326589323,109.11934',
         '1327712523,80.11242'))
-    mock_input_file = StringIO.StringIO(file_contents)
-    parsed_expected = [
+    mock_input_file = io.BytesIO(file_contents)
+    mock_open.return_value = mock_input_file
+    results_expected = [
         (datetime.datetime(2014, 11, 20, 16, 40, 38, 0, pytz.utc), 15.9014),
         (datetime.datetime(2012, 1, 15, 1, 2, 3, 0, pytz.utc), 109.11934),
         (datetime.datetime(2012, 1, 28, 1, 2, 3, 0, pytz.utc), 80.11242)]
-    parsed_actual = telescope_data_parser.parse_data_file(mock_input_file)
-    self.assertListEqual(parsed_expected, parsed_actual)
+    reader = telescope_data_parser.SingleTelescopeResultReader(
+        'mock_filename.csv')
+    results_actual = reader.read_rows()
+    self.assertListEqual(results_expected, results_actual)
+
+class MergedTelescopeResultReaderTest(unittest.TestCase):
+
+  def test_read_rows(self):
+    mock_readers = [mock.Mock() for i in range(2)]
+    mock_readers[0].read_rows.return_value = ['a', 'b', 'c']
+    mock_readers[1].read_rows.return_value = ['d', 'e', 'f']
+    merged_reader = telescope_data_parser.MergedTelescopeResultReader(
+        mock_readers)
+
+    results_expected = ['a', 'b', 'c', 'd', 'e', 'f']
+    results_actual = merged_reader.read_rows()
+    self.assertItemsEqual(results_expected, results_actual)
+
+  def test_get_metadata(self):
+    mock_readers = [mock.Mock() for i in range(2)]
+    mock_readers[0].get_metadata.return_value = {'foo': 'bar'}
+    mock_readers[1].get_metadata.return_value = {'abc': 'xyz'}
+
+    merged_reader = telescope_data_parser.MergedTelescopeResultReader(
+        mock_readers)
+
+    # get_metadata should just return the metadata for the first reader.
+    metadata_expected = {'foo': 'bar'}
+    metadata_actual = merged_reader.get_metadata()
+    self.assertDictEqual(metadata_expected, metadata_actual)
 
 if __name__ == '__main__':
   unittest.main()
