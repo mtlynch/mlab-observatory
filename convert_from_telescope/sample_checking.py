@@ -215,15 +215,15 @@ class DataFileBlacklister(object):
       (bool) True if the given filename is blacklisted because it is part
       of a dataset that does not meet the sample size requirements.
     """
-    parsed_metadata = telescope_data_parser.parse_filename_for_metadata(
-        filename)
+    result_reader = telescope_data_parser.SingleTelescopeResultReader(filename)
+    metadata = result_reader.get_metadata()
 
     # This is a workaround because Observatory currently can't exclude datasets
     # on a per-metric basis, so we use download_throughput as a lowest common
     # denominator.
-    parsed_metadata['metric_name'] = 'download_throughput'
+    metadata['metric_name'] = 'download_throughput'
 
-    return self._sample_count_checker.has_enough_samples(parsed_metadata)
+    return self._sample_count_checker.has_enough_samples(metadata)
 
   def _add_file(self, filename):
     """Adds the provided filename to blacklist database.
@@ -235,17 +235,17 @@ class DataFileBlacklister(object):
     Args:
       filename: (str) Name of file to add to blacklist database.
     """
-    parsed_metadata = telescope_data_parser.parse_filename_for_metadata(
-        filename)
+    result_reader = telescope_data_parser.SingleTelescopeResultReader(filename)
+    metadata = result_reader.get_metadata()
 
     # This is a performance optimization due to the workaround in
     # is_blacklisted(). Because we don't use any metric except download
     # throughput, there is no need to waste time parsing the data for other
     # metrics.
-    if parsed_metadata['metric_name'] != 'download_throughput':
+    if metadata['metric_name'] != 'download_throughput':
       return
 
     with open(filename, 'r') as data_file:
-      parsed_data = telescope_data_parser.parse_data_file(data_file)
-      self._sample_counter.add_to_counts(parsed_metadata, parsed_data)
+      telescope_data = result_reader.read_rows()
+      self._sample_counter.add_to_counts(metadata, telescope_data)
 
