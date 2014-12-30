@@ -246,6 +246,5 @@ class DataFileBlacklister(object):
       return
 
     with open(filename, 'r') as data_file:
-      telescope_data = result_reader.read_rows()
-      self._sample_counter.add_to_counts(metadata, telescope_data)
+      self._sample_counter.add_to_counts(metadata, result_reader)
 
