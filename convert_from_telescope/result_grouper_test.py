@@ -61,9 +61,9 @@ def _get_mock_readers():
       }
   return mock_readers
 
-class PerSiteTelescopeResultMergerTest(unittest.TestCase):
+class PerSiteTelescopeResultGrouperTest(unittest.TestCase):
 
-  def test_merge_readers_by_site(self):
+  def test_group_readers_by_site(self):
     grouper = result_grouper.PerSiteTelescopeResultGrouper()
     grouped_readers = grouper.group_results(_get_mock_readers())
 
@@ -79,7 +79,7 @@ class PerSiteTelescopeResultMergerTest(unittest.TestCase):
 
 class PerMetroTelescopeResultGrouperTest(unittest.TestCase):
 
-  def test_merge_readers_by_metro(self):
+  def test_group_readers_by_metro(self):
     grouper = result_grouper.PerMetroTelescopeResultGrouper()
     grouped_readers = grouper.group_results(_get_mock_readers())
 
