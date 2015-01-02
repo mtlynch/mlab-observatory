@@ -18,7 +18,7 @@
 import unittest
 import mock
 
-import result_merge
+import result_grouper
 
 
 def _get_mock_readers():
@@ -64,33 +64,33 @@ def _get_mock_readers():
 class PerSiteTelescopeResultMergerTest(unittest.TestCase):
 
   def test_merge_readers_by_site(self):
-    merger = result_merge.PerSiteTelescopeResultMerger()
-    merged_readers = merger.merge_results(_get_mock_readers())
+    grouper = result_grouper.PerSiteTelescopeResultGrouper()
+    grouped_readers = grouper.group_results(_get_mock_readers())
 
     keys_expected = ('lga01_comcast', 'sea01_comcast', 'sea01_verizon')
-    self.assertItemsEqual(keys_expected, merged_readers.keys())
+    self.assertItemsEqual(keys_expected, grouped_readers.keys())
     self.assertItemsEqual(('download_throughput', 'average_rtt'),
-                          merged_readers['lga01_comcast'].keys())
+                          grouped_readers['lga01_comcast'].keys())
     self.assertItemsEqual(('download_throughput',),
-                          merged_readers['sea01_comcast'].keys())
+                          grouped_readers['sea01_comcast'].keys())
     self.assertItemsEqual(('upload_throughput',),
-                          merged_readers['sea01_verizon'].keys())
+                          grouped_readers['sea01_verizon'].keys())
 
 
-class PerMetroTelescopeResultMergerTest(unittest.TestCase):
+class PerMetroTelescopeResultGrouperTest(unittest.TestCase):
 
   def test_merge_readers_by_metro(self):
-    merger = result_merge.PerMetroTelescopeResultMerger()
-    merged_readers = merger.merge_results(_get_mock_readers())
+    grouper = result_grouper.PerMetroTelescopeResultGrouper()
+    grouped_readers = grouper.group_results(_get_mock_readers())
 
     keys_expected = ('LGA_comcast', 'SEA_comcast', 'SEA_verizon')
-    self.assertItemsEqual(keys_expected, merged_readers.keys())
+    self.assertItemsEqual(keys_expected, grouped_readers.keys())
     self.assertItemsEqual(('download_throughput', 'average_rtt'),
-                          merged_readers['LGA_comcast'].keys())
+                          grouped_readers['LGA_comcast'].keys())
     self.assertItemsEqual(('download_throughput',),
-                          merged_readers['SEA_comcast'].keys())
+                          grouped_readers['SEA_comcast'].keys())
     self.assertItemsEqual(('upload_throughput',),
-                          merged_readers['SEA_verizon'].keys())
+                          grouped_readers['SEA_verizon'].keys())
 
 
 if __name__ == '__main__':
