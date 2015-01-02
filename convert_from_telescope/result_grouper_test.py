@@ -18,12 +18,12 @@
 import unittest
 import mock
 
-import result_merge
+import result_grouper
 
 
-class PerSiteTelescopeResultMergerTest(unittest.TestCase):
+class PerSiteTelescopeResultGrouperTest(unittest.TestCase):
 
-  def test_merge_readers_by_site(self):
+  def test_group_readers_by_site(self):
     mock_readers = [mock.Mock() for _ in range(5)]
     mock_readers[0].get_metadata.return_value = {
         'site_name': 'lga01', 'isp': 'comcast'}
@@ -36,17 +36,17 @@ class PerSiteTelescopeResultMergerTest(unittest.TestCase):
     mock_readers[4].get_metadata.return_value = {
         'site_name': 'sea01', 'isp': 'comcast'}
 
-    merger = result_merge.PerSiteTelescopeResultMerger()
-    merged_readers = merger.merge_results(mock_readers)
+    grouper = result_grouper.PerSiteTelescopeResultGrouper()
+    grouped_readers = grouper.group_results(mock_readers)
 
     # Readers should be grouped into three merged readers: lga01-comcast,
     # sea01-comcast, and sea01-verizon.
-    self.assertEqual(3, len(merged_readers))
+    self.assertEqual(3, len(grouped_readers))
 
 
-class PerMetroTelescopeResultMergerTest(unittest.TestCase):
+class PerMetroTelescopeResultGrouperTest(unittest.TestCase):
 
-  def test_merge_readers_by_metro(self):
+  def test_group_readers_by_metro(self):
     mock_readers = [mock.Mock() for _ in range(5)]
     mock_readers[0].get_metadata.return_value = {
         'metro': 'lga', 'isp': 'comcast'}
@@ -59,12 +59,12 @@ class PerMetroTelescopeResultMergerTest(unittest.TestCase):
     mock_readers[4].get_metadata.return_value = {
         'metro': 'sea', 'isp': 'comcast'}
 
-    merger = result_merge.PerMetroTelescopeResultMerger()
-    merged_readers = merger.merge_results(mock_readers)
+    grouper = result_grouper.PerMetroTelescopeResultGrouper()
+    grouped_readers = grouper.group_results(mock_readers)
 
     # Readers should be grouped into three merged readers: lga-comcast,
     # sea-comcast, and sea-verizon.
-    self.assertEqual(3, len(merged_readers))
+    self.assertEqual(3, len(grouped_readers))
 
 
 if __name__ == '__main__':
