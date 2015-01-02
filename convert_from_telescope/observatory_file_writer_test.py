@@ -39,8 +39,7 @@ class ObservatoryFileWriterTest(unittest.TestCase):
             'average_rtt_n': 16
             }
         }
-    aggregate_writer = observatory_file_writer.ObservatoryFileWriter(
-        ['average_rtt'])
+    aggregate_writer = observatory_file_writer.ObservatoryFileWriter()
     written_datafile_expected = [
         'month,hour,year,average_rtt,average_rtt_n',
         '10,0,2014,45.6,34',
@@ -68,8 +67,7 @@ class ObservatoryFileWriterTest(unittest.TestCase):
             'average_rtt_n': 16
             }
         }
-    aggregate_writer = observatory_file_writer.ObservatoryFileWriter(
-        ['average_rtt'])
+    aggregate_writer = observatory_file_writer.ObservatoryFileWriter()
     written_datafile_expected = [
         'month,day,year,average_rtt,average_rtt_n',
         '11,11,2014,45.6,34',
