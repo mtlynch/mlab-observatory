@@ -184,7 +184,7 @@ class DataFileBlacklister(object):
         percentage is 0.80 and minimum samples is 50, then at least 80% of days
         must have >= 50 samples per day.
     """
-    self._logger = logging.getLogger('prepare-for-server')
+    self._logger = logging.getLogger('telescope-convert')
     self._sample_counter = SampleCounter()
     self._sample_count_checker = SampleCountChecker(
         self._sample_counter, sample_period_end, min_samples_per_day,
