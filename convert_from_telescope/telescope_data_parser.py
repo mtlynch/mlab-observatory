@@ -111,10 +111,17 @@ def _parse_data_file(telescope_file):
 class TelescopeResultReader(object):
   """Base class for reading Telescope result files."""
 
-  def read_rows(self):
-    raise NotImplementedError('Subclasses must implement this function.')
+  def __iter__(self):
+    """Iterator for TelescopeResult objects read.
 
-  def get_metadata(self):
+    Returns:
+      (list): A (datetime, value) Telescope result pair, where datetime is the
+      time of the result (in UTC) and value is a float.
+    """
+    for row in self._read_rows():
+      yield row
+
+  def _read_rows(self):
     raise NotImplementedError('Subclasses must implement this function.')
 
 
@@ -124,7 +131,7 @@ class SingleTelescopeResultReader(TelescopeResultReader):
   def __init__(self, result_filename):
     self._result_filename = result_filename
 
-  def read_rows(self):
+  def _read_rows(self):
     with open(self._result_filename, 'r') as data_file:
       return _parse_data_file(data_file)
 
@@ -139,20 +146,15 @@ class MergedTelescopeResultReader(TelescopeResultReader):
   as a single, aggregated Telescope result.
   """
 
-  def __init__(self, result_readers):
-    self._result_readers = result_readers
+  def __init__(self):
+    self._result_readers = []
 
-  def read_rows(self):
+  def add_reader(self, result_reader):
+    self._result_readers.append(result_reader)
+
+  def _read_rows(self):
     merged_rows = []
     for reader in self._result_readers:
-      merged_rows.extend(reader.read_rows())
+      merged_rows.extend(reader)
     return merged_rows
-
-  def get_metadata(self):
-    # We are pretending that the first reader represents the metadata for the
-    # whole set, which is technically wrong because even in properly merged
-    # results, values such as start_time will differ. The current implementation
-    # suits our needs so we are opting against a more complex but technically
-    # correct implementation.
-    return self._result_readers[0].get_metadata()
 
