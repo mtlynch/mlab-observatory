@@ -39,18 +39,35 @@ class TelescopeResultGrouper(object):
       put into groups.
 
     Returns:
-      (list) A list of MergedTelescopeResultReader objects where each object
-      corresponds to a group of results.
+    (dict) A dictionary of results, keyed by group key, then by metric name.
+    For example:
+    {
+      'lga01_comcast': {
+        'download_throughput': [
+          (<datetime-2014-10-01>, 24.5),
+          (<datetime-2014-10-02>, 24.5),
+          (<datetime-2014-10-03>, 24.5),
+          ...
+          ],
+        'upload_throughput': ...,
+        },
+      'sea01_verizon': {
+        'download_throughput': ...,
+        'upload_throughput': ...,
+        },
+      'mia02_twc': ...,
+      ...
+    }
     """
-    reader_groups = collections.defaultdict(lambda: [])
+    reader_groups = collections.defaultdict(
+        lambda: collections.defaultdict(
+            lambda: telescope_data_parser.MergedTelescopeResultReader()))
     for result_reader in result_readers:
-      key = self._create_group_key(result_reader.get_metadata())
-      reader_groups[key].append(result_reader)
-    merged_readers = []
-    for result_reader_group in reader_groups.itervalues():
-      merged_readers.append(telescope_data_parser.MergedTelescopeResultReader(
-          result_reader_group))
-    return merged_readers
+      metadata = result_reader.get_metadata()
+      key = self._create_group_key(metadata)
+      metric_name = metadata['metric_name']
+      reader_groups[key][metric_name].add_reader(result_reader)
+    return reader_groups
 
   def _create_group_key(self, metadata):
     raise NotImplementedError('Subclasses must implement this function.')

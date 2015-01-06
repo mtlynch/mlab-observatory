@@ -60,7 +60,7 @@ class SingleTelescopeResultReaderTest(unittest.TestCase):
     self.assertDictEqual(metadata_expected, metadata_actual)
 
   @mock.patch('__builtin__.open')
-  def test_read_rows(self, mock_open):
+  def test_iter(self, mock_open):
     file_contents = '\n'.join((
         '1416501638,15.9014',
         '1326589323,109.11934',
@@ -73,34 +73,25 @@ class SingleTelescopeResultReaderTest(unittest.TestCase):
         (datetime.datetime(2012, 1, 28, 1, 2, 3, 0, pytz.utc), 80.11242)]
     reader = telescope_data_parser.SingleTelescopeResultReader(
         'mock_filename.csv')
-    results_actual = reader.read_rows()
+    results_actual = [result_row for result_row in reader]
     self.assertListEqual(results_expected, results_actual)
+
 
 class MergedTelescopeResultReaderTest(unittest.TestCase):
 
-  def test_read_rows(self):
-    mock_readers = [mock.Mock() for i in range(2)]
-    mock_readers[0].read_rows.return_value = ['a', 'b', 'c']
-    mock_readers[1].read_rows.return_value = ['d', 'e', 'f']
-    merged_reader = telescope_data_parser.MergedTelescopeResultReader(
-        mock_readers)
+  def test_iter(self):
+    mock_readers = [mock.MagicMock() for i in range(2)]
+    mock_readers[0].__iter__.return_value = iter(['a', 'b', 'c'])
+    mock_readers[1].__iter__.return_value = iter(['d', 'e', 'f'])
+
+    merged_reader = telescope_data_parser.MergedTelescopeResultReader()
+    for mock_reader in mock_readers:
+      merged_reader.add_reader(mock_reader)
 
     results_expected = ['a', 'b', 'c', 'd', 'e', 'f']
-    results_actual = merged_reader.read_rows()
+    results_actual = [result_row for result_row in merged_reader]
     self.assertItemsEqual(results_expected, results_actual)
 
-  def test_get_metadata(self):
-    mock_readers = [mock.Mock() for i in range(2)]
-    mock_readers[0].get_metadata.return_value = {'foo': 'bar'}
-    mock_readers[1].get_metadata.return_value = {'abc': 'xyz'}
-
-    merged_reader = telescope_data_parser.MergedTelescopeResultReader(
-        mock_readers)
-
-    # get_metadata should just return the metadata for the first reader.
-    metadata_expected = {'foo': 'bar'}
-    metadata_actual = merged_reader.get_metadata()
-    self.assertDictEqual(metadata_expected, metadata_actual)
 
 if __name__ == '__main__':
   unittest.main()
