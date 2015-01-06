@@ -73,7 +73,6 @@ class PerSiteTelescopeResultGrouperTest(unittest.TestCase):
     grouper = result_grouper.PerSiteTelescopeResultGrouper()
     grouped_readers = grouper.group_results(_get_mock_readers())
 
-
     keys_expected = ('lga01_comcast', 'sea01_comcast', 'sea01_verizon',
                      'sea02_comcast')
     self.assertItemsEqual(keys_expected, grouped_readers.keys())
