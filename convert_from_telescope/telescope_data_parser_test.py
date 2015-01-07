@@ -28,6 +28,25 @@ import telescope_data_parser
 class SingleTelescopeResultReaderTest(unittest.TestCase):
 
   def test_get_metadata_year_border(self):
+    filename = '2012-01-01-000000+366d_atl01_comcast_average_rtt-raw.csv'
+    metadata_expected = {
+        'start_date_string': '2012-01-01-000000',
+        'start_date': datetime.datetime(2012, 1, 1, tzinfo=pytz.utc),
+        'duration_string': '366',
+        'site_name': 'atl01',
+        'metro': 'atl',
+        'isp': 'comcast',
+        'metric_name': 'average_rtt',
+        }
+    reader = telescope_data_parser.SingleTelescopeResultReader(filename)
+    metadata_actual = reader.get_metadata()
+    self.assertDictEqual(metadata_expected, metadata_actual)
+
+  def test_get_metadata_ignored_characters_in_isp(self):
+    """The v1.0 release of Telescope left ampersands in filenames, while later
+    versions stripped special characters. Verify that we ignore ampersands when
+    parsing the ISP names so that 'at&t' is the same as 'att'.
+    """
     filename = '2012-01-01-000000+366d_atl01_at&t_average_rtt-raw.csv'
     metadata_expected = {
         'start_date_string': '2012-01-01-000000',
@@ -35,7 +54,7 @@ class SingleTelescopeResultReaderTest(unittest.TestCase):
         'duration_string': '366',
         'site_name': 'atl01',
         'metro': 'atl',
-        'isp': 'at&t',
+        'isp': 'att',
         'metric_name': 'average_rtt',
         }
     reader = telescope_data_parser.SingleTelescopeResultReader(filename)

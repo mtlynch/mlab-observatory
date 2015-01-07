@@ -20,22 +20,23 @@ import collections
 import telescope_data_parser
 
 
-class TelescopeResultMerger(object):
-  """Merges together a collection of TelescopeResultReader objects.
+class TelescopeResultGrouper(object):
+  """Groups together a collection of TelescopeResultReader objects.
 
-  Aggregates together multiple TelescopeResultReader objects based on
-  metadata groupings.
+  Groups together multiple TelescopeResultReader objects based on
+  metadata groupings and allows them the group to be read as a single
+  TelescopeResultReader object.
   """
 
-  def merge_results(self, result_readers):
-    """Merges results based on result groups.
+  def group_results(self, result_readers):
+    """Groups results based on result groups.
 
     Puts a list of Telescope result objects into groups, then merges each group
     into a single, merged result reader.
 
     Args:
       result_readers: (list) A list of TelescopeResultReader objects to be
-      merged by group.
+      put into groups.
 
     Returns:
     (dict) A dictionary of results, keyed by group key, then by metric name.
@@ -72,14 +73,14 @@ class TelescopeResultMerger(object):
     raise NotImplementedError('Subclasses must implement this function.')
 
 
-class PerSiteTelescopeResultMerger(TelescopeResultMerger):
+class PerSiteTelescopeResultGrouper(TelescopeResultGrouper):
   """Groups Telescope results based on M-Lab site."""
 
   def _create_group_key(self, metadata):
     return '%s_%s' % (metadata['site_name'], metadata['isp'])
 
 
-class PerMetroTelescopeResultMerger(TelescopeResultMerger):
+class PerMetroTelescopeResultGrouper(TelescopeResultGrouper):
   """Groups Telescope results based on site metro."""
 
   def _create_group_key(self, metadata):
