@@ -22,12 +22,6 @@ import csv
 class ObservatoryFileWriter(object):
   """Writes data metrics into output files that Observatory can consume."""
 
-  def __init__(self, metric_names):
-    self._metric_field_names = []
-    for metric_name in metric_names:
-      self._metric_field_names.append(metric_name)
-      self._metric_field_names.append(metric_name + '_n')
-
   def write_daily_datafile(self, daily_metrics, output_file):
     """Writes a CSV file of per-day metrics.
 
@@ -43,12 +37,14 @@ class ObservatoryFileWriter(object):
       output_file: (file) Output file to write into.
     """
     daily_items = daily_metrics.items()
+    metric_fields = set()
     for date, values in daily_items:
+      metric_fields |= set(values.keys())
       values['year'] = date.year
       values['month'] = date.month
       values['day'] = date.day
-    fields = ['month', 'day', 'year',]
-    fields.extend(self._metric_field_names)
+    fields = ['year', 'month', 'day']
+    fields.extend(sorted(metric_fields))
     self._write_output_file(daily_items, fields, output_file)
 
   def write_hourly_datafile(self, hourly_metrics, output_file):
@@ -70,12 +66,14 @@ class ObservatoryFileWriter(object):
       output_file: (file) Output file to write into.
     """
     hourly_items = hourly_metrics.items()
+    metric_fields = set()
     for date, values in hourly_items:
+      metric_fields |= set(values.keys())
+      values['year'] = date.year
       values['month'] = date.month
       values['hour'] = date.hour
-      values['year'] = date.year
-    fields = ['month', 'hour', 'year',]
-    fields.extend(self._metric_field_names)
+    fields = ['year', 'month', 'hour']
+    fields.extend(sorted(metric_fields))
     self._write_output_file(hourly_items, fields, output_file)
 
   def _write_output_file(self, metrics, fields, output_file):
