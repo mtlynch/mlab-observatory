@@ -67,7 +67,7 @@ def _parse_filename_for_metadata(file_path):
   parsed['start_date_string'] = match.group(1)
   parsed['duration_string'] = match.group(2)
   parsed['site_name'] = match.group(3)
-  parsed['isp'] = match.group(4)
+  parsed['isp'] = telescope.utils.strip_special_chars(match.group(4))
   parsed['metric_name'] = match.group(5)
 
   parsed['metro'] = parsed['site_name'][:3]
