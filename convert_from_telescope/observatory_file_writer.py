@@ -37,14 +37,14 @@ class ObservatoryFileWriter(object):
       output_file: (file) Output file to write into.
     """
     daily_items = daily_metrics.items()
-    fields = ['month', 'day', 'year',]
+    metric_fields = set()
     for date, values in daily_items:
+      metric_fields |= set(values.keys())
       values['year'] = date.year
       values['month'] = date.month
       values['day'] = date.day
-      for field_name in sorted(values.keys()):
-        if field_name not in fields:
-          fields.append(field_name)
+    fields = ['year', 'month', 'day']
+    fields.extend(sorted(metric_fields))
     self._write_output_file(daily_items, fields, output_file)
 
   def write_hourly_datafile(self, hourly_metrics, output_file):
@@ -66,14 +66,14 @@ class ObservatoryFileWriter(object):
       output_file: (file) Output file to write into.
     """
     hourly_items = hourly_metrics.items()
-    fields = ['month', 'hour', 'year',]
+    metric_fields = set()
     for date, values in hourly_items:
+      metric_fields |= set(values.keys())
+      values['year'] = date.year
       values['month'] = date.month
       values['hour'] = date.hour
-      values['year'] = date.year
-      for field_name in sorted(values.keys()):
-        if field_name not in fields:
-          fields.append(field_name)
+    fields = ['year', 'month', 'hour']
+    fields.extend(sorted(metric_fields))
     self._write_output_file(hourly_items, fields, output_file)
 
   def _write_output_file(self, metrics, fields, output_file):

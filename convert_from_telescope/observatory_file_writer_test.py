@@ -41,10 +41,10 @@ class ObservatoryFileWriterTest(unittest.TestCase):
         }
     aggregate_writer = observatory_file_writer.ObservatoryFileWriter()
     written_datafile_expected = [
-        'month,hour,year,average_rtt,average_rtt_n',
-        '10,0,2014,45.6,34',
-        '10,1,2014,29.3,16',
-        '10,2,2014,42.1,31',
+        'year,month,hour,average_rtt,average_rtt_n',
+        '2014,10,0,45.6,34',
+        '2014,10,1,29.3,16',
+        '2014,10,2,42.1,31',
         ]
     mock_output_file = io.BytesIO()
     aggregate_writer.write_hourly_datafile(hourly_metrics_input,
@@ -69,10 +69,10 @@ class ObservatoryFileWriterTest(unittest.TestCase):
         }
     aggregate_writer = observatory_file_writer.ObservatoryFileWriter()
     written_datafile_expected = [
-        'month,day,year,average_rtt,average_rtt_n',
-        '11,11,2014,45.6,34',
-        '11,12,2014,29.3,16',
-        '11,13,2014,42.1,31',
+        'year,month,day,average_rtt,average_rtt_n',
+        '2014,11,11,45.6,34',
+        '2014,11,12,29.3,16',
+        '2014,11,13,42.1,31',
         ]
     mock_output_file = io.BytesIO()
     aggregate_writer.write_daily_datafile(daily_metrics_input,
