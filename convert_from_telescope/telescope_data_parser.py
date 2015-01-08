@@ -25,10 +25,14 @@ import sys
 
 import pytz
 
-sys.path.insert(1,
-                os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                             './telescope')))
-import telescope.utils
+try:
+  sys.path.insert(1,
+                  os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                               './telescope')))
+  import telescope.utils
+except ImportError:
+  raise Exception(('Could not find Telescope library. '
+                   'Please verify all submodules are checked out.'))
 
 
 def _parse_filename_for_metadata(file_path):
