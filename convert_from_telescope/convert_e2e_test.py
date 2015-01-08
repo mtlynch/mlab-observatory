@@ -52,30 +52,23 @@ def _diff_dirs(left_dir, right_dir):
     directories, or '' if the two directories are identical.
   """
   dir_cmp = filecmp.dircmp(left_dir, right_dir)
+  unified_diff = difflib.unified_diff
   diffs = []
   for left_only_file in dir_cmp.left_only:
     left_path = os.path.join(left_dir, left_only_file)
     right_path = os.path.join(right_dir, left_only_file)
-    for diff in difflib.unified_diff(open(left_path).readlines(),
-                                     [],
-                                     left_path,
-                                     right_path):
+    for diff in unified_diff(open(left_path), [], left_path, right_path):
       diffs.append(diff)
   for right_only_file in dir_cmp.right_only:
     left_path = os.path.join(left_dir, right_only_file)
     right_path = os.path.join(right_dir, right_only_file)
-    for diff in difflib.unified_diff([],
-                                     open(right_path).readlines(),
-                                     left_path,
-                                     right_path):
+    for diff in unified_diff([], open(right_path), left_path, right_path):
       diffs.append(diff)
   for diff_file in dir_cmp.diff_files:
     left_path = os.path.join(left_dir, diff_file)
     right_path = os.path.join(right_dir, diff_file)
-    for diff in difflib.unified_diff(open(left_path).readlines(),
-                                     open(right_path).readlines(),
-                                     left_path,
-                                     right_path):
+    for diff in unified_diff(open(left_path), open(right_path),
+                             left_path, right_path):
       diffs.append(diff)
   for subdir_cmp in dir_cmp.subdirs.itervalues():
     diff = _diff_dirs(subdir_cmp.left, subdir_cmp.right)
@@ -103,7 +96,8 @@ class ResultConverterEndToEnd(unittest.TestCase):
   def _create_per_site_converter(self):
     grouper = result_grouper.PerSiteTelescopeResultGrouper()
     output_dir = os.path.join(TEST_OUTPUT_DIR, 'exploreData')
-    valid_keys_path = os.path.join(TEST_OUTPUT_DIR, 'metadata/validExploreKeys.txt')
+    valid_keys_path = os.path.join(TEST_OUTPUT_DIR,
+                                   'metadata/validExploreKeys.txt')
     return convert.ResultConverter(grouper,
                                    self._median_reducer,
                                    self._file_writer,
@@ -113,7 +107,8 @@ class ResultConverterEndToEnd(unittest.TestCase):
   def _create_per_metro_converter(self):
     grouper = result_grouper.PerMetroTelescopeResultGrouper()
     output_dir = os.path.join(TEST_OUTPUT_DIR, 'compareData')
-    valid_keys_path = os.path.join(TEST_OUTPUT_DIR, 'metadata/validCompareKeys.txt')
+    valid_keys_path = os.path.join(TEST_OUTPUT_DIR,
+                                   'metadata/validCompareKeys.txt')
     return convert.ResultConverter(grouper,
                                    self._median_reducer,
                                    self._file_writer,

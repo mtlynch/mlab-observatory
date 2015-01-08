@@ -25,6 +25,7 @@ sys.path.insert(1,
 import telescope.utils
 import telescope_data_parser
 
+
 def _ensure_dir_exists(dir_path):
   """Ensures that a given directory path exists (creating it if necessary).
 
@@ -37,6 +38,7 @@ def _ensure_dir_exists(dir_path):
   """
   if not os.path.exists(dir_path):
     os.makedirs(dir_path)
+
 
 def _generate_output_path(group_key, output_dir, output_type):
   """Generates the output path for an output file.
@@ -75,6 +77,7 @@ def _write_valid_keys_file(valid_keys, valid_keys_file):
 
 
 class ResultConverter(object):
+  """Converts Telescope data into Observatory format."""
 
   def __init__(self, result_grouper, result_reducer, observatory_file_writer,
                output_dir, valid_keys_path):
@@ -148,14 +151,16 @@ class ResultConverter(object):
       _write_valid_keys_file(result_groups.keys(), valid_keys_file)
 
   def _convert_result_group_by_day(self, group_key, metric_results):
-    self._convert_result_group(group_key, metric_results, 'daily',
-                          self._result_reducer.reduce_by_day,
-                          self._observatory_file_writer.write_daily_datafile)
+    self._convert_result_group(
+        group_key, metric_results, 'daily',
+        self._result_reducer.reduce_by_day,
+        self._observatory_file_writer.write_daily_datafile)
 
   def _convert_result_group_by_hour(self, group_key, metric_results):
-    self._convert_result_group(group_key, metric_results, 'hourly',
-                          self._result_reducer.reduce_by_hour_of_day_per_month,
-                          self._observatory_file_writer.write_hourly_datafile)
+    self._convert_result_group(
+        group_key, metric_results, 'hourly',
+        self._result_reducer.reduce_by_hour_of_day_per_month,
+        self._observatory_file_writer.write_hourly_datafile)
 
   def _convert_result_group(self, group_key, metric_results, output_type,
                             reducer_func, writer_func):
@@ -182,15 +187,17 @@ class ResultConverter(object):
         }
       output_type: (str) The type of data to be written (either 'daily' or
         'hourly').
-      reduce_func: (function) Function to reduce sets of raw results into
+      reducer_func: (function) Function to reduce sets of raw results into
         aggregate metrics that Observatory can display.
       writer_func: (function) Function to write results to an Observatory-
         compatible file.
     """
-    self._logger.info('Converting result group %s (%s)', group_key, output_type)
+    self._logger.info('Converting result group %s (%s)',
+                      group_key, output_type)
     results_reduced = reducer_func(metric_results)
     _ensure_dir_exists(self._output_dir)
-    output_path = _generate_output_path(group_key, self._output_dir, output_type)
+    output_path = _generate_output_path(group_key, self._output_dir,
+                                        output_type)
     with open(output_path, 'w') as output_file:
       writer_func(results_reduced, output_file)
 

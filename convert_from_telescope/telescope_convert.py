@@ -15,10 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Converts Telescope output files into data files compatible with M-Lab
-Observatory.
-"""
+"""Converts Telescope output files into data files for M-Lab Observatory."""
 
 import argparse
 import datetime
@@ -54,8 +51,8 @@ def filter_files(end_time, min_samples_per_day, percentage_of_days_threshold,
     min_samples_per_day: (int) The number of samples per day for a result set
       to be considered valid on that day.
     percentage_of_days_threshold: (float) The percentage of days that a result
-      set must meet the sample size minimum for the set as a whole to blacklister
-      considered valid (e.g. 0.8 => 80%).
+      set must meet the sample size minimum for the set as a whole to
+      blacklister considered valid (e.g. 0.8 => 80%).
     input_filenames: (list) Names of files to preprocess.
 
   Returns:
@@ -64,8 +61,8 @@ def filter_files(end_time, min_samples_per_day, percentage_of_days_threshold,
   blacklister = sample_checking.DataFileBlacklister(
       end_time, min_samples_per_day, percentage_of_days_threshold)
   blacklister.populate(input_filenames)
-  is_blacklisted = blacklister.is_blacklisted
-  return [filename for filename in input_filenames if not is_blacklisted(filename)]
+  return [filename for filename in input_filenames
+          if not blacklister.is_blacklisted(filename)]
 
 
 def perform_conversion(input_filenames, output_dir):
@@ -140,6 +137,5 @@ if __name__ == '__main__':
                       action='store_true',
                       help=('Skips check that datasets meet sample count '
                             'minimums.'))
-  args = parser.parse_args()
-  main(args)
+  main(parser.parse_args())
 
