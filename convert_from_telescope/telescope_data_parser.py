@@ -25,9 +25,13 @@ import sys
 
 import pytz
 
-sys.path.insert(1,
-                os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                             './telescope')))
+try:
+  sys.path.insert(1,
+                  os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                               './telescope')))
+except ImportError:
+  raise Exception(('Could not find Telescope library. '
+                   'Please verify all submodules are checked out.'))
 import telescope.utils
 
 
