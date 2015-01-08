@@ -57,18 +57,26 @@ def _diff_dirs(left_dir, right_dir):
   for left_only_file in dir_cmp.left_only:
     left_path = os.path.join(left_dir, left_only_file)
     right_path = os.path.join(right_dir, left_only_file)
-    for diff in unified_diff(open(left_path), [], left_path, right_path):
+    for diff in unified_diff(open(left_path).readlines(),
+                             [],
+                             left_path,
+                             right_path):
       diffs.append(diff)
   for right_only_file in dir_cmp.right_only:
     left_path = os.path.join(left_dir, right_only_file)
     right_path = os.path.join(right_dir, right_only_file)
-    for diff in unified_diff([], open(right_path), left_path, right_path):
+    for diff in unified_diff([],
+                             open(right_path).readlines(),
+                             left_path,
+                             right_path):
       diffs.append(diff)
   for diff_file in dir_cmp.diff_files:
     left_path = os.path.join(left_dir, diff_file)
     right_path = os.path.join(right_dir, diff_file)
-    for diff in unified_diff(open(left_path), open(right_path),
-                             left_path, right_path):
+    for diff in unified_diff(open(left_path).readlines(),
+                             open(right_path).readlines(),
+                             left_path,
+                             right_path):
       diffs.append(diff)
   for subdir_cmp in dir_cmp.subdirs.itervalues():
     diff = _diff_dirs(subdir_cmp.left, subdir_cmp.right)
