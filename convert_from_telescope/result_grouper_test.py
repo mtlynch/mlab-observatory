@@ -22,7 +22,7 @@ import result_grouper
 
 
 def _get_mock_readers():
-  mock_readers = [mock.Mock() for _ in range(6)]
+  mock_readers = [mock.Mock() for _ in range(7)]
   mock_readers[0].get_metadata.return_value = {
       'site_name': 'lga01',
       'metro': 'lga',
@@ -59,6 +59,12 @@ def _get_mock_readers():
       'isp': 'comcast',
       'metric_name': 'download_throughput',
       }
+  mock_readers[6].get_metadata.return_value = {
+      'site_name': 'sea02',
+      'metro': 'sea',
+      'isp': 'comcast',
+      'metric_name': 'download_throughput',
+      }
   return mock_readers
 
 class PerSiteTelescopeResultGrouperTest(unittest.TestCase):
@@ -67,7 +73,8 @@ class PerSiteTelescopeResultGrouperTest(unittest.TestCase):
     grouper = result_grouper.PerSiteTelescopeResultGrouper()
     grouped_readers = grouper.group_results(_get_mock_readers())
 
-    keys_expected = ('lga01_comcast', 'sea01_comcast', 'sea01_verizon')
+    keys_expected = ('lga01_comcast', 'sea01_comcast', 'sea01_verizon',
+                     'sea02_comcast')
     self.assertItemsEqual(keys_expected, grouped_readers.keys())
     self.assertItemsEqual(('download_throughput', 'average_rtt'),
                           grouped_readers['lga01_comcast'].keys())
@@ -75,6 +82,8 @@ class PerSiteTelescopeResultGrouperTest(unittest.TestCase):
                           grouped_readers['sea01_comcast'].keys())
     self.assertItemsEqual(('upload_throughput',),
                           grouped_readers['sea01_verizon'].keys())
+    self.assertItemsEqual(('download_throughput',),
+                          grouped_readers['sea02_comcast'].keys())
 
 
 class PerMetroTelescopeResultGrouperTest(unittest.TestCase):
