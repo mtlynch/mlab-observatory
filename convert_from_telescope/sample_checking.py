@@ -41,6 +41,9 @@ class SampleCounter(object):
     """Add result data to overall sample counts.
 
     Args:
+      dataset_key: (str) A string value identifying the dataset associated with
+        these results.
+
       results: (list) A list of (datetime, value) pairs representing Telescope
         results for the given metadata.
     """
@@ -53,6 +56,8 @@ class SampleCounter(object):
     """Gets the per-day sample counts for each day in the dataset.
 
     Args:
+      dataset_key: (str) A string value identifying the dataset for which to
+        retrieve per day counts.
 
     Returns:
       (dict) A dictionary of integer counts, keyed by datetime corresponding
@@ -104,6 +109,8 @@ class SampleCountChecker(object):
     sufficient samples to meet sample count requirements.
 
     Args:
+      dataset_key: (str) A string value identifying the dataset for which to
+        determine if there are sufficient samples.
 
     Returns:
       (bool) True if the associated dataset has sufficient samples.
