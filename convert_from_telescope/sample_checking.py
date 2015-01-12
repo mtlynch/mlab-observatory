@@ -37,41 +37,34 @@ class SampleCounter(object):
   def __init__(self):
     self.sample_counts = collections.defaultdict(lambda: {})
 
-  def add_to_counts(self, metadata, results):
+  def add_to_counts(self, dataset_key, results):
     """Add result data to overall sample counts.
 
     Args:
-      metadata: (dict) A dictionary of metadata describing the results data.
-        Currently the only supported value for the 'metric' key is
-        'download_throughput'.
-
       results: (list) A list of (datetime, value) pairs representing Telescope
         results for the given metadata.
     """
-    counts_key = self._hash_key_from_metadata(metadata)
-
     aggregated_by_day = aggregate.aggregate_by_day(results)
     for day, values in aggregated_by_day.iteritems():
-      current_count = self.sample_counts[counts_key].get(day, 0)
-      self.sample_counts[counts_key][day] = current_count + len(values)
+      current_count = self.sample_counts[dataset_key].get(day, 0)
+      self.sample_counts[dataset_key][day] = current_count + len(values)
 
-  def get_per_day_counts(self, metadata):
-    hash_key = self._hash_key_from_metadata(metadata)
-    return self.sample_counts[hash_key]
-
-  def _hash_key_from_metadata(self, metadata):
-    """Derives a key for a particular dataset based on supplied metadata.
+  def get_per_day_counts(self, dataset_key):
+    """Gets the per-day sample counts for each day in the dataset.
 
     Args:
-      metadata: (dict) A dictionary of metadata describing Telescope results.
 
     Returns:
-      (str) Key of the form '[site]-[isp]-[metric]', for example:
-      'lga01-comcast-minimum_rtt'.
+      (dict) A dictionary of integer counts, keyed by datetime corresponding
+      to the day they occurred. For example:
+        {
+          <datetime-2014-10-16@00:00:00>: 37,
+          <datetime-2014-10-17@00:00:00>: 29,
+          <datetime-2014-10-25@00:00:00>: 45,
+          ...
+        }
     """
-    hash_key = '%s-%s-%s' % (metadata['site_name'], metadata['isp'],
-                             metadata['metric_name'])
-    return hash_key
+    return self.sample_counts[dataset_key]
 
 
 class SampleCountChecker(object):
@@ -104,19 +97,18 @@ class SampleCountChecker(object):
     self._min_samples_per_day = min_samples_per_day
     self._percentage_of_days_threshold = percentage_of_days_threshold
 
-  def has_enough_samples(self, metadata):
+  def has_enough_samples(self, dataset_key):
     """Indicates whether the specified dataset has sufficient samples.
 
     Indicates whether the dataset associated with the specified metadata has
     sufficient samples to meet sample count requirements.
 
     Args:
-      metadata: (dict) A dictionary of values describing a dataset's metadata.
 
     Returns:
       (bool) True if the associated dataset has sufficient samples.
     """
-    counts = self._sample_counter.get_per_day_counts(metadata)
+    counts = self._sample_counter.get_per_day_counts(dataset_key)
     percentage_of_days_above_threshold = (
         self._get_percent_above_threshold(counts))
 
@@ -222,8 +214,9 @@ class DataFileBlacklister(object):
     # on a per-metric basis, so we use download_throughput as a lowest common
     # denominator.
     metadata['metric_name'] = 'download_throughput'
+    dataset_key = self._dataset_key_from_metadata(metadata)
 
-    return self._sample_count_checker.has_enough_samples(metadata)
+    return self._sample_count_checker.has_enough_samples(dataset_key)
 
   def _add_file(self, filename):
     """Adds the provided filename to blacklist database.
@@ -245,6 +238,21 @@ class DataFileBlacklister(object):
     if metadata['metric_name'] != 'download_throughput':
       return
 
+    dataset_key = self._dataset_key_from_metadata(metadata)
     with open(filename, 'r') as data_file:
-      self._sample_counter.add_to_counts(metadata, result_reader)
+      self._sample_counter.add_to_counts(dataset_key, result_reader)
+
+  def _dataset_key_from_metadata(self, metadata):
+    """Derives a key for a particular dataset based on supplied metadata.
+
+    Args:
+      metadata: (dict) A dictionary of metadata describing Telescope results.
+
+    Returns:
+      (str) Key of the form '[site]-[isp]-[metric]', for example:
+      'lga01-comcast-minimum_rtt'.
+    """
+    dataset_key = '%s-%s-%s' % (metadata['site_name'], metadata['isp'],
+                                metadata['metric_name'])
+    return dataset_key
 
