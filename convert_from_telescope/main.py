@@ -76,9 +76,10 @@ def perform_conversion(input_filenames, output_dir):
   file_writer = observatory_file_writer.ObservatoryFileWriter()
 
   per_site_result_grouper = result_grouper.PerSiteTelescopeResultGrouper()
-  per_site_output_dir = os.path.join(output_dir, 'exploreData')
+  per_site_output_dir = os.path.join(output_dir, 'data', 'exploreData')
   per_site_valid_keys_path = os.path.join(output_dir,
-                                          'metadata/validExploreKeys.txt')
+                                          'metadata',
+                                          'validExploreKeys.txt')
   per_site_converter = convert.ResultConverter(per_site_result_grouper,
                                                median_reducer,
                                                file_writer,
@@ -86,9 +87,10 @@ def perform_conversion(input_filenames, output_dir):
                                                per_site_valid_keys_path)
 
   per_metro_result_grouper = result_grouper.PerMetroTelescopeResultGrouper()
-  per_metro_output_dir = os.path.join(output_dir, 'compareData')
+  per_metro_output_dir = os.path.join(output_dir, 'data', 'compareData')
   per_metro_valid_keys_path = os.path.join(output_dir,
-                                           'metadata/validCompareKeys.txt')
+                                           'metadata',
+                                           'validCompareKeys.txt')
   per_metro_converter = convert.ResultConverter(per_metro_result_grouper,
                                                 median_reducer,
                                                 file_writer,
@@ -127,7 +129,7 @@ if __name__ == '__main__':
       formatter_class=argparse.ArgumentDefaultsHelpFormatter)
   parser.add_argument('data_files', nargs='+', default=None,
                       help='CSV datafile(s) to merge.')
-  parser.add_argument('-o', '--output', default='datasets_merged',
+  parser.add_argument('-o', '--output', default='../static/observatory/',
                       help='Output path.')
   parser.add_argument('--samples_per_day', default='50',
                       help='Minimum number of samples required per day.')
