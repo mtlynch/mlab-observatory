@@ -22,11 +22,11 @@ import datetime
 import logging
 import os
 
+import blacklister
 import convert
 import observatory_file_writer
 import reducer
 import result_grouper
-import sample_checking
 
 
 def setup_logger():
@@ -58,11 +58,11 @@ def filter_files(end_time, min_samples_per_day, percentage_of_days_threshold,
   Returns:
     (list) A list of filenames that meet the sample size requirements.
   """
-  blacklister = sample_checking.DataFileBlacklister(
+  file_blacklister = blacklister.DataFileBlacklister(
       end_time, min_samples_per_day, percentage_of_days_threshold)
-  blacklister.populate(input_filenames)
+  file_blacklister.populate(input_filenames)
   return [filename for filename in input_filenames
-          if not blacklister.is_blacklisted(filename)]
+          if not file_blacklister.is_blacklisted(filename)]
 
 
 def perform_conversion(input_filenames, output_dir):
