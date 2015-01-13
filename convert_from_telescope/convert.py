@@ -147,13 +147,16 @@ class ResultConverter(object):
           ...
         }
     """
-    for group_key, metric_results in result_groups.iteritems():
-      self._convert_result_group_by_day(group_key, metric_results)
-      self._convert_result_group_by_hour(group_key, metric_results)
+    group_keys = sorted(result_groups.keys())
+    for index, key in enumerate(group_keys):
+      self._logger.info('Converting result group %s (%u/%u)',
+                        key, index + 1, len(group_keys))
+      self._convert_result_group_by_day(key, result_groups[key])
+      self._convert_result_group_by_hour(key, result_groups[key])
 
     _ensure_dir_exists(os.path.dirname(self._valid_keys_path))
     with open(self._valid_keys_path, 'w') as valid_keys_file:
-      _write_valid_keys_file(result_groups.keys(), valid_keys_file)
+      _write_valid_keys_file(group_keys, valid_keys_file)
 
   def _convert_result_group_by_day(self, group_key, metric_results):
     self._convert_result_group(
@@ -197,8 +200,6 @@ class ResultConverter(object):
       writer_func: (function) Function to write results to an Observatory-
         compatible file.
     """
-    self._logger.info('Converting result group %s (%s)',
-                      group_key, output_type)
     results_reduced = reducer_func(metric_results)
     _ensure_dir_exists(self._output_dir)
     output_path = _generate_output_path(group_key, self._output_dir,
