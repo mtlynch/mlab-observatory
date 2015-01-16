@@ -18,15 +18,15 @@
 import pytz
 
 
-def get_site_timezone(site_name):
-  """Translates an M-Lab site's name into its associated timezone.
+def get_metro_timezone(metro):
+  """Translates an metro name into its associated timezone.
 
   Args:
-    site_name: (str) Name of M-Lab site for which to retrieve associated
+    metro: (str) Name of M-Lab metro for which to retrieve associated
       timezone.
 
   Returns:
-    (pytz.timezone) Timezone object associated with the site.
+    (pytz.timezone) Timezone object associated with the metro.
   """
   site_tz_map = {
       'ams': 'CET',
@@ -56,39 +56,5 @@ def get_site_timezone(site_name):
       'ord': 'US/Central',
       'sea': 'US/Pacific',
       }
-  metro = site_name[:3]
-  return pytz.timezone(site_tz_map[metro])
+  return pytz.timezone(site_tz_map[metro.lower()])
 
-
-def get_us_sites():
-  # TODO(mtlynch): Replace this with something that doesn't need to be
-  # maintained by hand.
-  return ('atl01',
-          'atl03',
-          'atl04',
-          'dfw01',
-          'dfw02',
-          'dfw05',
-          'iad01',
-          'iad02',
-          'iad04',
-          'lax01',
-          'lax03',
-          'lax05',
-          'lga01',
-          'lga02',
-          'lga04',
-          'mia01',
-          'nuq01',
-          'nuq02',
-          'nuq03',
-          'nuq04',
-          'nuq06',
-          'ord01',
-          'ord02',
-          'ord03',
-          'ord04',
-          'ord05',
-          'sea01',
-          'sea02',
-          'sea03')

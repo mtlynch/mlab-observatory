@@ -28,6 +28,7 @@ except ImportError:
   raise Exception(('Could not find Telescope library. '
                    'Please verify all submodules are checked out.'))
 
+import site_metadata
 import telescope_data_parser
 
 
@@ -151,12 +152,55 @@ class ResultConverter(object):
     for index, key in enumerate(group_keys):
       self._logger.info('Converting result group %s (%u/%u)',
                         key, index + 1, len(group_keys))
-      self._convert_result_group_by_day(key, result_groups[key])
-      self._convert_result_group_by_hour(key, result_groups[key])
+      metro = key[:3]
+      result_group_local = self._adjust_result_group_timezone(
+          metro, result_groups[key])
+      self._convert_result_group_by_day(key, result_group_local)
+      self._convert_result_group_by_hour(key, result_group_local)
 
     _ensure_dir_exists(os.path.dirname(self._valid_keys_path))
     with open(self._valid_keys_path, 'w') as valid_keys_file:
       _write_valid_keys_file(group_keys, valid_keys_file)
+
+  def _adjust_result_group_timezone(self, metro, metric_results):
+    """Converts the timestamps on a result group to local time.
+
+    Given a result group associated with a particular metro, creates a new
+    result group where all timestamps are local to the given metro.
+
+    Args:
+      metro: (str) Name of a metropolitan region associated with these results
+        (e.g. 'lga' or 'lax').
+
+      metric_results: (dict) A dictionary of raw Telescope results, keyed by
+        metric name, for example:
+        {
+          'download_throughput': [
+            (<datetime-2014-10-22@12:35:01>, 24.5),
+            (<datetime-2014-10-01@04:42:23>, 14.3),
+            (<datetime-2014-10-02@06:19:22>, 21.3),
+            ...
+            ],
+          'upload_throughput': [
+            (<datetime-2014-10-22@12:35:01>, 4.1),
+            (<datetime-2014-10-01@04:42:23>, 6.2),
+            (<datetime-2014-10-02@06:19:22>, 8.9),
+            ...
+          ]
+        }
+
+    Returns:
+      (dict) A dictionary in the same form as metric_results, but with the
+      timestamps converted to the local timezone.
+    """
+    timezone = site_metadata.get_metro_timezone(metro)
+    metric_results_local = {}
+    for metric, values in metric_results.iteritems():
+      metric_results_local[metric] = []
+      for timestamp_utc, value in values:
+        timestamp_local = timestamp_utc.astimezone(timezone)
+        metric_results_local[metric].append((timestamp_local, value))
+    return metric_results_local
 
   def _convert_result_group_by_day(self, group_key, metric_results):
     self._convert_result_group(
