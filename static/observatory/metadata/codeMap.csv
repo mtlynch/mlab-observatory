@@ -1,1 +1,36 @@
-MlabSiteName,State,City,TransitProvider,MetroAreaATL01,GA,Atlanta,Level3,AtlantaATL02,GA,Atlanta,Cogent,AtlantaDFW01,TX,Dallas,Cogent,DallasIAD01,VA,Reston,XO,Washington DCIAD02,VA,Ashburn,Cogent,Washington DCLAX01,CA,Los Angeles,Cogent,Southern CaliforniaLGA01,NY,New York,Internap,New YorkLGA02,NY,New York,Cogent,New YorkMIA01,FL,Miami,Level3,MiamiMIA02,FL,Miami,Cogent,MiamiNUQ01,CA,Mountain View,Google,SF Bay AreaNUQ02,CA,Redwood,ISC,SF Bay AreaORD01,IL,Chicago,Level3,ChicagoORD02,IL,Chicago,Cogent,ChicagoSEA01,WA,Seattle,Cogent,Pacific NorthwestNUQ03,CA,San Jose,Cogent,SF Bay Area
+MlabSiteName,State,City,TransitProvider,MetroArea
+ATL01,GA,Atlanta,Level3,Atlanta
+ATL02,GA,Atlanta,Cogent,Atlanta
+ATL03,GA,Atlanta,Tata,Atlanta
+ATL04,GA,Atlanta,GTT,Atlanta
+DFW01,TX,Dallas,Cogent,Dallas
+DFW02,TX,Dallas,Tata,Dallas
+DFW05,TX,Dallas,Zayo,Dallas
+IAD01,VA,Reston,XO,Washington DC
+IAD02,VA,Ashburn,Cogent,Washington DC
+IAD04,VA,Ashburn,GTT,Washington DC
+LAX01,CA,Los Angeles,Cogent,Southern California
+LAX02,CA,Los Angeles,Tata,Southern California
+LAX03,CA,Los Angeles,GTT,Southern California
+LAX05,CA,Los Angeles,Zayo,Southern California
+LGA01,NY,New York,Internap,New York
+LGA02,NY,New York,Cogent,New York
+LGA04,NY,New York,GTT,New York
+MIA01,FL,Miami,Level3,Miami
+MIA02,FL,Miami,Cogent,Miami
+MIA03,FL,Miami,Tata,Miami
+MIA04,FL,Miami,GTT,Miami
+MIA05,FL,Miami,Zayo,Miami
+NUQ01,CA,Mountain View,Level3,SF Bay Area
+NUQ02,CA,Redwood,ISC,SF Bay Area
+NUQ03,CA,Redwood,Cogent,SF Bay Area
+NUQ04,CA,Redwood,Tata,SF Bay Area
+NUQ06,CA,Redwood,Zayo,SF Bay Area
+ORD01,IL,Chicago,Level3,Chicago
+ORD02,IL,Chicago,Cogent,Chicago
+ORD03,IL,Chicago,Tata,Chicago
+ORD04,IL,Chicago,GTT,Chicago
+ORD05,IL,Chicago,Zayo,Chicago
+SEA01,WA,Seattle,Cogent,Pacific Northwest
+SEA02,WA,Seattle,Tata,Pacific Northwest
+SEA03,WA,Seattle,GTT,Pacific Northwest
