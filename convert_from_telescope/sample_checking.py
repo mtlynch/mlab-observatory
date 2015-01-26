@@ -93,6 +93,18 @@ class SampleCountChecker(object):
     self._min_samples_per_day = min_samples_per_day
     self._percentage_of_days_threshold = percentage_of_days_threshold
 
+  def add_to_counts(self, dataset_key, results):
+    """Add result data to overall sample counts.
+
+    Args:
+      dataset_key: (str) A string value identifying the dataset associated with
+        these results.
+
+      results: (list) A list of (datetime, value) pairs representing Telescope
+        results for the given metadata.
+    """
+    self._sample_counter.add_to_counts(dataset_key, results)
+
   def has_enough_samples(self, dataset_key):
     """Indicates whether the specified dataset has sufficient samples.
 
