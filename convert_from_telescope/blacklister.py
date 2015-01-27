@@ -19,44 +19,20 @@
 
 import logging
 
-import sample_checking
 import telescope_data_parser
-
-
-def setup_logger():
-  logger = logging.getLogger('prepare-for-server')
-  console_handler = logging.StreamHandler()
-  logger.addHandler(console_handler)
-  logger.setLevel(logging.INFO)
 
 
 class DataFileBlacklister(object):
 
-  def __init__(self, sample_period_end,
-               min_samples_per_day, percentage_of_days_threshold):
+  def __init__(self, sample_count_checker):
     """Checks whether sample counts for given files meet the sample thresholds.
 
     Args:
-      sample_period_end: (datetime.datetime) Time at which the relevant period
-        of sample counts ends (i.e. samples after this date are not considered
-        when checking against requirements). Note: There is no explicit
-        sample_period_start because we use the earliest sample in the dataset
-        as the implicit start of the sample period.
-
-      min_samples_per_day: (int) The minimum number of samples a dataset must
-        have in a day for the day to be considered statistically valid.
-
-      percentage_of_days_threshold: (float) The percentage of days (e.g. 0.80)
-        in a dataset that must meet the minimum number of per-day samples for
-        the entire dataset to be considered statistically valid (e.g. if
-        percentage is 0.80 and minimum samples is 50, then at least 80% of days
-        must have >= 50 samples per day.
+      sample_count_checker: (SampleCountChecker) Object to check whether
+        datasets meet sample count thresholds.
     """
     self._logger = logging.getLogger('telescope-convert')
-    self._sample_counter = sample_checking.SampleCounter()
-    self._sample_count_checker = sample_checking.SampleCountChecker(
-        self._sample_counter, sample_period_end, min_samples_per_day,
-        percentage_of_days_threshold)
+    self._sample_count_checker = sample_count_checker
 
   def populate(self, filenames):
     """Adds the provided filenames to blacklist database.
@@ -92,7 +68,7 @@ class DataFileBlacklister(object):
     metadata['metric_name'] = 'download_throughput'
     dataset_key = self._dataset_key_from_metadata(metadata)
 
-    return self._sample_count_checker.has_enough_samples(dataset_key)
+    return not self._sample_count_checker.has_enough_samples(dataset_key)
 
   def _add_file(self, filename):
     """Adds the provided filename to blacklist database.
@@ -115,8 +91,7 @@ class DataFileBlacklister(object):
       return
 
     dataset_key = self._dataset_key_from_metadata(metadata)
-    with open(filename, 'r') as data_file:
-      self._sample_counter.add_to_counts(dataset_key, result_reader)
+    self._sample_count_checker.add_to_counts(dataset_key, result_reader)
 
   def _dataset_key_from_metadata(self, metadata):
     """Derives a key for a particular dataset based on supplied metadata.
