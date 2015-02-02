@@ -512,6 +512,8 @@ viz file for the explore type visualizations
 		var tp = mlabOpenInternet.dataLoader.getTPForCode(code)
 		exploreTT.select('.ttTitle').text(isp + " x " + tp)
 		exploreTT.select('.valueLabel').text(curMetric.name)
+		var truncatedValue = parseFloat(d[curMetric.key]).toFixed(curMetric.decimal_digits)
+		exploreTT.select('.valueValue').text(truncatedValue + " " + curMetric.units)
 		exploreTT.select('.valueValue').text(d[curMetric.key] + " " + curMetric.units)
 		exploreTT.select('.sampleSizeValue').text(d[curMetric.key + '_n'])
 		var momentDate = moment(d.date)
