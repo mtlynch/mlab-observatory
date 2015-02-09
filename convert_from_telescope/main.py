@@ -135,7 +135,7 @@ if __name__ == '__main__':
                       help='CSV datafile(s) to merge.')
   parser.add_argument('-o', '--output', default='../static/observatory/',
                       help='Output path.')
-  parser.add_argument('--samples_per_day', default='50',
+  parser.add_argument('--samples_per_day', default='30',
                       help='Minimum number of samples required per day.')
   parser.add_argument('--percentage_valid_days', default='0.80',
                       help='Required percentage of valid days.')
