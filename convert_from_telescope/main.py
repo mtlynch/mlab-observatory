@@ -22,12 +22,12 @@ import datetime
 import logging
 import os
 
-import blacklister
 import convert
 import observatory_file_writer
 import reducer
 import result_grouper
 import sample_checking
+import whitelister
 
 
 def setup_logger():
@@ -38,35 +38,56 @@ def setup_logger():
   return logger
 
 
-def filter_files(end_time, min_samples_per_day, percentage_of_days_threshold,
-                 input_filenames):
+def read_whitelist(whitelist_filename):
+  """Read the whitelist file."""
+  with open(whitelist_filename) as whitelist_file:
+    deserializer = whitelister.MetadataWhitelistSerializer()
+    return deserializer.deserialize(whitelist_file)
+
+
+def update_whitelist(whitelist_filename, sample_count_checker,
+                     input_filenames):
+  """Update the whitelist file with new datasets.
+
+  Update the whitelist file to include any new datasets that currently meet the
+  sample size requirements.
+
+  Args:
+    whitelist_filename: (str) Filename of whitelist file to update.
+    sample_count_checker: (sample_checking.SampleCounter) Sample counter to
+      check sample size requirements.
+    input_filenames: (list) A list of filenames from which to find datasets to
+      add to the whitelist.
+
+  Returns:
+    (whitelister.MetadataWhitelist) Updated whitelist object.
+  """
+  whitelist = read_whitelist(whitelist_filename)
+  updater = whitelister.MetadataWhitelistUpdater(whitelist,
+                                                 sample_count_checker)
+  if updater.update(input_filenames):
+    with open(whitelist_filename, 'w') as whitelist_file:
+      serializer = whitelister.MetadataWhitelistSerializer()
+      serializer.serialize(whitelist, whitelist_file)
+  return whitelist
+
+
+def filter_files(whitelist, input_filenames):
   """Filter out the inputs that do not meet sample size requirements.
 
   Preprocesses Telescope data files to filter out the result sets that do not
   meet sample size requirements.
 
   Args:
-    end_time: (datetime) End time for the evaluation window (the end of the
-      time window in which we care about whether sample size requirements are
-      met).
-    min_samples_per_day: (int) The number of samples per day for a result set
-      to be considered valid on that day.
-    percentage_of_days_threshold: (float) The percentage of days that a result
-      set must meet the sample size minimum for the set as a whole to
-      blacklister considered valid (e.g. 0.8 => 80%).
+    whitelist: (whitelister.MetadataWhitelist) Whitelist to use for filtering.
     input_filenames: (list) Names of files to preprocess.
 
   Returns:
     (list) A list of filenames that meet the sample size requirements.
   """
-  sample_counter = sample_checking.SampleCounter()
-  sample_count_checker = sample_checking.SampleCountChecker(
-      sample_counter, end_time, min_samples_per_day,
-      percentage_of_days_threshold)
-  file_blacklister = blacklister.DataFileBlacklister(sample_count_checker)
-  file_blacklister.populate(input_filenames)
+  file_checker = whitelister.DataFileWhitelistChecker(whitelist)
   return [filename for filename in input_filenames
-          if not file_blacklister.is_blacklisted(filename)]
+          if file_checker.is_whitelisted(filename)]
 
 
 def perform_conversion(input_filenames, output_dir):
@@ -109,19 +130,25 @@ def main(args):
   logger = setup_logger()
   program_start_time = datetime.datetime.utcnow()
 
-  if not args.no_sample_count_check:
+  if not args.no_whitelist_update:
+    logger.info('Updating dataset whitelist.')
     now = datetime.datetime.utcnow()
     end_time = datetime.datetime(now.year, now.month, 1)
 
     min_samples_per_day = int(args.samples_per_day)
     percentage_of_days_threshold = float(args.percentage_valid_days)
-    filtered_files = filter_files(end_time,
-                                  min_samples_per_day,
-                                  percentage_of_days_threshold,
-                                  args.data_files)
+    sample_checker = load_sample_count_checker(end_time, min_samples_per_day,
+                                               percentage_of_days_threshold)
+    sample_counter = sample_checking.SampleCounter()
+    sample_checker = sample_checking.SampleCountChecker(
+        sample_counter, end_time, min_samples_per_day,
+        percentage_of_days_threshold)
+    whitelist = update_whitelist(args.whitelist, sample_checker,
+                                 args.data_files)
   else:
-    filtered_files = args.data_files
+    whitelist = read_whitelist(args.whitelist)
 
+  filtered_files = filter_files(whitelist, args.data_files)
   perform_conversion(filtered_files, args.output)
   program_end_time = datetime.datetime.utcnow()
   runtime_mins = (program_end_time - program_start_time).total_seconds() / 60.0
@@ -139,7 +166,10 @@ if __name__ == '__main__':
                       help='Minimum number of samples required per day.')
   parser.add_argument('--percentage_valid_days', default='0.80',
                       help='Required percentage of valid days.')
-  parser.add_argument('--no_sample_count_check', default=False,
+  parser.add_argument('--whitelist',
+                      default='../static/observatory/metadata/whitelist.txt',
+                      help='Whitelist of datasets to include in results.')
+  parser.add_argument('--no_whitelist_update', default=False,
                       action='store_true',
                       help=('Skips check that datasets meet sample count '
                             'minimums.'))
