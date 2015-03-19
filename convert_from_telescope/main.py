@@ -137,8 +137,6 @@ def main(args):
 
     min_samples_per_day = int(args.samples_per_day)
     percentage_of_days_threshold = float(args.percentage_valid_days)
-    sample_checker = load_sample_count_checker(end_time, min_samples_per_day,
-                                               percentage_of_days_threshold)
     sample_counter = sample_checking.SampleCounter()
     sample_checker = sample_checking.SampleCountChecker(
         sample_counter, end_time, min_samples_per_day,
