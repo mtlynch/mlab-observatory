@@ -27,8 +27,8 @@ file that handles all data loading
 	var hourlyCompareDataByCode = {};
 	var mlabSitesByCode = {}
 	var ispNameMap;
-	var minSampleSize = 50
-	var regionsToIgnore = ['Washington DC']
+	var minSampleSize = 30
+	var regionsToIgnore = []
 	var filenameToColorMap = {}
 	var loadingDiv;
 	
