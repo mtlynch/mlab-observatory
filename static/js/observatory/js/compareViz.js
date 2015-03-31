@@ -480,13 +480,12 @@ viz file for the comapre visualizations
 		var tooltipsOnLeft = xPos > dimensions.w / 2;
 		tooltips.select('.ttMetric').text(function(d,i) {
 			var dataValue = d.data[xIndex][curMetric.key];
-			var valueTruncated = parseFloat(dataValue).toFixed(curMetric.decimal_digits)
 			var y = i * graphAreaHeight
 
 			d.tooltipX = xPos;
 			d.tooltipY = y + margin.top + yScale(dataValue);
 
-			return valueTruncated + ' ' + curMetric.units
+			return dataValue + ' ' + curMetric.units
 		})
 		tooltips.select('.ttMetricLabel').text(function(d) {
 			return curMetric.name
