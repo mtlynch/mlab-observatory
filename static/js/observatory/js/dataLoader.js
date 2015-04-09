@@ -4,14 +4,14 @@ file that handles all data loading
 (function() {
   var colorMap;
   var exports = new EventEmitter()
-  var metadatafolder = 'static/observatory/metadata/'
+  var metadatafolder = '/mlab-observatory/static/observatory/metadata/'
 
   var mapFile = metadatafolder + "codeMap.csv"
   var validExploreCodesFile = metadatafolder + 'validExploreKeys.txt'
   var validCompareCodesFile = metadatafolder + 'validCompareKeys.txt'
   var metricFile = metadatafolder + 'metrics.json'
 
-  var dataPath = "static/observatory/data/"
+  var dataPath = '/mlab-observatory/static/observatory/data/'
   var validExploreCodes = [];
   var validCompareCodes = []
   var ispsBySite = {}
@@ -27,15 +27,15 @@ file that handles all data loading
   var hourlyCompareDataByCode = {};
   var mlabSitesByCode = {}
   var ispNameMap;
-  var minSampleSize = 50
-  var regionsToIgnore = ['Washington DC']
+  var minSampleSize = 30
+  var regionsToIgnore = []
   var filenameToColorMap = {}
   var loadingDiv;
 
   //kick off data loading
   function init() {
     loadingDiv = d3.select('#loading')
-    loadingDiv.append('img').attr('src', 'static/observatory/images/loading.gif')
+    loadingDiv.append('img').attr('src', '/mlab-observatory/static/observatory/images/loading.gif')
     d3.json(metadatafolder + 'ispMap.json', loadISPNameMap)
   }
   /*
@@ -497,5 +497,6 @@ file that handles all data loading
   if( ! window.mlabOpenInternet){
     window.mlabOpenInternet = {}
   }
+
   window.mlabOpenInternet.dataLoader = exports;
 })()

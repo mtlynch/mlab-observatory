@@ -19,6 +19,46 @@
 import csv
 
 
+def _format_metric_values(metric_values):
+  """Formats metric values into the proper number of decimal digits.
+
+  Args:
+    metric_values: (dict) A dictionary of metrics where the keys are metric
+      names (or the _n variants to represent sample sizes) and the values are
+      are the appropriate values.
+      For example:
+      {
+        'average_rtt': 35.392, 'average_rtt_n': 26,
+        'download_throughput': 45.22035, 'download_throughput_n': 29
+        ...
+      }
+
+  Returns:
+    (dict) A dictionary of metrics with properly formatted values.
+      For example:
+      {
+        'average_rtt': '35.4', 'average_rtt_n': 26,
+        'download_throughput': '45.220', 'download_throughput_n': 29
+        ...
+      }
+  """
+  metric_digits = {
+      'average_rtt': 1,
+      'minimum_rtt': 1,
+      'packet_retransmit_rate': 6,
+      'upload_throughput': 3,
+      'download_throughput': 3,
+      }
+  formatted_values = {}
+  for key, value in metric_values.iteritems():
+    if key in metric_digits:
+      format_string = '%.' + str(metric_digits[key]) + 'f'
+      formatted_values[key] = format_string % value
+    else:
+      formatted_values[key] = value
+  return formatted_values
+
+
 class ObservatoryFileWriter(object):
   """Writes data metrics into output files that Observatory can consume."""
 
@@ -101,5 +141,6 @@ class ObservatoryFileWriter(object):
     csv_writer = csv.DictWriter(output_file, fields)
     csv_writer.writeheader()
     for _, values in metrics:
-      csv_writer.writerow(values)
+      formatted_values = _format_metric_values(values)
+      csv_writer.writerow(formatted_values)
 

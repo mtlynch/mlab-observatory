@@ -6,7 +6,7 @@ pretty straightforward
   var exports = new EventEmitter()
   var div;
   var $div;
-  var left, right, divider;
+  var left, right ,divider;
   var helpPopup;
   var bottomPadding = 10;
   var defaultDefHeight = 63;
@@ -33,24 +33,24 @@ pretty straightforward
   '</ul>' +
   '<div class="helpCopy" style="margin-bottom:0;">Based on the city you select, the combinations filter options will change, listing the combinations of <a href="#" data-word="Access ISP or Access Network">Access ISP</a> and <a href="#" data-word="Transit ISP or Transit Network">Transit ISP</a> available in that city.</div>' +
   '<ul style="margin-top: 0;"><li>Select one or more of those combinations to view or compare the data you’ve selected</li></ul>' +
-  '<img src="static/observatory/images/graphExample.png" />' +
+  '<img src="/mlab-observatory/static/observatory/images/graphExample.png" />' +
   '<div class="helpCopy">Based on the selections you make and filters you applied, Observatory graphs the results, highlighting the selected Access ISP / Transit ISP combination(s). Grey lines are shown behind your selection(s) to provide a quick visual comparison to other unselected combinations. You can turn these grey lines on or off using the link at the top right of the graph.</div>' +
   '<div class="helpCopy">Hover over the lines to see how many tests are contributing to the performance data, and to see what the median value on that date is or a range over data points and dates.</div>' +
-  '<img src="static/observatory/images/graphHover.png" />' +
+  '<img src="/mlab-observatory/static/observatory/images/graphHover.png" />' +
   '<div class="helpCopy">Adjust the timeline by moving the selected area to see how the performance changes at different times of day and on different dates.</div>' +
-  '<img src="static/observatory/images/timeline.png" />';
+  '<img src="/mlab-observatory/static/observatory/images/timeline.png" />';
 
   var internetCopy =
   '<div class="helpHeader internetHeader">How the Internet Works</div>' +
   '<div class="helpCopy">Whenever we use a computer, a smartphone, tablet or other connected device to go online, we’re accessing our content and services via a collection of networks owned and operated by many organizations and companies across the world. The Internet is an interconnected mesh of separate networks. From a US consumer’s perspective, we buy Internet service, and once it’s hooked up, our ISP (say Verizon, Comcast or Time Warner) lets us connect with everything on the web. To be able to provide us this vast access, our individual ISP must connect to the rest of the Internet. This happens via “<a href="#" data-word="Interconnection">interconnection</a>.” Our ISP connects to other, less well-known ISPs that we refer to as transit providers. The points at which transit providers and access ISPs meet and exchange traffic are called “interconnection.” What this means is that the performance we get to our favorite sites and services is determined by many factors, including the relationship between our access ISP and the transit ISPs that it interconnects with.</div>' +
-  '<a href="static/observatory/images/internetInfographic.png" target="_blank"><img style="width: 540px;" src="static/observatory/images/internetInfographic.png" /></a>' +
+  '<a href="/mlab-observatory/static/observatory/images/internetInfographic.png" target="_blank"><img style="width: 540px;" src="/mlab-observatory/static/observatory/images/internetInfographic.png" /></a>' +
   '<div class="helpCopy">M-Lab choses the locations of its measurement points carefully, placing them inside transit ISPs that interconnect with many other ISPs. This provides a representative location at which it’s possible to measure representative performance as experienced by end-users. In other words, when you run an M-Lab test, the measurement of your connection replicates the experience you have many times daily -- crossing the boundaries of networks and infrastructure owners to download a webpage, or access a file, etc.. This ability to get whatever is hosted on the Internet, from anywhere connected to the Internet, is fundamental to how the Internet functions. Without it, the Internet is not longer in inter-network, and is instead an intra-network.</div>'  +
-  '<a href="static/observatory/images/mlabInfographic.png" target="_blank"><img style="width: 540px;" src="static/observatory/images/mlabInfographic.png" /></a>' +
+  '<a href="/mlab-observatory/static/observatory/images/mlabInfographic.png" target="_blank"><img style="width: 540px;" src="/mlab-observatory/static/observatory/images/mlabInfographic.png" /></a>' +
   '<div class="helpHeader">Additional Resources</div>' +
   '<ul>' +
   '<li>"The Internet is Serious Business"<br /><a href="http://welcometocup.org/Projects/UrbanInvestigations/TheInternetIsSeriousBusiness" target="_blank">http://welcometocup.org/Projects/UrbanInvestigations/<br />TheInternetIsSeriousBusiness</a></li>' +
   '<li>"Learn Networking Basics"<br /><a href="https://commotionwireless.net/docs/cck/networking/learn-networking-basics/" target="_blank">https://commotionwireless.net/docs/cck/networking/<br />learn-networking-basics/</a></li>' +
-  '<li>"How the Internet Sees You: An Illustrated Guide"<br /><a href="https://www.youtube.com/watch?v=Oqd6S5av5eg" target="_blank">https://www.youtube.com/watch?v=Oqd6S5av5eg</a></li>' +
+  '<li>"How the   Internet Sees You: An Illustrated Guide"<br /><a href="https://www.youtube.com/watch?v=Oqd6S5av5eg" target="_blank">https://www.youtube.com/watch?v=Oqd6S5av5eg</a></li>' +
   '</ul>'
 
   var defData = [
@@ -192,6 +192,8 @@ pretty straightforward
     })
     terms.on('click', clickTerm)
 
+
+
     _.defer(function() {
       var height = $(left[0][0]).height();
       $(divider[0][0]).height(height + bottomPadding)
@@ -290,7 +292,6 @@ pretty straightforward
     $(right[0][0]).height(height)
     $div.height(height + bottomPadding)
     mlabOpenInternet.controls.updateHash()
-
   }
   exports.init = init
   exports.show = show
@@ -299,5 +300,4 @@ pretty straightforward
     window.mlabOpenInternet = {}
   }
   window.mlabOpenInternet.help = exports;
-
 })()
