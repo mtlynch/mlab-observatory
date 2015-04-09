@@ -1,12 +1,12 @@
 /*
 defines the help content
-pretty straight forward
+pretty straightforward
 */
 (function() {
 	var exports = new EventEmitter()
 	var div;
 	var $div;
-	var left, right ,divider;
+	var left, right, divider;
 	var helpPopup;
 	var bottomPadding = 10;
 	var defaultDefHeight = 63;
@@ -17,20 +17,20 @@ pretty straight forward
 	'<div class="helpCopy">The M-Lab Data Observatory allows a window into ISP performance, letting people in the US see how their ISP is doing compared to others, and to view the way in which the connections between ISPs impact performance.</div>' +
 	'<div class="helpCopy">By selecting different options, you can compare a variety of metrics like upload or download speed, round trip time or packet retransmission rate, for different ISPs. You can also see how different ISPs performed across varying locations in the US.</div>' +
 	'<ul class="buttons cf">' +
-	'<li>How this works</li>' + 
+	'<li>How this works</li>' +
 	'<li>Explore the tool</li>' +
 	'</ul>' +
 	'<div class="dontshow"><div class="cb"></div><div class="lbl">Please don\'t show me this again</div></div>'
 
-	var toolCopy = 
-	'<div class="helpHeader">Our Tool</div>' + 
-	'<div class="helpCopy">The M-Lab Data Observatory provides a way to explore ISP performance across a number of metrics, locations, and time periods. It also allows a view into the way ISPs’ connections with each other -- the interconnectedness that makes up the Internet -- shape performance. By selecting different options, you can see how various ISPs performance across a variety of metrics like <a href="#" data-word="Upload Throughput (Megabits per second, Mbps)">upload</a> or <a href="#" data-word="Download Throughput (Megabits per second, abbreviated Mbps)">download speed</a>, <a href="#" data-word="Round Trip Time (Milliseconds, ms)">round trip time</a> or <a href="#" data-word="Packet retransmission rate">packet retransmission rate</a>. You can also see how these metrics differed over time, across locations, or relative to ISP interconnection relationships.</div>' + 
+	var toolCopy =
+	'<div class="helpHeader">Our Tool</div>' +
+	'<div class="helpCopy">The M-Lab Data Observatory provides a way to explore ISP performance across a number of metrics, locations, and time periods. It also allows a view into the way ISPs’ connections with each other -- the interconnectedness that makes up the Internet -- shape performance. By selecting different options, you can see how various ISPs performance across a variety of metrics like <a href="#" data-word="Upload Throughput (Megabits per second, Mbps)">upload</a> or <a href="#" data-word="Download Throughput (Megabits per second, abbreviated Mbps)">download speed</a>, <a href="#" data-word="Round Trip Time (Milliseconds, ms)">round trip time</a> or <a href="#" data-word="Packet retransmission rate">packet retransmission rate</a>. You can also see how these metrics differed over time, across locations, or relative to ISP interconnection relationships.</div>' +
 	'<div class="helpHeader">Exploring the data</div>' +
-	'<div class="helpCopy">Observatory is a tool for exploring M-Lab’s data by selecting a metric like download speed, and then displaying graphs of the data in combination with additional filters.</div>' + 
-	'<ul>' + 
-	'<li>First, select the metric you’d like to visualize</li>' + 
-	'<li>Then select a city</li>' + 
-	'</ul>' + 
+	'<div class="helpCopy">Observatory is a tool for exploring M-Lab’s data by selecting a metric like download speed, and then displaying graphs of the data in combination with additional filters.</div>' +
+	'<ul>' +
+	'<li>First, select the metric you’d like to visualize</li>' +
+	'<li>Then select a city</li>' +
+	'</ul>' +
 	'<div class="helpCopy" style="margin-bottom:0;">Based on the city you select, the combinations filter options will change, listing the combinations of <a href="#" data-word="Access ISP or Access Network">Access ISP</a> and <a href="#" data-word="Transit ISP or Transit Network">Transit ISP</a> available in that city.</div>' +
 	'<ul style="margin-top: 0;"><li>Select one or more of those combinations to view or compare the data you’ve selected</li></ul>' +
 	'<img src="static/observatory/images/graphExample.png" />' +
@@ -40,20 +40,19 @@ pretty straight forward
 	'<div class="helpCopy">Adjust the timeline by moving the selected area to see how the performance changes at different times of day and on different dates.</div>' +
 	'<img src="static/observatory/images/timeline.png" />';
 
-	
-	var internetCopy = 
+	var internetCopy =
 	'<div class="helpHeader internetHeader">How the Internet Works</div>' +
 	'<div class="helpCopy">Whenever we use a computer, a smartphone, tablet or other connected device to go online, we’re accessing our content and services via a collection of networks owned and operated by many organizations and companies across the world. The Internet is an interconnected mesh of separate networks. From a US consumer’s perspective, we buy Internet service, and once it’s hooked up, our ISP (say Verizon, Comcast or Time Warner) lets us connect with everything on the web. To be able to provide us this vast access, our individual ISP must connect to the rest of the Internet. This happens via “<a href="#" data-word="Interconnection">interconnection</a>.” Our ISP connects to other, less well-known ISPs that we refer to as transit providers. The points at which transit providers and access ISPs meet and exchange traffic are called “interconnection.” What this means is that the performance we get to our favorite sites and services is determined by many factors, including the relationship between our access ISP and the transit ISPs that it interconnects with.</div>' +
 	'<a href="static/observatory/images/internetInfographic.png" target="_blank"><img style="width: 540px;" src="static/observatory/images/internetInfographic.png" /></a>' +
 	'<div class="helpCopy">M-Lab choses the locations of its measurement points carefully, placing them inside transit ISPs that interconnect with many other ISPs. This provides a representative location at which it’s possible to measure representative performance as experienced by end-users. In other words, when you run an M-Lab test, the measurement of your connection replicates the experience you have many times daily -- crossing the boundaries of networks and infrastructure owners to download a webpage, or access a file, etc.. This ability to get whatever is hosted on the Internet, from anywhere connected to the Internet, is fundamental to how the Internet functions. Without it, the Internet is not longer in inter-network, and is instead an intra-network.</div>'  +
 	'<a href="static/observatory/images/mlabInfographic.png" target="_blank"><img style="width: 540px;" src="static/observatory/images/mlabInfographic.png" /></a>' +
 	'<div class="helpHeader">Additional Resources</div>' +
-	'<ul>' + 
+	'<ul>' +
 	'<li>"The Internet is Serious Business"<br /><a href="http://welcometocup.org/Projects/UrbanInvestigations/TheInternetIsSeriousBusiness" target="_blank">http://welcometocup.org/Projects/UrbanInvestigations/<br />TheInternetIsSeriousBusiness</a></li>' +
 	'<li>"Learn Networking Basics"<br /><a href="https://commotionwireless.net/docs/cck/networking/learn-networking-basics/" target="_blank">https://commotionwireless.net/docs/cck/networking/<br />learn-networking-basics/</a></li>' +
-	'<li>"How the 	Internet Sees You: An Illustrated Guide"<br /><a href="https://www.youtube.com/watch?v=Oqd6S5av5eg" target="_blank">https://www.youtube.com/watch?v=Oqd6S5av5eg</a></li>' +
-
+	'<li>"How the Internet Sees You: An Illustrated Guide"<br /><a href="https://www.youtube.com/watch?v=Oqd6S5av5eg" target="_blank">https://www.youtube.com/watch?v=Oqd6S5av5eg</a></li>' +
 	'</ul>'
+
 	var defData = [
 		{
 			'label': 'Infrastructure',
@@ -104,7 +103,7 @@ pretty straight forward
 					'term': 'Round Trip Time (Milliseconds, ms)',
 					'def': 'How much data can be downloaded (server to user computer) per unit of time.   Note that networking capacity is generally measured in bits per second, while application file sizes are generally measured in bytes, which are 8 bit each.  So for example downloading a 1 megabyte photo image in 10 seconds would be 8 Megabits per second or 8 Mbps. ' +
 					'How much time does it take for a packet to go from point A to point B and back. The shorter the time, the better. ' +
-					'Minimum: the minimum latency measured in transmissions from the server to the client, reported in milliseconds. Normally, this is a good indication of physical path distance, except when there is high load. ISPs with smaller RTTs are probably better connected to other ISPs, meaning that they have more interconnections in more widely distributed geographic locations. ' + 
+					'Minimum: the minimum latency measured in transmissions from the server to the client, reported in milliseconds. Normally, this is a good indication of physical path distance, except when there is high load. ISPs with smaller RTTs are probably better connected to other ISPs, meaning that they have more interconnections in more widely distributed geographic locations. ' +
 					'Average: the average latency of data transfers from the server to the client. This is calculated as the sum of round trip times sampled during the test against the number of samples, reported in milliseconds.' +
 					'Comparing Average and Minimum RTTs provides an estimate of the average delay caused by queuing traffic in the network. '
 				},
@@ -115,7 +114,6 @@ pretty straight forward
 			]
 		}
 	]
-	
 
 	var sectionData = [
 		{id: 'Our Tool', copy: toolCopy },
@@ -150,21 +148,20 @@ pretty straight forward
 		})
 
 		right.append('div').attr('class','rightLabel').text('Definitions')
-		
 
 		var defLinks = right.append('ul').attr('class','defLinks cf').selectAll('li').data(defData)
 		defLinks.enter().append('li').append('a').attr('src', function(d) {
-			
+
 		}).text(function(d) {
 			return d.label
 		})
 		defLinks.on('click', clickDefType)
-		
-		var defs = d3.merge(_.map(defData, function(d) { 
+
+		var defs = d3.merge(_.map(defData, function(d) {
 			_.each(d.terms, function(term) {
 				term.type = d.label
 			})
-			return d.terms 
+			return d.terms
 		}))
 		defs.sort(function(a,b) {
 			if(a.term > b.term) {
@@ -195,8 +192,6 @@ pretty straight forward
 		})
 		terms.on('click', clickTerm)
 
-		
-
 		_.defer(function() {
 			var height = $(left[0][0]).height();
 			$(divider[0][0]).height(height + bottomPadding)
@@ -214,7 +209,7 @@ pretty straight forward
 			$("<span>" + word.text() + "</span>").insertAfter(this)
 			word.remove();
 		})
-		
+
 	}
 	function clickDefType(d) {
 		console.log(this)
@@ -288,7 +283,6 @@ pretty straight forward
 			return d.id === curTab
 		})
 
-
 		$div.show()
 
 		var height = $(left[0][0]).height();
@@ -296,7 +290,7 @@ pretty straight forward
 		$(right[0][0]).height(height)
 		$div.height(height + bottomPadding)
 		mlabOpenInternet.controls.updateHash()
-			
+
 	}
 	exports.init = init
 	exports.show = show
@@ -305,5 +299,5 @@ pretty straight forward
 		window.mlabOpenInternet = {}
 	}
 	window.mlabOpenInternet.help = exports;
-	
+
 })()
