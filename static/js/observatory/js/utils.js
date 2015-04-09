@@ -5,7 +5,6 @@ d3.selection.prototype.moveToFront = function() {
   });
 };
 
-
 //ensure console doesn't break anything
 if(typeof console === 'undefined') {
   console = {}
@@ -17,7 +16,7 @@ if(typeof console.log === 'undefined') {
 //cookie utils, used for displaying help just once
 (function() {
   var exports = new EventEmitter()
-  
+
   function setCookie(cname, cvalue, exdays) {
       var d = new Date();
       d.setTime(d.getTime() + (exdays*24*60*60*1000));
@@ -36,12 +35,10 @@ if(typeof console.log === 'undefined') {
       return "";
   }
 
-  
   exports.setCookie = setCookie;
   exports.getCookie = getCookie;
   if( ! window.mlabOpenInternet){
     window.mlabOpenInternet = {}
   }
   window.mlabOpenInternet.utils = exports;
-  
 })()

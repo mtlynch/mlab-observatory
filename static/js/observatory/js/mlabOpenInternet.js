@@ -4,7 +4,6 @@ Main MLab Application.
 Gets everything going
 */
 (function() {
-
   var dataLoader = mlabOpenInternet.dataLoader;
   var viz = mlabOpenInternet.viz;
   var exploreViz = mlabOpenInternet.exploreViz;
@@ -24,10 +23,9 @@ Gets everything going
 
   /* once data is loaded, setup each element of visual */
   function loaded() {
-    
     timeControl.init();
     timeControl.hide()
-    
+
     exploreViz.init()
     exploreViz.hide()
     compareViz.init()
@@ -37,7 +35,7 @@ Gets everything going
 
     help.init();
     help.hide()
-    
+
     /* event listeners for changing controls */
     controls.addListener('switchTab', switchTab)
     controls.addListener('selectionChanged', selectionChanged)
@@ -51,7 +49,6 @@ Gets everything going
     } else if(activeTab.id === 'compare') {
       compareViz.show()
     }
-
   }
 
   /* update visualization based on any other time of control change */
@@ -65,7 +62,6 @@ Gets everything going
     } else if(activeTab.id === 'help') {
       help.show()
     }
-
   }
 
   /* if we switch tabs, switch out the visible view */
@@ -82,12 +78,11 @@ Gets everything going
           timeControl.hide();
         case 'help':
           help.hide()
-
       }
     }
     activeTab = tab
     switch(activeTab.id) {
-      case 'explore': 
+      case 'explore':
         timeControl.show()
         exploreViz.show()
         break;
@@ -97,10 +92,7 @@ Gets everything going
         break;
       case 'help':
         help.show()
-  
-
     }
-
   }
   if( ! window.mlabOpenInternet) {
     window.mlabOpenInternet = {}

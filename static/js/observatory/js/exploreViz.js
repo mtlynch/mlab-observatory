@@ -7,7 +7,7 @@ viz file for the explore type visualizations
     w: 824 - margin.left - margin.right,
     h: 441 - margin.top - margin.bottom
   }
-  
+
   var svg;
   var div;
   var exploreTT;
@@ -25,8 +25,7 @@ viz file for the explore type visualizations
   /* setup initial dom elements of our charts */
   function init() {
     div = d3.select('#exploreViz')
-    
-    
+
     toggleGreyButton = div.append('div').attr('class','toggleGrey')
     toggleGreyButton.append('span').text('Hide').attr('class','ul')
     toggleGreyButton.append('span').text(' all other lines')
@@ -43,7 +42,6 @@ viz file for the explore type visualizations
     chart.append('g').attr('class','lines')
     chart.append('g').attr('class','dots')
     chart.append('g').attr('class','hoverAreas')
-
   }
   /* make this chart's dom elements visible
   request data for the current viz state's data
@@ -54,7 +52,6 @@ viz file for the explore type visualizations
     curViewType = mlabOpenInternet.controls.getSelectedTimeView().toLowerCase()
     console.log(curViewType)
     mlabOpenInternet.dataLoader.requestMetroData(curMetro, curViewType, dataLoaded)
-
   }
   /*
   data has been returned form data loader
@@ -83,7 +80,7 @@ viz file for the explore type visualizations
             if(typeof d.dateShifted === 'undefined') {
               d.dateShifted = true;
               d.moment.add(24, 'hours')
-              d.date = d.moment.toDate()              
+              d.date = d.moment.toDate()
             }
           }
         })
@@ -123,7 +120,7 @@ viz file for the explore type visualizations
     //console.log(datasets)
     _.each(datasets, function(dataset) {
       _.each(dataset.data, function(datum) {
-        
+
         if(minDate === null || datum.date < minDate) {
           minDate = datum.date
         }
@@ -131,7 +128,7 @@ viz file for the explore type visualizations
           maxDate = datum.date
         }
         var sampleSize = +datum[metricKey + "_n"]
-        
+
         var metricValue = +datum[metricKey]
         if(metricValue < minDataValue) {
           minDataValue = metricValue
@@ -162,19 +159,19 @@ viz file for the explore type visualizations
         yPoint(d)
       })
     })
-    var allPoints = d3.merge(_.map(datasets, function(d) { 
-      _.each(d.data, function(dd) { 
+    var allPoints = d3.merge(_.map(datasets, function(d) {
+      _.each(d.data, function(dd) {
         var active = _.find(selectedCombinations, function(combo) {
           return combo.filename === d.id
         })
         dd.dataID = d.id
         dd.color = d.color
-          
+
         dd.active =  typeof active !== 'undefined'
       } )
-      return d.data 
+      return d.data
     }))
-    
+
     //console.log('allPoints')
     //console.log(allPoints)
     var activePoints = _.filter(allPoints, function(d) { return d.active })
@@ -202,7 +199,6 @@ viz file for the explore type visualizations
         ]
         ])
 
-
     var dotPointsToUse;
     if(hidingGreyLines || (curViewType === 'hourly' && selectedCombinations.length !== 0)) {
       dotPointsToUse = uniqueActivePoints
@@ -222,7 +218,7 @@ viz file for the explore type visualizations
     paths.attr('class',function(d,i) {
       return 'full full-' + d.id
     }).attr('d', function(d) {
-      return lineGen(d.data) 
+      return lineGen(d.data)
     }).style('stroke', function(d,i) {
       var active = _.find(selectedCombinations, function(combo) {
         return combo.filename === d.id
@@ -246,7 +242,6 @@ viz file for the explore type visualizations
     }).classed('selectedLine', function(d,i) {
       return d.active
     })
-
 
     var areaGen = d3.svg.area()
       .x(function(d) { return d.x })
@@ -296,7 +291,7 @@ viz file for the explore type visualizations
     pathsDashed.attr('class',function(d,i) {
       return 'dashed dashed-' + d.id
     }).attr('d', function(d) {
-      return lineGen(d.data) 
+      return lineGen(d.data)
     }).style('stroke', function(d,i) {
       var active = _.find(selectedCombinations, function(combo) {
         return combo.filename === d.id
@@ -346,7 +341,7 @@ viz file for the explore type visualizations
         return 'translate(' + x + ',' + y + ')'
       })
     dots.exit().remove();
-    
+
     var dotSize = 5;
 
     var fillDot = dots.selectAll('.fillDot').data(function(d) { return [d] })
@@ -361,7 +356,7 @@ viz file for the explore type visualizations
             return 2
           }
         }
-      }).style('fill', function(d) { 
+      }).style('fill', function(d) {
       if(d.active) {
         return d.color
       }
@@ -381,7 +376,6 @@ viz file for the explore type visualizations
       .datum(function(d) { return d.point; })
       .on("mouseover", mouseOverDot)
       .on("mouseout", mouseOutDot);
-  
 
     chart.selectAll('.axis').remove()
     var format;
@@ -473,7 +467,6 @@ viz file for the explore type visualizations
     content.append('div').attr('class','ttValue sampleSizeValue')
     content.append('div').attr('class','ttLabel dateLabel').text('Date')
     content.append('div').attr('class','ttValue dateValue')
-
   }
 
   /*
@@ -535,20 +528,18 @@ viz file for the explore type visualizations
     if(graphXPos > exploreDimensions.w  / 2) {
       exploreTT.select('.exploreTTArrow').style('right', '15px').style('left', null)
       x -= ttWidth
-      x += 15 + 8; 
+      x += 15 + 8;
     } else {
       exploreTT.select('.exploreTTArrow').style('left', '15px').style('right', null)
       x -= 15 + 7
     }
 
     var ttHeight = $tt.height();
-    var ttPadding = 18; 
+    var ttPadding = 18;
     y -= ttHeight + ttPadding
-
 
     exploreTT.style('left', x + 'px').style('top', y + 'px')
     exploreTT.style('opacity',1)
-    
   }
   /*
   hide the tooltip
@@ -564,7 +555,6 @@ viz file for the explore type visualizations
     var opacity = dotOpacityFunction(d,i)
     dot.style('opacity', opacity)
     exploreTT.style('opacity',0).transition().duration(0).delay(300).style('display','none')
-
   }
   /*
   method to toggle grey lines externally, used for permalink
@@ -579,7 +569,6 @@ viz file for the explore type visualizations
     toggleGreyButton.select('.ul').text(function() {
       return hidingGreyLines ? 'Show' : 'Hide'
     })
-
   }
   /*
   helper function to determine dot opacity

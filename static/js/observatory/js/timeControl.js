@@ -61,7 +61,6 @@ control for the time control slider/visual
       .text('').attr('text-anchor','middle'))
     shades.append('line').attr('x1', 0).attr('x2', monthWidth * 5)
       .attr('y1', svgDimensions.height).attr('y2', svgDimensions.height)
-
   }
 
   /*
@@ -81,7 +80,6 @@ control for the time control slider/visual
       var curViewType = mlabOpenInternet.controls.getCompareByView()
       var aggregationSelection = mlabOpenInternet.controls.getCompareAggregationSelection()
       mlabOpenInternet.dataLoader.requestCompareData(aggregationSelection, curViewType, view, dataLoaded)
-      
     }
   }
 
@@ -123,7 +121,7 @@ control for the time control slider/visual
     var maxDate = null;
     //console.log(datasets)
     //determine min / maxes
-    
+
     //we need to break up datasets by month to color them properly :/
     var monthlyDatasets = []
     var maxMonthIndex = 0;
@@ -133,7 +131,7 @@ control for the time control slider/visual
       //console.log(dataset.data)
       _.each(dataset.data, function(datum,index) {
         var metricValue = +datum[metricKey]
-        
+
         if(minDate === null || datum.date < minDate) {
           minDate = datum.date
         }
@@ -141,7 +139,7 @@ control for the time control slider/visual
           maxDate = datum.date
         }
         var monthYearKey = datum.date.getMonth() + "-" + datum.date.getFullYear();
-        
+
         if(typeof thisDataSetByMonths[monthYearKey] === 'undefined') {
           thisDataSetByMonths[monthYearKey] = []
         }
@@ -159,13 +157,13 @@ control for the time control slider/visual
           maxDataValue = metricValue
         }
       })
-      dataset.byMonths = thisDataSetByMonths; 
+      dataset.byMonths = thisDataSetByMonths;
     //  console.log(dataset.byMonths)
     })
     _.each(datasets, function(dataset) {
       var twoMonthsPrior = moment(new Date(minDate.getFullYear(), minDate.getMonth() - 2, 1))
       var oneMonthPrior =  moment(new Date(minDate.getFullYear(), minDate.getMonth() - 1, 1))
-      
+
       var monthIndex = 0;
 
       monthlyDatasets.push({
@@ -173,13 +171,13 @@ control for the time control slider/visual
         monthIndex: monthIndex,
         data: nullData(twoMonthsPrior, monthIndex)
       })
-      monthIndex ++ 
+      monthIndex ++
       monthlyDatasets.push({
         color: dataset.color,
         monthIndex: monthIndex,
         data: nullData(oneMonthPrior, monthIndex)
       })
-      monthIndex ++ 
+      monthIndex ++
       _.each(dataset.byMonths, function(data, key) {
         _.each(data, function(d) {
           d.monthIndex = monthIndex
@@ -203,7 +201,6 @@ control for the time control slider/visual
       monthlyDatasets.push({
         color: dataset.color, monthIndex: monthIndex + 1, data: nullData(twoMonthAfter, monthIndex + 1)
       })
-
     })
     maxMonthIndex -= 2; //to account for the 2 start buffer months
     /*
@@ -247,7 +244,6 @@ control for the time control slider/visual
       labels[2].text(dispMonth.format('MMM \'YY').toUpperCase())
       dispMonth.add(1,'months')
       labels[3].text(dispMonth.format('MMM \'YY').toUpperCase())
-      
     }
     var yScale = d3.scale.linear().domain([0, maxDataValue])
       .range([svgDimensions.height, 0])
@@ -322,7 +318,7 @@ control for the time control slider/visual
         selectedMonthIndex = xTranslate
         selectedDate = dateOptions[selectedMonthIndex]
         linesTranslateData.dx = 0
-        
+
         updatePaths()
         updateDateLabels()
         exports.emitEvent('timeChanged')
@@ -357,7 +353,7 @@ control for the time control slider/visual
         labels[2].text(dispMonth.format('MMM \'YY').toUpperCase())
         dispMonth.add(1,'months')
         labels[3].text(dispMonth.format('MMM \'YY').toUpperCase())
-        
+
         d3.select(this).select('g.lines')
           .transition().duration(300)
           .attr('transform', 'translate(' + linesTranslateData.x + ',' + linesTranslateData.y + ')')
@@ -408,7 +404,7 @@ control for the time control slider/visual
       return null
     }
     paths.attr('d', function(d) {
-      return lineGen(d.data) 
+      return lineGen(d.data)
     }).style('stroke', strokeFunc )
     pathsDashed.attr('d', function(d) {
       return lineGenDashed(d.data)
@@ -468,5 +464,4 @@ control for the time control slider/visual
     window.mlabOpenInternet = {}
   }
   window.mlabOpenInternet.timeControl = exports;
-  
 })()

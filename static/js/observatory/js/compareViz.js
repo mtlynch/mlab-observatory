@@ -6,7 +6,7 @@ viz file for the comapre visualizations
   var dimensions = {
     w: 824 - margin.left - margin.right,
   }
-  
+
   var graphAreaHeight = 150;
   var graphHeight = 60
   var topPadding = 20;
@@ -20,7 +20,7 @@ viz file for the comapre visualizations
   var xScale;
   var yScale;
   var curFocusDay = null;
-  var tooltipContainer; 
+  var tooltipContainer;
   var tooltips;
   var numDays;
   var curTimeViewType;
@@ -52,7 +52,6 @@ viz file for the comapre visualizations
     curTimeViewType = mlabOpenInternet.controls.getSelectedTimeView().toLowerCase()
 
     mlabOpenInternet.dataLoader.requestCompareData(aggregationSelection, curViewType, curTimeViewType, dataLoaded)
-    
   }
 
   //data received, filter out data that is not in the currently selected time period
@@ -178,7 +177,7 @@ viz file for the comapre visualizations
     paths.enter().append('path').attr('class','full');
     paths.exit().remove()
     paths.attr('d', function(d) {
-      return lineGen(d.data) 
+      return lineGen(d.data)
     }).style('stroke', function(d,i) {
       return null
       var active = _.find(selectedCombinations, function(combo) {
@@ -204,7 +203,6 @@ viz file for the comapre visualizations
     }).style('stroke', function(d) {
       return d.color
     })
-
 
     var areaGen = d3.svg.area()
       .x(function(d,i) {
@@ -248,7 +246,7 @@ viz file for the comapre visualizations
     pathsDashed.enter().append('path').attr('class','dashed');
     pathsDashed.exit().remove()
     pathsDashed.attr('d', function(d) {
-      return lineGen(d.data) 
+      return lineGen(d.data)
     }).style('stroke', function(d,i) {
       return d.color
 
@@ -410,7 +408,6 @@ viz file for the comapre visualizations
     dotGroup.moveToFront()
 
     mlabOpenInternet.controls.updateHash()
-
   }
 
   /*
@@ -452,7 +449,7 @@ viz file for the comapre visualizations
       if(xIndex === numDays) {
         xIndex --
       }
-      
+
     } else if(curTimeViewType === 'hourly') {
       var mouseHour = xScale.invert(x)
       //console.log(mouseHour)
@@ -472,7 +469,6 @@ viz file for the comapre visualizations
         .attr('x1', xPos).attr('x2', xPos)
       curFocusDay = nextFocusDate
     }
-    
 
     //console.log(xPos + " " + xIndex)
     var yIndex = ~~(y / graphAreaHeight)
@@ -523,7 +519,7 @@ viz file for the comapre visualizations
       if(i === yIndex  && (
         d.tooltipX < dimensions.w * (1 - activeWidthCutoffPct)
         &&
-        d.tooltipX > (dimensions.w * activeWidthCutoffPct) 
+        d.tooltipX > (dimensions.w * activeWidthCutoffPct)
         )
       ) {
         thisTTOnLeft = !thisTTOnLeft
@@ -548,7 +544,6 @@ viz file for the comapre visualizations
         .selectAll('circle.dot:nth-child(' + (xIndex + 1) + ')')
         .style('opacity',1)
     }
-
   }
 
   /*
@@ -560,7 +555,6 @@ viz file for the comapre visualizations
     if(curTimeViewType === 'daily') {
       chart.selectAll('circle.dot').style('opacity',0)
     }
-    
   }
 
   /* helper function to ensure tooltip doesn't hide when you mouse over it

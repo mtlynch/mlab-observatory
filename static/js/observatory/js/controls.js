@@ -12,7 +12,7 @@ includes the tabs, and all dropdown controls and a few others
   var tabData = [
     {lbl: 'Explore', id: 'explore'},
     {lbl: 'Compare', id: 'compare'},
-    {lbl: 'How this works', id: 'help'} 
+    {lbl: 'How this works', id: 'help'}
   ]
   //help sections
   var helpTabs = [
@@ -219,9 +219,7 @@ includes the tabs, and all dropdown controls and a few others
     _.defer(function() {
       //inform app viz that we are ready to go
       exports.emitEvent('switchTab', [selectedTab])
-
     })
-
   }
 
   /* open a share link based on current state */
@@ -298,7 +296,6 @@ includes the tabs, and all dropdown controls and a few others
     setupComboSelectOptions()
     populateSelectionLabel()
     exports.emitEvent('selectionChanged')
-
   }
 
   /* IP x TSP combinations event handler */
@@ -318,7 +315,7 @@ includes the tabs, and all dropdown controls and a few others
 
   }
 
-  /* populate the IP x TSP combination dropdown based on the combinations available in 
+  /* populate the IP x TSP combination dropdown based on the combinations available in
      the currently selected region
   */
   function setupComboSelectOptions() {
@@ -400,7 +397,6 @@ includes the tabs, and all dropdown controls and a few others
           }
           labelHTML += ' '
           tpIndex ++
-
         })
       }
       labelHTML += 'in '
@@ -441,7 +437,6 @@ includes the tabs, and all dropdown controls and a few others
           }
           return null
         })
-
     }).on('mouseout', function(d,i) {
       var d3this = d3.select(this)
       d3this.style('border-bottom',null)
@@ -453,7 +448,6 @@ includes the tabs, and all dropdown controls and a few others
           return null
         })
     })
-
   }
 
   /*
@@ -461,7 +455,7 @@ includes the tabs, and all dropdown controls and a few others
   show the explore controls
   */
   function showExploreControls() {
-    $compareViewBySelect.next().hide() //kind of odd 
+    $compareViewBySelect.next().hide() //kind of odd
     $comboSelect.next().show()
     $metroSelect.next().show();
     $metricsSelect.next().show();
@@ -471,7 +465,6 @@ includes the tabs, and all dropdown controls and a few others
     selectedDateLabels.style('display','block')
     helpTabsList.style('display','none')
     div.selectAll('.selectedTime').style('display','block')
-
   }
   /*
   hide the non compare controls
@@ -486,7 +479,6 @@ includes the tabs, and all dropdown controls and a few others
     selectedDateLabels.style('display','block')
     helpTabsList.style('display','none')
     div.selectAll('.selectedTime').style('display','block')
-
   }
   /*
   hide the non help controls
@@ -515,7 +507,6 @@ includes the tabs, and all dropdown controls and a few others
     populateSelectionLabel()
 
     exports.emitEvent('selectionChanged')
-
   }
 
   /*
@@ -554,7 +545,6 @@ includes the tabs, and all dropdown controls and a few others
         }
         return o
       },'')
-    
 
       var time = mlabOpenInternet.timeControl.getDeepLinkHash()
       if(time !== null) {
@@ -585,7 +575,6 @@ includes the tabs, and all dropdown controls and a few others
       return hashVal
     },'')
 
-
     return hash
   }
 
@@ -603,7 +592,7 @@ includes the tabs, and all dropdown controls and a few others
     var hashObj = getQueryParameters(hash)
     console.log(hashObj)
     if(typeof hashObj['tab'] !== 'undefined') {
-      var tab = hashObj['tab'];    
+      var tab = hashObj['tab'];
       var selectedTabIndex = _.findIndex(tabData, function(d,i) {
         return d.id === tab
       })
@@ -611,10 +600,9 @@ includes the tabs, and all dropdown controls and a few others
         selectedTab = tabData[selectedTabIndex]
         clickTab(selectedTab, selectedTabIndex, false)
         viewingFromDeeplink = true;
-
       }
     }
-    
+
     if(typeof hashObj['metric'] !== 'undefined') {
       var selectedMetricIndex = _.findIndex(metrics, function(d) {
         return d.key === hashObj['metric']
@@ -635,7 +623,6 @@ includes the tabs, and all dropdown controls and a few others
         selectedMetroRegion = metros[selectedMetroIndex]
         $metroSelect.selectpicker('val', selectedMetroRegion)
         viewingFromDeeplink = true;
-
       }
       console.log(selectedMetroRegion)
       setupComboSelectOptions()
@@ -666,7 +653,7 @@ includes the tabs, and all dropdown controls and a few others
       mlabOpenInternet.timeControl.setTime(hashObj['time'])
         viewingFromDeeplink = true;
     }
-    
+
     if(typeof hashObj['viewBy'] !== 'undefined') {
       var viewOptionIndex = _.findIndex(viewByOpts,function(d,i) {
         return d.replace(/ /g, '') === hashObj['viewBy']
@@ -707,7 +694,6 @@ includes the tabs, and all dropdown controls and a few others
       }
     }
     populateSelectionLabel()
-
   }
 
   /*
@@ -716,7 +702,7 @@ includes the tabs, and all dropdown controls and a few others
   function updateHash() {
     var hash = getDeepLinkHash()
     console.log(hash)
-    
+
     if(window.history) {
       window.history.replaceState(null, null, '#' + hash)
     }
@@ -733,7 +719,7 @@ includes the tabs, and all dropdown controls and a few others
     timeViewButtons.classed('selected', false)
     d3.select(this).classed('selected', true)
     selectedTimeView = d
-    
+
     exports.emitEvent('selectionChanged')
   }
 
@@ -747,7 +733,6 @@ includes the tabs, and all dropdown controls and a few others
     }
   }
 
-  
   exports.init = init
   /* getters for the currently selected control state */
   exports.getSelectedMetro = function() { return selectedMetroRegion }
@@ -765,5 +750,4 @@ includes the tabs, and all dropdown controls and a few others
     window.mlabOpenInternet = {}
   }
   window.mlabOpenInternet.controls = exports;
-  
 })()

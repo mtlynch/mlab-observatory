@@ -31,7 +31,7 @@ file that handles all data loading
   var regionsToIgnore = ['Washington DC']
   var filenameToColorMap = {}
   var loadingDiv;
-  
+
   //kick off data loading
   function init() {
     loadingDiv = d3.select('#loading')
@@ -220,7 +220,6 @@ file that handles all data loading
           //console.log(requestData)
           numCombosLoaded ++;
           checkIfAllDataLoaded(numCombosLoaded, combos, requestData.callbacks, dataObj, dataType)
-          
         })
       } else {
         //data has either been requested and we are waiting for a response
@@ -233,16 +232,14 @@ file that handles all data loading
           //data already received
           numCombosLoaded++
           checkIfAllDataLoaded(numCombosLoaded, combos, [callback], dataObj)
-
         }
-      } 
+      }
     })
   }
 
   /*
   requests compare data based on current selection
 
-  
   aggregationSelection is the currently selected ISP or selected Metro
   viewType defines if we are comparing by Metro Region or by ISP
   dataType again defines 'daily' or 'hourly' data
@@ -272,7 +269,6 @@ file that handles all data loading
       })
     }
     //console.log(dataToLoad)
-
 
     var dataObj = null;
     if(dataType === 'hourly') {
@@ -304,7 +300,6 @@ file that handles all data loading
           //console.log(requestData)
           numFilesLoaded ++;
           checkIfAllDataLoaded(numFilesLoaded, dataToLoad, requestData.callbacks, dataObj, dataType)
-          
         })
       } else {
         //data has either been requested and we are waiting for a response
@@ -317,15 +312,13 @@ file that handles all data loading
           //data already received
           numFilesLoaded++
           checkIfAllDataLoaded(numFilesLoaded, dataToLoad, [callback], dataObj)
-
         }
-      } 
+      }
     })
-
   }
 
   /*
-  determines if all the data that has been requested has been loaded. 
+  determines if all the data that has been requested has been loaded.
 
   if it has, we ensure there are no gaps in the data
   and then pass that data to our callback
@@ -459,7 +452,6 @@ file that handles all data loading
         }
       }
       return dataWithGaps
-
     }
   }
   /*
@@ -505,7 +497,5 @@ file that handles all data loading
   if( ! window.mlabOpenInternet){
     window.mlabOpenInternet = {}
   }
-
   window.mlabOpenInternet.dataLoader = exports;
-  
 })()
