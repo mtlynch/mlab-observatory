@@ -1,0 +1,14 @@
+/*
+Specifies commonly used data paths within Observatory.
+(Version for STAGING version of Observatory)
+*/
+(function() {
+  var exports = new EventEmitter();
+  exports.dataRoot = 'http://storage.googleapis.com/mlab-observatory-staging/';
+
+  if (!window.mlabOpenInternet) {
+    window.mlabOpenInternet = {};
+  }
+
+  window.mlabOpenInternet.paths = exports;
+})();
