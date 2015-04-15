@@ -3,33 +3,33 @@ file that handles all data loading
 */
 (function() {
   var colorMap;
-  var exports = new EventEmitter()
-  var metadatafolder = '/mlab-observatory/static/observatory/metadata/'
+  var exports = new EventEmitter();
+  var metadatafolder = mlabOpenInternet.paths.dataRoot + 'metadata/';
 
-  var mapFile = metadatafolder + "codeMap.csv"
-  var validExploreCodesFile = metadatafolder + 'validExploreKeys.txt'
-  var validCompareCodesFile = metadatafolder + 'validCompareKeys.txt'
-  var metricFile = metadatafolder + 'metrics.json'
+  var mapFile = metadatafolder + 'codeMap.csv';
+  var validExploreCodesFile = metadatafolder + 'validExploreKeys.txt';
+  var validCompareCodesFile = metadatafolder + 'validCompareKeys.txt';
+  var metricFile = metadatafolder + 'metrics.json';
 
-  var dataPath = '/mlab-observatory/static/observatory/data/'
+  var dataPath = mlabOpenInternet.paths.dataRoot + 'data/';
   var validExploreCodes = [];
-  var validCompareCodes = []
-  var ispsBySite = {}
+  var validCompareCodes = [];
+  var ispsBySite = {};
   var validISPs = [];
   var validSiteNames = [];
-  var validMetroRegions = []
-  var metroRegionToMLabPrefix = {}
+  var validMetroRegions = [];
+  var metroRegionToMLabPrefix = {};
   var siteMappings = null;
   var metrics = null;
   var dailyDataByCode = {};
   var hourlyDataByCode = {};
   var dailyCompareDataByCode = {};
   var hourlyCompareDataByCode = {};
-  var mlabSitesByCode = {}
+  var mlabSitesByCode = {};
   var ispNameMap;
-  var minSampleSize = 30
-  var regionsToIgnore = []
-  var filenameToColorMap = {}
+  var minSampleSize = 30;
+  var regionsToIgnore = [];
+  var filenameToColorMap = {};
   var loadingDiv;
 
   //kick off data loading
