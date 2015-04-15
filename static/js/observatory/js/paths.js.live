@@ -11,4 +11,4 @@ Specifies commonly used data paths within Observatory.
   }
 
   window.mlabOpenInternet.paths = exports;
-})():
+})();
