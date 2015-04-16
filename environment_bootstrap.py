@@ -24,6 +24,11 @@ import sys
 
 def setup_environment(environment_type):
   link_name = 'static/js/observatory/js/paths.js'
+
+  if os.path.exists(link_name):
+    print 'Warning: Replacing existing file: %s' % link_name
+    os.remove(link_name)
+
   if environment_type == 'staging':
     os.symlink('paths.js.staging', link_name)
   elif environment_type == 'live':
