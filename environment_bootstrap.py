@@ -22,20 +22,24 @@ import sys
 """Configure Observatory based on the type of environment this is."""
 
 
-def setup_environment(environment_type):
-  link_name = 'static/js/observatory/js/paths.js'
+def create_environment_symlink(link_name, environment_type):
+  target_name = '%s.%s' % (os.path.basename(link_name), environment_type)
+  print 'Creating symlink %s -> %s' % (link_name, target_name)
 
-  if os.path.exists(link_name):
-    print 'Warning: Replacing existing file: %s' % link_name
+  existing_link_removed = False
+  if os.path.islink(link_name):
     os.remove(link_name)
+    existing_link_removed = True
 
-  if environment_type == 'staging':
-    os.symlink('paths.js.staging', link_name)
-  elif environment_type == 'live':
-    os.symlink('paths.js.live', link_name)
-  else:
-    print 'Error: Invalid environment type'
-    sys.exit(-1)
+  os.symlink(target_name, link_name)
+
+  if existing_link_removed:
+    print 'Warning: Replaced existing symbolic link: %s' % link_name
+
+
+def setup_environment(environment_type):
+  create_environment_symlink('static/js/observatory/js/paths.js',
+                             environment_type)
 
 
 def main(args):
