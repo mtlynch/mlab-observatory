@@ -4,6 +4,8 @@ atl01_twc
 atl01_verizon
 atl04_att
 atl04_comcast
+atl04_twc
+atl04_verizon
 dfw01_att
 dfw01_centurylink
 dfw01_comcast
@@ -31,8 +33,11 @@ lax01_verizon
 lax02_att
 lax02_cox
 lax02_twc
+lax03_att
+lax03_centurylink
 lax03_cox
 lax03_twc
+lax03_verizon
 lga01_cablevision
 lga01_comcast
 lga01_twc
@@ -41,6 +46,12 @@ lga02_cablevision
 lga02_comcast
 lga02_twc
 lga02_verizon
+lga03_cablevision
+lga03_twc
+lga03_verizon
+lga04_cablevision
+lga04_comcast
+lga04_twc
 lga04_verizon
 lga05_cablevision
 lga05_comcast
@@ -61,4 +72,6 @@ ord04_comcast
 ord04_twc
 sea01_centurylink
 sea01_comcast
+sea02_centurylink
+sea02_comcast
 

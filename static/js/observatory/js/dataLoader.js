@@ -35,7 +35,7 @@ file that handles all data loading
   //kick off data loading
   function init() {
     loadingDiv = d3.select('#loading')
-    loadingDiv.append('img').attr('src', '/mlab-observatory/static/observatory/images/loading.gif')
+    loadingDiv.append('img').attr('src', '/mlab_observatory/static/observatory/images/loading.gif')
     d3.json(metadatafolder + 'ispMap.json', loadISPNameMap)
   }
   /*
