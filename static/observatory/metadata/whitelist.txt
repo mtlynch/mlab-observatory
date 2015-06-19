@@ -17,6 +17,7 @@ dfw05_att
 dfw05_comcast
 dfw05_cox
 dfw05_twc
+dfw05_verizon
 iad01_comcast
 iad04_comcast
 iad04_twc
@@ -73,3 +74,4 @@ sea01_centurylink
 sea01_comcast
 sea02_centurylink
 sea02_comcast
+
