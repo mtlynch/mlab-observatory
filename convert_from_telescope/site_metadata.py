@@ -48,6 +48,7 @@ def get_metro_timezone(metro):
       'vie': 'CET',
       'atl': 'US/Eastern',
       'dfw': 'US/Central',
+      'den': 'US/Mountain',
       'iad': 'US/Eastern',
       'lax': 'US/Pacific',
       'lga': 'US/Eastern',
