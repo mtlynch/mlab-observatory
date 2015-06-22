@@ -46,9 +46,6 @@ lga02_cablevision
 lga02_comcast
 lga02_twc
 lga02_verizon
-lga03_cablevision
-lga03_twc
-lga03_verizon
 lga04_cablevision
 lga04_comcast
 lga04_twc
@@ -74,4 +71,3 @@ sea01_centurylink
 sea01_comcast
 sea02_centurylink
 sea02_comcast
-
