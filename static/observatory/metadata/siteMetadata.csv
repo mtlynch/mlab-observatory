@@ -1,0 +1,38 @@
+MlabSiteName,TransitProvider,MetroArea
+ATL01,Level3,Atlanta
+ATL02,Cogent,Atlanta
+ATL03,Tata,Atlanta
+ATL04,GTT,Atlanta
+DEN01,GTT,Denver
+DFW01,Cogent,Dallas
+DFW02,Tata,Dallas
+DFW05,Zayo,Dallas
+IAD01,XO,Washington DC
+IAD02,Cogent,Washington DC
+IAD04,GTT,Washington DC
+LAX01,Cogent,Southern California
+LAX02,Tata,Southern California
+LAX03,GTT,Southern California
+LAX05,Zayo,Southern California
+LGA01,Internap,New York
+LGA02,Cogent,New York
+LGA04,GTT,New York
+LGA05,Level3,New York
+MIA01,Level3,Miami
+MIA02,Cogent,Miami
+MIA03,Tata,Miami
+MIA04,GTT,Miami
+MIA05,Zayo,Miami
+NUQ01,Level3,SF Bay Area
+NUQ02,ISC,SF Bay Area
+NUQ03,Cogent,SF Bay Area
+NUQ04,Tata,SF Bay Area
+NUQ06,Zayo,SF Bay Area
+ORD01,Level3,Chicago
+ORD02,Cogent,Chicago
+ORD03,Tata,Chicago
+ORD04,GTT,Chicago
+ORD05,Zayo,Chicago
+SEA01,Cogent,Pacific Northwest
+SEA02,Tata,Pacific Northwest
+SEA03,GTT,Pacific Northwest

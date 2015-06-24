@@ -6,7 +6,7 @@ file that handles all data loading
   var exports = new EventEmitter();
   var metadatafolder = mlabOpenInternet.paths.dataRoot + 'metadata/';
 
-  var mapFile = metadatafolder + 'codeMap.csv';
+  var mapFile = metadatafolder + 'siteMetadata.csv';
   var validExploreCodesFile = metadatafolder + 'validExploreKeys.txt';
   var validCompareCodesFile = metadatafolder + 'validCompareKeys.txt';
   var metricFile = metadatafolder + 'metrics.json';
