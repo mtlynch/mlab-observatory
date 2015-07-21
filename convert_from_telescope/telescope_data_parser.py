@@ -35,6 +35,15 @@ except ImportError:
                    'Please verify all submodules are checked out.'))
 
 
+class Error(Exception):
+  pass
+
+
+class ParseFailedError(Error):
+  """Error thrown when parsing Telescope data fails."""
+  pass
+
+
 def _parse_filename_for_metadata(file_path):
   """Parses a telescope file path for metadata.
 
@@ -136,8 +145,13 @@ class SingleTelescopeResultReader(TelescopeResultReader):
     self._result_filename = result_filename
 
   def _read_rows(self):
-    with open(self._result_filename, 'r') as data_file:
-      return _parse_data_file(data_file)
+    try:
+      with open(self._result_filename) as data_file:
+        return _parse_data_file(data_file)
+    except csv.Error as e:
+      raise ParseFailedError(
+          'Failed to parse Telescope CSV file: %s\nError: %s' % (
+              self._result_filename, e))
 
   def get_metadata(self):
     return _parse_filename_for_metadata(self._result_filename)
