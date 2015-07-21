@@ -95,6 +95,25 @@ class SingleTelescopeResultReaderTest(unittest.TestCase):
     results_actual = [result_row for result_row in reader]
     self.assertListEqual(results_expected, results_actual)
 
+  @mock.patch('__builtin__.open')
+  def test_iter_when_file_contains_null_byte_raise_ParseFailedError(self,
+                                                                    mock_open):
+    """A NULL byte in Telescope data should yield a ParseFailedError."""
+    file_contents = '1416501638,\0x0015.9014'
+    mock_open.return_value = io.BytesIO(file_contents)
+    with self.assertRaises(telescope_data_parser.ParseFailedError):
+      reader = telescope_data_parser.SingleTelescopeResultReader(
+          'mock_filename.csv')
+      results_actual = [result_row for result_row in reader]
+
+  @mock.patch('__builtin__.open')
+  def test_iter_when_file_open_fails(self, mock_open):
+    """When opening the file fails, just pass through the original IOError."""
+    mock_open.side_effect = IOError('Mock IOError')
+    with self.assertRaises(IOError):
+      reader = telescope_data_parser.SingleTelescopeResultReader(
+          'non_existent_file.csv')
+      results_actual = [result_row for result_row in reader]
 
 class MergedTelescopeResultReaderTest(unittest.TestCase):
 
