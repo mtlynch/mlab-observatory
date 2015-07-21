@@ -96,13 +96,11 @@ class SingleTelescopeResultReaderTest(unittest.TestCase):
     self.assertListEqual(results_expected, results_actual)
 
   @mock.patch('__builtin__.open')
-  def test_iter_when_file_contains_null_byte(self, mock_open):
-    file_contents = '\n'.join((
-        '1416501638,\0x0015.9014',
-        '1326589323,109.11934',
-        '1327712523,80.11242'))
-    mock_input_file = io.BytesIO(file_contents)
-    mock_open.return_value = mock_input_file
+  def test_iter_when_file_contains_null_byte_raise_ParseFailedError(self,
+                                                                    mock_open):
+    """A NULL byte in Telescope data should yield a ParseFailedError."""
+    file_contents = '1416501638,\0x0015.9014'
+    mock_open.return_value = io.BytesIO(file_contents)
     with self.assertRaises(telescope_data_parser.ParseFailedError):
       reader = telescope_data_parser.SingleTelescopeResultReader(
           'mock_filename.csv')
