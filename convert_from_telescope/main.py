@@ -19,6 +19,7 @@
 
 import argparse
 import datetime
+import glob
 import logging
 import os
 
@@ -129,6 +130,7 @@ def perform_conversion(input_filenames, output_dir):
 def main(args):
   logger = setup_logger()
   program_start_time = datetime.datetime.utcnow()
+  input_files = glob.glob(args.input_pattern)
 
   if not args.no_whitelist_update:
     logger.info('Updating dataset whitelist.')
@@ -141,12 +143,11 @@ def main(args):
     sample_checker = sample_checking.SampleCountChecker(
         sample_counter, end_time, min_samples_per_day,
         percentage_of_days_threshold)
-    whitelist = update_whitelist(args.whitelist, sample_checker,
-                                 args.data_files)
+    whitelist = update_whitelist(args.whitelist, sample_checker, input_files)
   else:
     whitelist = read_whitelist(args.whitelist)
 
-  filtered_files = filter_files(whitelist, args.data_files)
+  filtered_files = filter_files(whitelist, input_files)
   perform_conversion(filtered_files, args.output)
   program_end_time = datetime.datetime.utcnow()
   runtime_mins = (program_end_time - program_start_time).total_seconds() / 60.0
@@ -156,8 +157,9 @@ if __name__ == '__main__':
   parser = argparse.ArgumentParser(
       prog='Observatory Data Preparation Tool',
       formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-  parser.add_argument('data_files', nargs='+', default=None,
-                      help='CSV datafile(s) to merge.')
+  parser.add_argument('-i', '--input_pattern', default=None,
+                      help=('Input pattern (in quotes) specifying CSV '
+                            'datafile(s) to merge.'))
   parser.add_argument('-o', '--output', default='../static/observatory/',
                       help='Output path.')
   parser.add_argument('--samples_per_day', default='30',
