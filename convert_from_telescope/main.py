@@ -158,7 +158,8 @@ if __name__ == '__main__':
       prog='Observatory Data Preparation Tool',
       formatter_class=argparse.ArgumentDefaultsHelpFormatter)
   parser.add_argument('-i', '--input_pattern', default=None,
-                      help='Input pattern specifying CSV datafile(s) to merge.')
+                      help=('Input pattern (in quotes) specifying CSV '
+                            'datafile(s) to merge.'))
   parser.add_argument('-o', '--output', default='../static/observatory/',
                       help='Output path.')
   parser.add_argument('--samples_per_day', default='30',
