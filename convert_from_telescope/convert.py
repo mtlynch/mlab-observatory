@@ -17,13 +17,9 @@
 
 import logging
 import os
-import sys
 
 try:
-  sys.path.insert(1,
-                  os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                               './telescope')))
-  import telescope.utils
+  import telescope.telescope.utils as telescope_utils
 except ImportError:
   raise Exception(('Could not find Telescope library. '
                    'Please verify all submodules are checked out.'))
@@ -63,7 +59,7 @@ def _generate_output_path(group_key, output_dir, output_type):
     characters).
   """
   filename = '%s_%s.csv' % (group_key, output_type)
-  filename = telescope.utils.strip_special_chars(filename)
+  filename = telescope_utils.strip_special_chars(filename)
   return os.path.join(output_dir, filename)
 
 
