@@ -21,15 +21,11 @@ import csv
 import datetime
 import os
 import re
-import sys
 
 import pytz
 
 try:
-  sys.path.insert(1,
-                  os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                               './telescope')))
-  import telescope.utils
+  import telescope.telescope.utils as telescope_utils
 except ImportError:
   raise Exception(('Could not find Telescope library. '
                    'Please verify all submodules are checked out.'))
@@ -80,14 +76,14 @@ def _parse_filename_for_metadata(file_path):
   parsed['start_date_string'] = match.group(1)
   parsed['duration_string'] = match.group(2)
   parsed['site_name'] = match.group(3)
-  parsed['isp'] = telescope.utils.strip_special_chars(match.group(4))
+  parsed['isp'] = telescope_utils.strip_special_chars(match.group(4))
   parsed['metric_name'] = match.group(5)
 
   parsed['metro'] = parsed['site_name'][:3]
 
   start_date_no_tz = datetime.datetime.strptime(parsed['start_date_string'],
                                                 '%Y-%m-%d-%H%M%S')
-  parsed['start_date'] = telescope.utils.make_datetime_utc_aware(
+  parsed['start_date'] = telescope_utils.make_datetime_utc_aware(
       start_date_no_tz)
 
   return parsed
