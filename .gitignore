@@ -1,3 +1,4 @@
 *.pyc
+tests/testoutput/*
 static/js/observatory/js/paths.js
 static/observatory/data/*

@@ -20,16 +20,20 @@ import filecmp
 import glob
 import os
 import shutil
+import sys
 import unittest
 
+sys.path.insert(1, os.path.abspath(
+    os.path.join(os.path.dirname(__file__), '../convert_from_telescope')))
 import convert
 import observatory_file_writer
 import reducer
 import result_grouper
 
-TESTDATA_DIR = 'testdata'
-TEST_OUTPUT_DIR = 'testoutput'
-GOLDEN_OUTPUT_DIR = 'testoutput-golden'
+TEST_DIR = os.path.dirname(__file__)
+TESTDATA_DIR = os.path.join(TEST_DIR, 'testdata')
+TEST_OUTPUT_DIR = os.path.join(TEST_DIR, 'testoutput')
+GOLDEN_OUTPUT_DIR = os.path.join(TEST_DIR, 'testoutput-golden')
 
 
 def clear_output_dir():

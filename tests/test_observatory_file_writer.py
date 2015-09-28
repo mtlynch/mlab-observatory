@@ -17,8 +17,12 @@
 
 import datetime
 import io
+import os
+import sys
 import unittest
 
+sys.path.insert(1, os.path.abspath(
+    os.path.join(os.path.dirname(__file__), '../convert_from_telescope')))
 import observatory_file_writer
 
 
