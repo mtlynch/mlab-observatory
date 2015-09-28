@@ -16,10 +16,14 @@
 # limitations under the License.
 
 import datetime
+import os
+import sys
 import unittest
 
 import pytz
 
+sys.path.insert(1, os.path.abspath(
+    os.path.join(os.path.dirname(__file__), '../convert_from_telescope')))
 import aggregate
 
 DEFAULT_TIMEZONE = pytz.timezone('US/Eastern')

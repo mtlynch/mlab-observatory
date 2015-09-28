@@ -17,11 +17,15 @@
 
 import datetime
 import io
+import os
+import sys
 import unittest
 
 import mock
 import pytz
 
+sys.path.insert(1, os.path.abspath(
+    os.path.join(os.path.dirname(__file__), '../convert_from_telescope')))
 import telescope_data_parser
 
 
