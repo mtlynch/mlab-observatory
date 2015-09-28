@@ -6,7 +6,7 @@ install:
     - pip install -r test-requirements.txt
     - pip install coveralls
 script:
-    - coverage run --source convert_from_telescope -m unittest discover
+    - coverage run --omit="convert_from_telescope/telescope/*" --source convert_from_telescope -m unittest discover
 after_success:
     coveralls
 
