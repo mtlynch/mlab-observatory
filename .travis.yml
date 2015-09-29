@@ -6,6 +6,10 @@ install:
     - pip install -r test-requirements.txt
     - pip install coveralls
 script:
+    # Run unit tests and calculate code coverage.
+    # Note that we exclude the telescope/ directory from coverage as it is a
+    # submodule of the repo and so should not be included in this repo's code
+    # coverage metrics.
     - coverage run --omit="convert_from_telescope/telescope/*" --source convert_from_telescope -m unittest discover
 after_success:
     coveralls
