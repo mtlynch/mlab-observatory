@@ -14,7 +14,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Module to reduce sets of results to their aggregate values.
 
 This module provides classes that take a collection of Telescope results and
@@ -29,24 +28,24 @@ import aggregate
 
 
 class MedianReducer(object):
-  """Reduces a set of raw metrics to their median values.
+    """Reduces a set of raw metrics to their median values.
 
   Reduces a set of raw metrics to their median value within a given window of
   time (e.g. a day, an hour) and, for each time unit, outputs the median value
   and the sample count.
   """
 
-  def reduce_by_day(self, metrics_raw):
-    """Reduces metrics to their median values per day."""
-    return self._reduce(metrics_raw, aggregate.aggregate_by_day)
+    def reduce_by_day(self, metrics_raw):
+        """Reduces metrics to their median values per day."""
+        return self._reduce(metrics_raw, aggregate.aggregate_by_day)
 
-  def reduce_by_hour_of_day_per_month(self, metrics_raw):
-    """Reduces metrics to their median values by hour of day per month."""
-    return self._reduce(metrics_raw,
-                        aggregate.aggregate_by_hour_of_day_per_month)
+    def reduce_by_hour_of_day_per_month(self, metrics_raw):
+        """Reduces metrics to their median values by hour of day per month."""
+        return self._reduce(metrics_raw,
+                            aggregate.aggregate_by_hour_of_day_per_month)
 
-  def _reduce(self, metrics_raw, aggregation_func):
-    """Reduces raw metrics to their median values and count.
+    def _reduce(self, metrics_raw, aggregation_func):
+        """Reduces raw metrics to their median values and count.
 
     Calculates median values for raw metric values, aggregated according
     to the given aggregation function.
@@ -80,10 +79,9 @@ class MedianReducer(object):
          <datetime-2014-10-02>: ...
        }
     """
-    metrics_aggregated = collections.defaultdict(lambda: {})
-    for metric, rows_raw in metrics_raw.iteritems():
-      for time, values in aggregation_func(rows_raw).iteritems():
-        metrics_aggregated[time][metric] = numpy.median(values)
-        metrics_aggregated[time][metric + '_n'] = len(values)
-    return metrics_aggregated
-
+        metrics_aggregated = collections.defaultdict(lambda: {})
+        for metric, rows_raw in metrics_raw.iteritems():
+            for time, values in aggregation_func(rows_raw).iteritems():
+                metrics_aggregated[time][metric] = numpy.median(values)
+                metrics_aggregated[time][metric + '_n'] = len(values)
+        return metrics_aggregated

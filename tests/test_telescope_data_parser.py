@@ -31,110 +31,121 @@ import telescope_data_parser
 
 class SingleTelescopeResultReaderTest(unittest.TestCase):
 
-  def test_get_metadata_year_border(self):
-    filename = '2012-01-01-000000+366d_atl01_comcast_average_rtt-raw.csv'
-    metadata_expected = {
-        'start_date_string': '2012-01-01-000000',
-        'start_date': datetime.datetime(2012, 1, 1, tzinfo=pytz.utc),
-        'duration_string': '366',
-        'site_name': 'atl01',
-        'metro': 'atl',
-        'isp': 'comcast',
-        'metric_name': 'average_rtt',
+    def test_get_metadata_year_border(self):
+        filename = '2012-01-01-000000+366d_atl01_comcast_average_rtt-raw.csv'
+        metadata_expected = {
+            'start_date_string': '2012-01-01-000000',
+            'start_date': datetime.datetime(2012,
+                                            1,
+                                            1,
+                                            tzinfo=pytz.utc),
+            'duration_string': '366',
+            'site_name': 'atl01',
+            'metro': 'atl',
+            'isp': 'comcast',
+            'metric_name': 'average_rtt',
         }
-    reader = telescope_data_parser.SingleTelescopeResultReader(filename)
-    metadata_actual = reader.get_metadata()
-    self.assertDictEqual(metadata_expected, metadata_actual)
+        reader = telescope_data_parser.SingleTelescopeResultReader(filename)
+        metadata_actual = reader.get_metadata()
+        self.assertDictEqual(metadata_expected, metadata_actual)
 
-  def test_get_metadata_ignored_characters_in_isp(self):
-    """The v1.0 release of Telescope left ampersands in filenames, while later
+    def test_get_metadata_ignored_characters_in_isp(self):
+        """The v1.0 release of Telescope left ampersands in filenames, while later
     versions stripped special characters. Verify that we ignore ampersands when
     parsing the ISP names so that 'at&t' is the same as 'att'.
     """
-    filename = '2012-01-01-000000+366d_atl01_at&t_average_rtt-raw.csv'
-    metadata_expected = {
-        'start_date_string': '2012-01-01-000000',
-        'start_date': datetime.datetime(2012, 1, 1, tzinfo=pytz.utc),
-        'duration_string': '366',
-        'site_name': 'atl01',
-        'metro': 'atl',
-        'isp': 'att',
-        'metric_name': 'average_rtt',
+        filename = '2012-01-01-000000+366d_atl01_at&t_average_rtt-raw.csv'
+        metadata_expected = {
+            'start_date_string': '2012-01-01-000000',
+            'start_date': datetime.datetime(2012,
+                                            1,
+                                            1,
+                                            tzinfo=pytz.utc),
+            'duration_string': '366',
+            'site_name': 'atl01',
+            'metro': 'atl',
+            'isp': 'att',
+            'metric_name': 'average_rtt',
         }
-    reader = telescope_data_parser.SingleTelescopeResultReader(filename)
-    metadata_actual = reader.get_metadata()
-    self.assertDictEqual(metadata_expected, metadata_actual)
+        reader = telescope_data_parser.SingleTelescopeResultReader(filename)
+        metadata_actual = reader.get_metadata()
+        self.assertDictEqual(metadata_expected, metadata_actual)
 
-  def test_get_metadata_arbitrary_start_time(self):
-    filename = (
-        '2013-05-15-133506+21d_lga02_comcast_download_throughput-raw.csv')
-    metadata_expected = {
-        'start_date_string': '2013-05-15-133506',
-        'start_date': datetime.datetime(2013, 5, 15, 13, 35, 6,
-                                        tzinfo=pytz.utc),
-        'duration_string': '21',
-        'site_name': 'lga02',
-        'metro': 'lga',
-        'isp': 'comcast',
-        'metric_name': 'download_throughput',
+    def test_get_metadata_arbitrary_start_time(self):
+        filename = (
+            '2013-05-15-133506+21d_lga02_comcast_download_throughput-raw.csv')
+        metadata_expected = {
+            'start_date_string': '2013-05-15-133506',
+            'start_date': datetime.datetime(2013,
+                                            5,
+                                            15,
+                                            13,
+                                            35,
+                                            6,
+                                            tzinfo=pytz.utc),
+            'duration_string': '21',
+            'site_name': 'lga02',
+            'metro': 'lga',
+            'isp': 'comcast',
+            'metric_name': 'download_throughput',
         }
-    reader = telescope_data_parser.SingleTelescopeResultReader(filename)
-    metadata_actual = reader.get_metadata()
-    self.assertDictEqual(metadata_expected, metadata_actual)
+        reader = telescope_data_parser.SingleTelescopeResultReader(filename)
+        metadata_actual = reader.get_metadata()
+        self.assertDictEqual(metadata_expected, metadata_actual)
 
-  @mock.patch('__builtin__.open')
-  def test_iter(self, mock_open):
-    file_contents = '\n'.join((
-        '1416501638,15.9014',
-        '1326589323,109.11934',
-        '1327712523,80.11242'))
-    mock_input_file = io.BytesIO(file_contents)
-    mock_open.return_value = mock_input_file
-    results_expected = [
-        (datetime.datetime(2014, 11, 20, 16, 40, 38, 0, pytz.utc), 15.9014),
-        (datetime.datetime(2012, 1, 15, 1, 2, 3, 0, pytz.utc), 109.11934),
-        (datetime.datetime(2012, 1, 28, 1, 2, 3, 0, pytz.utc), 80.11242)]
-    reader = telescope_data_parser.SingleTelescopeResultReader(
-        'mock_filename.csv')
-    results_actual = [result_row for result_row in reader]
-    self.assertListEqual(results_expected, results_actual)
+    @mock.patch('__builtin__.open')
+    def test_iter(self, mock_open):
+        file_contents = '\n'.join((
+            '1416501638,15.9014', '1326589323,109.11934', '1327712523,80.11242'
+        ))
+        mock_input_file = io.BytesIO(file_contents)
+        mock_open.return_value = mock_input_file
+        results_expected = [
+            (datetime.datetime(2014, 11, 20, 16, 40, 38, 0, pytz.utc), 15.9014),
+            (datetime.datetime(2012, 1, 15, 1, 2, 3, 0, pytz.utc), 109.11934),
+            (datetime.datetime(2012, 1, 28, 1, 2, 3, 0, pytz.utc), 80.11242)
+        ]
+        reader = telescope_data_parser.SingleTelescopeResultReader(
+            'mock_filename.csv')
+        results_actual = [result_row for result_row in reader]
+        self.assertListEqual(results_expected, results_actual)
 
-  @mock.patch('__builtin__.open')
-  def test_iter_when_file_contains_null_byte_raise_ParseFailedError(self,
-                                                                    mock_open):
-    """A NULL byte in Telescope data should yield a ParseFailedError."""
-    file_contents = '1416501638,\0x0015.9014'
-    mock_open.return_value = io.BytesIO(file_contents)
-    with self.assertRaises(telescope_data_parser.ParseFailedError):
-      reader = telescope_data_parser.SingleTelescopeResultReader(
-          'mock_filename.csv')
-      results_actual = [result_row for result_row in reader]
+    @mock.patch('__builtin__.open')
+    def test_iter_when_file_contains_null_byte_raise_ParseFailedError(
+        self, mock_open):
+        """A NULL byte in Telescope data should yield a ParseFailedError."""
+        file_contents = '1416501638,\0x0015.9014'
+        mock_open.return_value = io.BytesIO(file_contents)
+        with self.assertRaises(telescope_data_parser.ParseFailedError):
+            reader = telescope_data_parser.SingleTelescopeResultReader(
+                'mock_filename.csv')
+            results_actual = [result_row for result_row in reader]
 
-  @mock.patch('__builtin__.open')
-  def test_iter_when_file_open_fails(self, mock_open):
-    """When opening the file fails, just pass through the original IOError."""
-    mock_open.side_effect = IOError('Mock IOError')
-    with self.assertRaises(IOError):
-      reader = telescope_data_parser.SingleTelescopeResultReader(
-          'non_existent_file.csv')
-      results_actual = [result_row for result_row in reader]
+    @mock.patch('__builtin__.open')
+    def test_iter_when_file_open_fails(self, mock_open):
+        """When opening the file fails, just pass through the original IOError."""
+        mock_open.side_effect = IOError('Mock IOError')
+        with self.assertRaises(IOError):
+            reader = telescope_data_parser.SingleTelescopeResultReader(
+                'non_existent_file.csv')
+            results_actual = [result_row for result_row in reader]
+
 
 class MergedTelescopeResultReaderTest(unittest.TestCase):
 
-  def test_iter(self):
-    mock_readers = [mock.MagicMock() for i in range(2)]
-    mock_readers[0].__iter__.return_value = iter(['a', 'b', 'c'])
-    mock_readers[1].__iter__.return_value = iter(['d', 'e', 'f'])
+    def test_iter(self):
+        mock_readers = [mock.MagicMock() for i in range(2)]
+        mock_readers[0].__iter__.return_value = iter(['a', 'b', 'c'])
+        mock_readers[1].__iter__.return_value = iter(['d', 'e', 'f'])
 
-    merged_reader = telescope_data_parser.MergedTelescopeResultReader()
-    for mock_reader in mock_readers:
-      merged_reader.add_reader(mock_reader)
+        merged_reader = telescope_data_parser.MergedTelescopeResultReader()
+        for mock_reader in mock_readers:
+            merged_reader.add_reader(mock_reader)
 
-    results_expected = ['a', 'b', 'c', 'd', 'e', 'f']
-    results_actual = [result_row for result_row in merged_reader]
-    self.assertItemsEqual(results_expected, results_actual)
+        results_expected = ['a', 'b', 'c', 'd', 'e', 'f']
+        results_actual = [result_row for result_row in merged_reader]
+        self.assertItemsEqual(results_expected, results_actual)
 
 
 if __name__ == '__main__':
-  unittest.main()
-
+    unittest.main()

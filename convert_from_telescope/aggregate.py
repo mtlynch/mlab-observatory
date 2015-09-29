@@ -17,7 +17,6 @@
 
 import datetime
 
-
 # Note: All functions in this module return datetimes in timezone-naive format.
 #   This is necessary because we are lumping together results from DST and
 #   non-DST times into the same bin. For example, there are certain hours that
@@ -29,7 +28,7 @@ import datetime
 
 
 def aggregate_by_month(results):
-  """Aggregate test results by month.
+    """Aggregate test results by month.
 
   Args:
     results: (list) A list of 2-tuples where the first entry is a datetime and
@@ -46,15 +45,15 @@ def aggregate_by_month(results):
       ...
     }
   """
-  aggregation_func = lambda result_datetime: (
-      datetime.datetime(year=result_datetime.year,
-                        month=result_datetime.month,
-                        day=1))
-  return _aggregate_results(results, aggregation_func)
+    aggregation_func = lambda result_datetime: (
+        datetime.datetime(year=result_datetime.year,
+                          month=result_datetime.month,
+                          day=1))
+    return _aggregate_results(results, aggregation_func)
 
 
 def aggregate_by_day(results):
-  """Aggregate test results by day.
+    """Aggregate test results by day.
 
   Args:
     results: (list) A list of 2-tuples where the first entry is a datetime and
@@ -71,15 +70,15 @@ def aggregate_by_day(results):
       ...
     }
   """
-  aggregation_func = lambda result_datetime: (
-      datetime.datetime(year=result_datetime.year,
-                        month=result_datetime.month,
-                        day=result_datetime.day))
-  return _aggregate_results(results, aggregation_func)
+    aggregation_func = lambda result_datetime: (
+        datetime.datetime(year=result_datetime.year,
+                          month=result_datetime.month,
+                          day=result_datetime.day))
+    return _aggregate_results(results, aggregation_func)
 
 
 def aggregate_by_hour_of_day(results):
-  """Aggregate test results by hour of day.
+    """Aggregate test results by hour of day.
 
   Aggregate together all tests that occur in the same hour of day (e.g. all
   results from 2-3 PM are aggregated together, even if the results occurred on
@@ -100,12 +99,12 @@ def aggregate_by_hour_of_day(results):
       ...
     }
   """
-  aggregation_func = lambda result_datetime: result_datetime.hour
-  return _aggregate_results(results, aggregation_func)
+    aggregation_func = lambda result_datetime: result_datetime.hour
+    return _aggregate_results(results, aggregation_func)
 
 
 def aggregate_by_hour_of_day_per_month(results):
-  """Aggregate test results by hour of day for each month.
+    """Aggregate test results by hour of day for each month.
 
   Aggregate together all tests each month that occur in the same hour of day
   (e.g. all results from 2-3 PM in March 2014 are aggregated together, even if
@@ -131,16 +130,16 @@ def aggregate_by_hour_of_day_per_month(results):
       ...
     }
   """
-  aggregation_func = lambda result_datetime: (
-      datetime.datetime(year=result_datetime.year,
-                        month=result_datetime.month,
-                        day=1,
-                        hour=result_datetime.hour))
-  return _aggregate_results(results, aggregation_func)
+    aggregation_func = lambda result_datetime: (
+        datetime.datetime(year=result_datetime.year,
+                          month=result_datetime.month,
+                          day=1,
+                          hour=result_datetime.hour))
+    return _aggregate_results(results, aggregation_func)
 
 
 def aggregate_by_hour(results):
-  """Aggregate test results by hour each day.
+    """Aggregate test results by hour each day.
 
   Aggregate test results by hour (e.g. all results from 2-3 PM on 2014/05/14
   are aggregated together, all results from 3-4 PM on 2014/05/14 are
@@ -165,16 +164,16 @@ def aggregate_by_hour(results):
       ...
     }
   """
-  aggregation_func = lambda result_datetime: (
-      datetime.datetime(year=result_datetime.year,
-                        month=result_datetime.month,
-                        day=result_datetime.day,
-                        hour=result_datetime.hour))
-  return _aggregate_results(results, aggregation_func)
+    aggregation_func = lambda result_datetime: (
+        datetime.datetime(year=result_datetime.year,
+                          month=result_datetime.month,
+                          day=result_datetime.day,
+                          hour=result_datetime.hour))
+    return _aggregate_results(results, aggregation_func)
 
 
 def _aggregate_results(results, aggregation_func):
-  """Aggregate test results according to the given aggregation function.
+    """Aggregate test results according to the given aggregation function.
 
   Args:
     results: (list) A list of 2-tuples where the first entry is a datetime and
@@ -189,14 +188,13 @@ def _aggregate_results(results, aggregation_func):
     aggregation unit (float values), keyed by whatever type aggregation_func
     outputs as an aggregation key.
   """
-  aggregated_data = {}
+    aggregated_data = {}
 
-  for result_datetime, value in results:
-    aggregation_key = aggregation_func(result_datetime)
-    try:
-      aggregated_data[aggregation_key].append(value)
-    except KeyError:
-      aggregated_data[aggregation_key] = [value]
+    for result_datetime, value in results:
+        aggregation_key = aggregation_func(result_datetime)
+        try:
+            aggregated_data[aggregation_key].append(value)
+        except KeyError:
+            aggregated_data[aggregation_key] = [value]
 
-  return aggregated_data
-
+    return aggregated_data

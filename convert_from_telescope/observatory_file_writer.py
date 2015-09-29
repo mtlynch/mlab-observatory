@@ -15,12 +15,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 import csv
 
 
 def _format_metric_values(metric_values):
-  """Formats metric values into the proper number of decimal digits.
+    """Formats metric values into the proper number of decimal digits.
 
   Args:
     metric_values: (dict) A dictionary of metrics where the keys are metric
@@ -42,28 +41,28 @@ def _format_metric_values(metric_values):
         ...
       }
   """
-  metric_digits = {
-      'average_rtt': 1,
-      'minimum_rtt': 1,
-      'packet_retransmit_rate': 6,
-      'upload_throughput': 3,
-      'download_throughput': 3,
-      }
-  formatted_values = {}
-  for key, value in metric_values.iteritems():
-    if key in metric_digits:
-      format_string = '%.' + str(metric_digits[key]) + 'f'
-      formatted_values[key] = format_string % value
-    else:
-      formatted_values[key] = value
-  return formatted_values
+    metric_digits = {
+        'average_rtt': 1,
+        'minimum_rtt': 1,
+        'packet_retransmit_rate': 6,
+        'upload_throughput': 3,
+        'download_throughput': 3,
+    }
+    formatted_values = {}
+    for key, value in metric_values.iteritems():
+        if key in metric_digits:
+            format_string = '%.' + str(metric_digits[key]) + 'f'
+            formatted_values[key] = format_string % value
+        else:
+            formatted_values[key] = value
+    return formatted_values
 
 
 class ObservatoryFileWriter(object):
-  """Writes data metrics into output files that Observatory can consume."""
+    """Writes data metrics into output files that Observatory can consume."""
 
-  def write_daily_datafile(self, daily_metrics, output_file):
-    """Writes a CSV file of per-day metrics.
+    def write_daily_datafile(self, daily_metrics, output_file):
+        """Writes a CSV file of per-day metrics.
 
     Args:
       daily_metrics: (dict) A dictionary of metrics where the keys are datetime
@@ -76,19 +75,19 @@ class ObservatoryFileWriter(object):
         ...
       output_file: (file) Output file to write into.
     """
-    daily_items = daily_metrics.items()
-    metric_fields = set()
-    for date, values in daily_items:
-      metric_fields |= set(values.keys())
-      values['year'] = date.year
-      values['month'] = date.month
-      values['day'] = date.day
-    fields = ['year', 'month', 'day']
-    fields.extend(sorted(metric_fields))
-    self._write_output_file(daily_items, fields, output_file)
+        daily_items = daily_metrics.items()
+        metric_fields = set()
+        for date, values in daily_items:
+            metric_fields |= set(values.keys())
+            values['year'] = date.year
+            values['month'] = date.month
+            values['day'] = date.day
+        fields = ['year', 'month', 'day']
+        fields.extend(sorted(metric_fields))
+        self._write_output_file(daily_items, fields, output_file)
 
-  def write_hourly_datafile(self, hourly_metrics, output_file):
-    """Writes a CSV file of per-hour metrics.
+    def write_hourly_datafile(self, hourly_metrics, output_file):
+        """Writes a CSV file of per-hour metrics.
 
     Writes a CSV file of metrics by hour per month (i.e. 24 bins
     for Jan-2014, 24 bins for Feb-2014, ...).
@@ -105,19 +104,19 @@ class ObservatoryFileWriter(object):
         ...
       output_file: (file) Output file to write into.
     """
-    hourly_items = hourly_metrics.items()
-    metric_fields = set()
-    for date, values in hourly_items:
-      metric_fields |= set(values.keys())
-      values['year'] = date.year
-      values['month'] = date.month
-      values['hour'] = date.hour
-    fields = ['year', 'month', 'hour']
-    fields.extend(sorted(metric_fields))
-    self._write_output_file(hourly_items, fields, output_file)
+        hourly_items = hourly_metrics.items()
+        metric_fields = set()
+        for date, values in hourly_items:
+            metric_fields |= set(values.keys())
+            values['year'] = date.year
+            values['month'] = date.month
+            values['hour'] = date.hour
+        fields = ['year', 'month', 'hour']
+        fields.extend(sorted(metric_fields))
+        self._write_output_file(hourly_items, fields, output_file)
 
-  def _write_output_file(self, metrics, fields, output_file):
-    """Writes Observatory data to a CSV file, sorted by timestamp.
+    def _write_output_file(self, metrics, fields, output_file):
+        """Writes Observatory data to a CSV file, sorted by timestamp.
 
     Args:
       metrics: (list) A list of two-tuples of the form (timestamp, values)
@@ -132,15 +131,14 @@ class ObservatoryFileWriter(object):
         CSV.
       output_file: (file) Output file to write into.
     """
-    # Sort items by timestamp before writing them.
-    metrics.sort(key=lambda item: item[0])
+        # Sort items by timestamp before writing them.
+        metrics.sort(key=lambda item: item[0])
 
-    # Remove pre-2012 results (that have shifted because of timezone conversion)
-    metrics = [item for item in metrics if item[0].year >= 2012]
+        # Remove pre-2012 results (that have shifted because of timezone conversion)
+        metrics = [item for item in metrics if item[0].year >= 2012]
 
-    csv_writer = csv.DictWriter(output_file, fields)
-    csv_writer.writeheader()
-    for _, values in metrics:
-      formatted_values = _format_metric_values(values)
-      csv_writer.writerow(formatted_values)
-
+        csv_writer = csv.DictWriter(output_file, fields)
+        csv_writer.writeheader()
+        for _, values in metrics:
+            formatted_values = _format_metric_values(values)
+            csv_writer.writerow(formatted_values)

@@ -19,7 +19,7 @@ import pytz
 
 
 def get_metro_timezone(metro):
-  """Translates an metro name into its associated timezone.
+    """Translates an metro name into its associated timezone.
 
   Args:
     metro: (str) Name of M-Lab metro for which to retrieve associated
@@ -28,34 +28,33 @@ def get_metro_timezone(metro):
   Returns:
     (pytz.timezone) Timezone object associated with the metro.
   """
-  site_tz_map = {
-      'ams': 'CET',
-      'arn': 'CET',
-      'ath': 'EET',
-      'beg': 'CET',
-      'dub': 'GMT',
-      'ham': 'CET',
-      'lba': 'CET',
-      'lca': 'CET',
-      'lhr': 'GMT',
-      'lju': 'CET',
-      'mad': 'CET',
-      'mil': 'CET',
-      'par': 'CET',
-      'prg': 'CET',
-      'svg': 'CET',
-      'trn': 'CET',
-      'vie': 'CET',
-      'atl': 'US/Eastern',
-      'dfw': 'US/Central',
-      'den': 'US/Mountain',
-      'iad': 'US/Eastern',
-      'lax': 'US/Pacific',
-      'lga': 'US/Eastern',
-      'mia': 'US/Eastern',
-      'nuq': 'US/Pacific',
-      'ord': 'US/Central',
-      'sea': 'US/Pacific',
-      }
-  return pytz.timezone(site_tz_map[metro.lower()])
-
+    site_tz_map = {
+        'ams': 'CET',
+        'arn': 'CET',
+        'ath': 'EET',
+        'beg': 'CET',
+        'dub': 'GMT',
+        'ham': 'CET',
+        'lba': 'CET',
+        'lca': 'CET',
+        'lhr': 'GMT',
+        'lju': 'CET',
+        'mad': 'CET',
+        'mil': 'CET',
+        'par': 'CET',
+        'prg': 'CET',
+        'svg': 'CET',
+        'trn': 'CET',
+        'vie': 'CET',
+        'atl': 'US/Eastern',
+        'dfw': 'US/Central',
+        'den': 'US/Mountain',
+        'iad': 'US/Eastern',
+        'lax': 'US/Pacific',
+        'lga': 'US/Eastern',
+        'mia': 'US/Eastern',
+        'nuq': 'US/Pacific',
+        'ord': 'US/Central',
+        'sea': 'US/Pacific',
+    }
+    return pytz.timezone(site_tz_map[metro.lower()])
