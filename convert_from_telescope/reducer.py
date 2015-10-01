@@ -30,10 +30,10 @@ import aggregate
 class MedianReducer(object):
     """Reduces a set of raw metrics to their median values.
 
-  Reduces a set of raw metrics to their median value within a given window of
-  time (e.g. a day, an hour) and, for each time unit, outputs the median value
-  and the sample count.
-  """
+    Reduces a set of raw metrics to their median value within a given window of
+    time (e.g. a day, an hour) and, for each time unit, outputs the median value
+    and the sample count.
+    """
 
     def reduce_by_day(self, metrics_raw):
         """Reduces metrics to their median values per day."""
@@ -47,38 +47,40 @@ class MedianReducer(object):
     def _reduce(self, metrics_raw, aggregation_func):
         """Reduces raw metrics to their median values and count.
 
-    Calculates median values for raw metric values, aggregated according
-    to the given aggregation function.
+        Calculates median values for raw metric values, aggregated according
+        to the given aggregation function.
 
-    Args:
-      metrics_raw: (dict) A dictionary of metrics and their corresponding
-        value lists, for example:
-        {
-         'download_throughput': ((<datetime-2012-04-05@15:28:02>, 12.192),
-                                 (<datetime-2013-08-01@03:29:15>, 13.012),
-                                 ...)
-         'upload_throughput': ((<datetime-2012-04-05@15:28:02>, 2.502),
-                               (<datetime-2013-08-01@03:29:15>, 8.689),
-                                ...)
-         ...
-        }
-      aggregation_func: (function) The function to apply to the value lists
-        to aggregate the data.
+        Args:
+          metrics_raw: (dict) A dictionary of metrics and their corresponding
+              value lists, for example:
+              {
+                 'download_throughput': (
+                     (<datetime-2012-04-05@15:28:02>, 12.192),
+                     (<datetime-2013-08-01@03:29:15>, 13.012),
+                     ...)
+                 'upload_throughput': (
+                     (<datetime-2012-04-05@15:28:02>, 2.502),
+                     (<datetime-2013-08-01@03:29:15>, 8.689),
+                     ...)
+                 ...
+              }
+          aggregation_func: (function) The function to apply to the value lists
+              to aggregate the data.
 
-     Returns:
-       (dict) A dictionary where the keys are datetime objects representing
-       the time buckets in which the data has been aggregated and the values
-       are dictionaries of metrics containing the metric median and sample
-       count. For example:
-       {
-         <datetime-2014-10-01>: { 'download_throughput': 15.89,
-                                  'download_throughput_n': 128,
-                                  'upload_throughput': 2.942,
-                                  'upload_throughput_n': 115,
-                                  ... }
-         <datetime-2014-10-02>: ...
-       }
-    """
+         Returns:
+             (dict) A dictionary where the keys are datetime objects
+             representing the time buckets in which the data has been
+             aggregated and the values are dictionaries of metrics containing
+             the metric median and sample count. For example:
+             {
+                 <datetime-2014-10-01>: { 'download_throughput': 15.89,
+                                          'download_throughput_n': 128,
+                                          'upload_throughput': 2.942,
+                                          'upload_throughput_n': 115,
+                                          ... }
+                 <datetime-2014-10-02>: ...
+             }
+        """
         metrics_aggregated = collections.defaultdict(lambda: {})
         for metric, rows_raw in metrics_raw.iteritems():
             for time, values in aggregation_func(rows_raw).iteritems():

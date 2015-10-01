@@ -45,16 +45,16 @@ def clear_output_dir():
 def _diff_dirs(left_dir, right_dir):
     """Create a diff of two directories.
 
-  Generates a string that contains a diff of all files between two directories.
+    Generates a string that contains a diff of all files between two directories.
 
-  Args:
-    left_dir: (str) The path to the lefthand directory to compare.
-    right_dir: (str) The path to the righthand directory to compare.
+    Args:
+        left_dir: (str) The path to the lefthand directory to compare.
+        right_dir: (str) The path to the righthand directory to compare.
 
-  Returns:
-    (str) A diff-formatted string of the differences between the two
-    directories, or '' if the two directories are identical.
-  """
+    Returns:
+        (str) A diff-formatted string of the differences between the two
+        directories, or '' if the two directories are identical.
+    """
     dir_cmp = filecmp.dircmp(left_dir, right_dir)
     unified_diff = difflib.unified_diff
     diffs = []
@@ -122,13 +122,13 @@ class ResultConverterEndToEnd(unittest.TestCase):
     def test_conversion_end_to_end(self):
         """Perform an end-to-end conversion of Telescope conversion.
 
-    Runs both the per-site converter and the per-metro converter to convert
-    the test data to Observatory format, then compares the output to the known
-    good golden files and reports any differences. Note that we could test each
-    converter independently, but this end-to-end test better matches the
-    Telescope-to-Observatory converter's actual usage, in which the output
-    directory contains the results of both conversions.
-    """
+        Runs both the per-site converter and the per-metro converter to convert
+        the test data to Observatory format, then compares the output to the
+        known good golden files and reports any differences. Note that we could
+        test each converter independently, but this end-to-end test better
+        matches the Telescope-to-Observatory converter's actual usage, in which
+        the output directory contains the results of both conversions.
+        """
         per_site_converter = self._create_per_site_converter()
         per_metro_converter = self._create_per_metro_converter()
         for converter in [per_site_converter, per_metro_converter]:

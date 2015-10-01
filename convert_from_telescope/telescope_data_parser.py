@@ -42,27 +42,28 @@ class ParseFailedError(Error):
 def _parse_filename_for_metadata(file_path):
     """Parses a telescope file path for metadata.
 
-  Args:
-    file_path: (str) Filename (and optionally, path) of a Telescope output
-    data file.
+    Args:
+        file_path: (str) Filename (and optionally, path) of a Telescope output
+            data file.
 
-  Returns:
-    (dict) A dictionary containing parsed values from the filename:
-      duration_string (str): The duration value in its original string
-        form.
-      isp: (str) Name of the access isp associated with this file (e.g.
-        'comcast').
-      metric_name: (str) Name of metric in this file (e.g.
-        'download_throughput').
-      metro: (str) Three letter code for metro area of this file (e.g. 'lga').
-      site_name: (str) Site name associated with this file (e.g. 'lax01').
-      start_date: (datetime.datetime) The start time as a datetime object in
-        UTC time.
-      start_date_string: (str) The start date in its original string form.
+    Returns:
+      (dict) A dictionary containing parsed values from the filename:
+          duration_string (str): The duration value in its original string
+              form.
+          isp: (str) Name of the access isp associated with this file (e.g.
+              'comcast').
+          metric_name: (str) Name of metric in this file (e.g.
+              'download_throughput').
+          metro: (str) Three letter code for metro area of this file (e.g.
+              'lga').
+          site_name: (str) Site name associated with this file (e.g. 'lax01').
+          start_date: (datetime.datetime) The start time as a datetime object in
+              UTC time.
+          start_date_string: (str) The start date in its original string form.
 
-  Raises:
-    ValueError: The filename was in unexpected format.
-  """
+    Raises:
+      ValueError: The filename was in unexpected format.
+    """
     parsed = {}
     filename_part = os.path.split(file_path)[1]
 
@@ -91,19 +92,20 @@ def _parse_filename_for_metadata(file_path):
 def _parse_data_file(telescope_file):
     """Parses the content of a Telescope output file.
 
-  Parses a data file output from Telescope into a list of (timestamp, value)
-  pairs parsed from the rows of the file.
+    Parses a data file output from Telescope into a list of (timestamp, value)
+    pairs parsed from the rows of the file.
 
-  Args:
-    telescope_file: (file) File object containing Telescope output data. The
-      file must be in CSV format with a UNIX timestamp in the first column and
-      the value in the second column. The file cannot have a header row.
+    Args:
+        telescope_file: (file) File object containing Telescope output data. The
+            file must be in CSV format with a UNIX timestamp in the first column
+            and the value in the second column. The file cannot have a header
+            row.
 
-  Returns:
-    (list) A list of (datetime, value) pairs parsed from the Telescope
-    output, where datetime is the time of the result (in UTC) and value is
-    a float.
-  """
+    Returns:
+        (list) A list of (datetime, value) pairs parsed from the Telescope
+        output, where datetime is the time of the result (in UTC) and value is
+        a float.
+    """
     rows = []
 
     data_file_csv = csv.DictReader(telescope_file, ('timestamp', 'result'))
@@ -154,9 +156,9 @@ class SingleTelescopeResultReader(TelescopeResultReader):
 class MergedTelescopeResultReader(TelescopeResultReader):
     """Reads a series of Telescope result files.
 
-  This result reader reads a series of Telescope result files, presenting them
-  as a single, aggregated Telescope result.
-  """
+    This result reader reads a series of Telescope result files, presenting them
+    as a single, aggregated Telescope result.
+    """
 
     def __init__(self):
         self._result_readers = []

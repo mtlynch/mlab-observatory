@@ -45,15 +45,15 @@ class MetadataWhitelist(object):
     def _dataset_key_from_metadata(self, site_name, isp):
         """Derives a key for a particular dataset
 
-    Derives a whitelist key for a dataset based on metadata attributes.
+        Derives a whitelist key for a dataset based on metadata attributes.
 
-    Args:
-      site_name: (str) The name of the M-Lab site (e.g. 'lga01').
-      isp: (str) The name of the client ISP (e.g. 'verizon').
+        Args:
+            site_name: (str) The name of the M-Lab site (e.g. 'lga01').
+            isp: (str) The name of the client ISP (e.g. 'verizon').
 
-    Returns:
-      (str) Key of the form '[site]_[isp]', for example: 'lga01_verizon'.
-    """
+        Returns:
+            (str) Key of the form '[site]_[isp]', for example: 'lga01_verizon'.
+        """
         return '%s_%s' % (site_name, isp)
 
 
@@ -89,23 +89,23 @@ class MetadataWhitelistSerializer(object):
 class MetadataWhitelistUpdater(object):
     """Updates the whitelist with new datasets that meet sample requirements.
 
-  The update process keeps all the datasets that are currently in the whitelist
-  because Observatory should not unpublish datasets that have previously been
-  published. Updating checks all other datasets to see if there are new
-  datasets that now meet sample size thresholds (either because they did not
-  exist at the last check or their sample count has increased to meet
-  requirements).
-  """
+    The update process keeps all the datasets that are currently in the
+    whitelist because Observatory should not unpublish datasets that have
+    previously been published. Updating checks all other datasets to see if
+    there are new datasets that now meet sample size thresholds (either because
+    they did not exist at the last check or their sample count has increased to
+    meet requirements).
+    """
 
     def __init__(self, existing_whitelist, sample_count_checker):
         """Creates a new whitelist updater.
 
-    Args:
-      existing_whitelist: (MetadataWhitelist) Current whitelist before adding
-        new datasets.
-      sample_count_checker: (SampleCountChecker) Object to check whether
-        datasets meet sample count thresholds.
-    """
+        Args:
+            existing_whitelist: (MetadataWhitelist) Current whitelist before
+                adding new datasets.
+            sample_count_checker: (SampleCountChecker) Object to check whether
+                datasets meet sample count thresholds.
+        """
         self.whitelist = existing_whitelist
         self._logger = logging.getLogger('telescope-convert')
         self._sample_count_checker = sample_count_checker
@@ -114,14 +114,14 @@ class MetadataWhitelistUpdater(object):
     def update(self, filenames):
         """Updates whitelist by checking sample counts of provided datasets.
 
-    Args:
-      filenames: (list) A list of Telescope data files. Any datasets contained
-        in these files will be added to the whitelist if the dataset meets
-        sample count requirements.
+        Args:
+          filenames: (list) A list of Telescope data files. Any datasets
+              contained in these files will be added to the whitelist if the
+              dataset meets sample count requirements.
 
-    Returns:
-      (bool) True if datasets were added to the whitelist.
-    """
+        Returns:
+          (bool) True if datasets were added to the whitelist.
+        """
         added_new_datasets = False
 
         # Check sample counts for all non-whitelisted datasets.
@@ -144,9 +144,9 @@ class MetadataWhitelistUpdater(object):
     def _check_file(self, filename):
         """Analyze a data file to see if it should be whitelisted.
 
-    Args:
-      filename: (str) Filename of Telescope data file to check.
-    """
+        Args:
+            filename: (str) Filename of Telescope data file to check.
+        """
         self._logger.info('Checking file for whitelist: %s', filename)
         result_reader = telescope_data_parser.SingleTelescopeResultReader(
             filename)
@@ -169,13 +169,14 @@ class MetadataWhitelistUpdater(object):
     def _dataset_key_from_metadata(self, metadata):
         """Derives a key for a particular dataset based on supplied metadata.
 
-    Args:
-      metadata: (dict) A dictionary of metadata describing Telescope results.
+        Args:
+            metadata: (dict) A dictionary of metadata describing Telescope
+                results.
 
-    Returns:
-      (str) Key of the form '[site]-[isp]-[metric]', for example:
-      'lga01-comcast-minimum_rtt'.
-    """
+        Returns:
+            (str) Key of the form '[site]-[isp]-[metric]', for example:
+            'lga01-comcast-minimum_rtt'.
+        """
         dataset_key = '%s-%s-%s' % (metadata['site_name'], metadata['isp'],
                                     metadata['metric_name'])
         return dataset_key
@@ -186,21 +187,21 @@ class DataFileWhitelistChecker(object):
     def __init__(self, whitelist):
         """Checks whether sample counts for given files meet the sample thresholds.
 
-    Args:
-      whitelist: (MetadataWhitelist) Whitelist to use to check files.
-    """
+        Args:
+            whitelist: (MetadataWhitelist) Whitelist to use to check files.
+        """
         self._whitelist = whitelist
 
     def is_whitelisted(self, filename):
         """Indicates whether a file is part of a whitelisted dataset.
 
-    Args:
-      filename: (str) Filename to evaluate.
+        Args:
+            filename: (str) Filename to evaluate.
 
-    Returns:
-      (bool) True if the given filename is whitelisted because it is part of a
-      dataset that meets the sample size requirements.
-    """
+        Returns:
+            (bool) True if the given filename is whitelisted because it is part
+            of a dataset that meets the sample size requirements.
+        """
         result_reader = telescope_data_parser.SingleTelescopeResultReader(
             filename)
         metadata = result_reader.get_metadata()

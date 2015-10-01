@@ -31,13 +31,13 @@ import telescope_data_parser
 def _ensure_dir_exists(dir_path):
     """Ensures that a given directory path exists (creating it if necessary).
 
-  Creates a directory path for a given file path if the directory path does
-  not already exist. For example, if dir_path='foo/bar/baz/' and only
-  directory 'foo' exists, this function will create 'foo/bar/baz'.
+    Creates a directory path for a given file path if the directory path does
+    not already exist. For example, if dir_path='foo/bar/baz/' and only
+    directory 'foo' exists, this function will create 'foo/bar/baz'.
 
-  Args:
-    dir_path: (str) Directory path to create.
-  """
+    Args:
+        dir_path: (str) Directory path to create.
+    """
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
 
@@ -45,19 +45,19 @@ def _ensure_dir_exists(dir_path):
 def _generate_output_path(group_key, output_dir, output_type):
     """Generates the output path for an output file.
 
-  Generates the output path (including output directory and filename),
-  given a group key and type of output data to be written to the file.
+    Generates the output path (including output directory and filename),
+    given a group key and type of output data to be written to the file.
 
-  Args:
-    group_key: (str) The key that identifies this dataset.
-    output_dir: (str) The directory to which this file will be written.
-    output_type: (str) The type of data to be written (either 'daily' or
-      'hourly').
+    Args:
+        group_key: (str) The key that identifies this dataset.
+        output_dir: (str) The directory to which this file will be written.
+        output_type: (str) The type of data to be written (either 'daily' or
+            'hourly').
 
-  Returns:
-    (str) A generated path for the output file (stripped of illegal filename
-    characters).
-  """
+    Returns:
+        (str) A generated path for the output file (stripped of illegal filename
+        characters).
+    """
     filename = '%s_%s.csv' % (group_key, output_type)
     filename = telescope_utils.strip_special_chars(filename)
     return os.path.join(output_dir, filename)
@@ -66,14 +66,14 @@ def _generate_output_path(group_key, output_dir, output_type):
 def _write_valid_keys_file(valid_keys, valid_keys_file):
     """Writes the valid result group keys to a file.
 
-  Writes the valid keys file, indicating the keys for which we generated
-  output data. The keys are written in plaintext with one key per line in
-  alphabetically sorted order.
+    Writes the valid keys file, indicating the keys for which we generated
+    output data. The keys are written in plaintext with one key per line in
+    alphabetically sorted order.
 
-  Args:
-    valid_keys: (list) A list of strings indicating the valid keys.
-    valid_keys_file: (file) File to which to write the keys.
-  """
+    Args:
+        valid_keys: (list) A list of strings indicating the valid keys.
+        valid_keys_file: (file) File to which to write the keys.
+    """
     keys_sorted = sorted(valid_keys)
     valid_keys_file.write(os.linesep.join(keys_sorted))
 
@@ -85,17 +85,17 @@ class ResultConverter(object):
                  output_dir, valid_keys_path):
         """Creates a converter from Telescope data to Observatory data.
 
-    Args:
-      result_grouper: Result grouper, which groups Telescope results according
-        to their metadata.
-      result_reducer: Result reducer, which reduces sets of raw results into
-        aggregate values compatible with Observatory.
-      observatory_file_writer: File writer to write processed results into a
-        file format that Observatory can read from.
-      output_dir: (str) The directory to which to write converted results.
-      valid_keys_path: (str) The file path to which to write the valid group
-        keys created during the convert operation.
-    """
+        Args:
+            result_grouper: Result grouper, which groups Telescope results
+                according to their metadata.
+            result_reducer: Result reducer, which reduces sets of raw results
+                into aggregate values compatible with Observatory.
+            observatory_file_writer: File writer to write processed results
+                into a file format that Observatory can read from.
+            output_dir: (str) The directory to which to write converted results.
+            valid_keys_path: (str) The file path to which to write the valid
+                group keys created during the convert operation.
+        """
         self._logger = logging.getLogger('telescope-convert')
         self._result_grouper = result_grouper
         self._result_reducer = result_reducer
@@ -106,12 +106,12 @@ class ResultConverter(object):
     def convert_to_observatory_format(self, input_filenames):
         """Converts a list of files in Telescope format into Observatory format.
 
-    Parses a list of files output from Telescope and converts them to files
-    that Observatory can read, placing the results into self._output_dir.
+        Parses a list of files output from Telescope and converts them to files
+        that Observatory can read, placing the results into self._output_dir.
 
-    Args:
-      input_filenames: (list) A list of files created by Telescope.
-    """
+        Args:
+            input_filenames: (list) A list of files created by Telescope.
+        """
         result_readers = []
         for filename in input_filenames:
             result_readers.append(
@@ -124,27 +124,27 @@ class ResultConverter(object):
     def _convert_result_groups(self, result_groups):
         """Converts Telescope result groups into Observatory format.
 
-    Args:
-      result_groups: (dict) A dictionary of raw Telescope results, keyed by
-        group key, then by metric name, for example:
-        {
-          'lga01_comcast': {
-            'download_throughput': [
-              (<datetime-2014-10-22@12:35:01>, 24.5),
-              (<datetime-2014-10-01@04:42:23>, 14.3),
-              (<datetime-2014-10-02@06:19:22>, 21.3),
-              ...
-              ],
-            'upload_throughput': ...,
-            },
-          'sea01_verizon': {
-            'download_throughput': ...,
-            'upload_throughput': ...,
-            },
-          'mia02_twc': ...,
-          ...
-        }
-    """
+        Args:
+          result_groups: (dict) A dictionary of raw Telescope results, keyed by
+              group key, then by metric name, for example:
+              {
+                  'lga01_comcast': {
+                      'download_throughput': [
+                        (<datetime-2014-10-22@12:35:01>, 24.5),
+                        (<datetime-2014-10-01@04:42:23>, 14.3),
+                        (<datetime-2014-10-02@06:19:22>, 21.3),
+                        ...
+                        ],
+                      'upload_throughput': ...,
+                  },
+                  'sea01_verizon': {
+                      'download_throughput': ...,
+                      'upload_throughput': ...,
+                  },
+                  'mia02_twc': ...,
+                  ...
+              }
+        """
         group_keys = sorted(result_groups.keys())
         for index, key in enumerate(group_keys):
             self._logger.info('Converting result group %s (%u/%u)', key,
@@ -162,34 +162,34 @@ class ResultConverter(object):
     def _adjust_result_group_timezone(self, metro, metric_results):
         """Converts the timestamps on a result group to local time.
 
-    Given a result group associated with a particular metro, creates a new
-    result group where all timestamps are local to the given metro.
+        Given a result group associated with a particular metro, creates a new
+        result group where all timestamps are local to the given metro.
 
-    Args:
-      metro: (str) Name of a metropolitan region associated with these results
-        (e.g. 'lga' or 'lax').
+        Args:
+          metro: (str) Name of a metropolitan region associated with these
+              results (e.g. 'lga' or 'lax').
 
-      metric_results: (dict) A dictionary of raw Telescope results, keyed by
-        metric name, for example:
-        {
-          'download_throughput': [
-            (<datetime-2014-10-22@12:35:01>, 24.5),
-            (<datetime-2014-10-01@04:42:23>, 14.3),
-            (<datetime-2014-10-02@06:19:22>, 21.3),
-            ...
-            ],
-          'upload_throughput': [
-            (<datetime-2014-10-22@12:35:01>, 4.1),
-            (<datetime-2014-10-01@04:42:23>, 6.2),
-            (<datetime-2014-10-02@06:19:22>, 8.9),
-            ...
-          ]
-        }
+          metric_results: (dict) A dictionary of raw Telescope results, keyed by
+              metric name, for example:
+              {
+                  'download_throughput': [
+                      (<datetime-2014-10-22@12:35:01>, 24.5),
+                      (<datetime-2014-10-01@04:42:23>, 14.3),
+                      (<datetime-2014-10-02@06:19:22>, 21.3),
+                      ...
+                      ],
+                  'upload_throughput': [
+                      (<datetime-2014-10-22@12:35:01>, 4.1),
+                      (<datetime-2014-10-01@04:42:23>, 6.2),
+                      (<datetime-2014-10-02@06:19:22>, 8.9),
+                      ...
+                      ]
+              }
 
-    Returns:
-      (dict) A dictionary in the same form as metric_results, but with the
-      timestamps converted to the local timezone.
-    """
+        Returns:
+          (dict) A dictionary in the same form as metric_results, but with the
+          timestamps converted to the local timezone.
+        """
         timezone = site_metadata.get_metro_timezone(metro)
         metric_results_local = {}
         for metric, values in metric_results.iteritems():
@@ -215,32 +215,32 @@ class ResultConverter(object):
                               reducer_func, writer_func):
         """Converts a group of Telescope results into Observatory files.
 
-    Args:
-      group_key: (str) The key that identifies this result group (e.g.
-        lga01_comcast).
-      metric_results: (dict) A dictionary of raw Telescope results, keyed by
-        metric name, for example:
-        {
-          'download_throughput': [
-            (<datetime-2014-10-22@12:35:01>, 24.5),
-            (<datetime-2014-10-01@04:42:23>, 14.3),
-            (<datetime-2014-10-02@06:19:22>, 21.3),
-            ...
-            ],
-          'upload_throughput': [
-            (<datetime-2014-10-22@12:35:01>, 4.1),
-            (<datetime-2014-10-01@04:42:23>, 6.2),
-            (<datetime-2014-10-02@06:19:22>, 8.9),
-            ...
-          ]
-        }
-      output_type: (str) The type of data to be written (either 'daily' or
-        'hourly').
-      reducer_func: (function) Function to reduce sets of raw results into
-        aggregate metrics that Observatory can display.
-      writer_func: (function) Function to write results to an Observatory-
-        compatible file.
-    """
+        Args:
+            group_key: (str) The key that identifies this result group (e.g.
+                lga01_comcast).
+            metric_results: (dict) A dictionary of raw Telescope results, keyed
+                by metric name, for example:
+                {
+                    'download_throughput': [
+                        (<datetime-2014-10-22@12:35:01>, 24.5),
+                        (<datetime-2014-10-01@04:42:23>, 14.3),
+                        (<datetime-2014-10-02@06:19:22>, 21.3),
+                        ...
+                        ],
+                  'upload_throughput': [
+                        (<datetime-2014-10-22@12:35:01>, 4.1),
+                        (<datetime-2014-10-01@04:42:23>, 6.2),
+                        (<datetime-2014-10-02@06:19:22>, 8.9),
+                        ...
+                        ]
+                }
+            output_type: (str) The type of data to be written (either 'daily' or
+                'hourly').
+            reducer_func: (function) Function to reduce sets of raw results into
+                aggregate metrics that Observatory can display.
+            writer_func: (function) Function to write results to an Observatory-
+                compatible file.
+        """
         results_reduced = reducer_func(metric_results)
         _ensure_dir_exists(self._output_dir)
         output_path = _generate_output_path(group_key, self._output_dir,

@@ -21,13 +21,13 @@ import pytz
 def get_metro_timezone(metro):
     """Translates an metro name into its associated timezone.
 
-  Args:
-    metro: (str) Name of M-Lab metro for which to retrieve associated
-      timezone.
+      Args:
+          metro: (str) Name of M-Lab metro for which to retrieve associated
+              timezone.
 
-  Returns:
-    (pytz.timezone) Timezone object associated with the metro.
-  """
+      Returns:
+          (pytz.timezone) Timezone object associated with the metro.
+      """
     site_tz_map = {
         'ams': 'CET',
         'arn': 'CET',

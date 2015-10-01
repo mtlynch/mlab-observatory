@@ -48,19 +48,19 @@ def read_whitelist(whitelist_filename):
 def update_whitelist(whitelist_filename, sample_count_checker, input_filenames):
     """Update the whitelist file with new datasets.
 
-  Update the whitelist file to include any new datasets that currently meet the
-  sample size requirements.
+    Update the whitelist file to include any new datasets that currently meet the
+    sample size requirements.
 
-  Args:
-    whitelist_filename: (str) Filename of whitelist file to update.
-    sample_count_checker: (sample_checking.SampleCounter) Sample counter to
-      check sample size requirements.
-    input_filenames: (list) A list of filenames from which to find datasets to
-      add to the whitelist.
+    Args:
+        whitelist_filename: (str) Filename of whitelist file to update.
+        sample_count_checker: (sample_checking.SampleCounter) Sample counter to
+            check sample size requirements.
+        input_filenames: (list) A list of filenames from which to find datasets
+            to add to the whitelist.
 
-  Returns:
-    (whitelister.MetadataWhitelist) Updated whitelist object.
-  """
+    Returns:
+        (whitelister.MetadataWhitelist) Updated whitelist object.
+    """
     whitelist = read_whitelist(whitelist_filename)
     updater = whitelister.MetadataWhitelistUpdater(whitelist,
                                                    sample_count_checker)
@@ -74,16 +74,17 @@ def update_whitelist(whitelist_filename, sample_count_checker, input_filenames):
 def filter_files(whitelist, input_filenames):
     """Filter out the inputs that do not meet sample size requirements.
 
-  Preprocesses Telescope data files to filter out the result sets that do not
-  meet sample size requirements.
+    Preprocesses Telescope data files to filter out the result sets that do not
+    meet sample size requirements.
 
-  Args:
-    whitelist: (whitelister.MetadataWhitelist) Whitelist to use for filtering.
-    input_filenames: (list) Names of files to preprocess.
+    Args:
+        whitelist: (whitelister.MetadataWhitelist) Whitelist to use for
+            filtering.
+        input_filenames: (list) Names of files to preprocess.
 
-  Returns:
-    (list) A list of filenames that meet the sample size requirements.
-  """
+    Returns:
+        (list) A list of filenames that meet the sample size requirements.
+    """
     file_checker = whitelister.DataFileWhitelistChecker(whitelist)
     return [filename for filename in input_filenames
             if file_checker.is_whitelisted(filename)]
@@ -92,10 +93,11 @@ def filter_files(whitelist, input_filenames):
 def perform_conversion(input_filenames, output_dir):
     """Converts Telescope files to Observatory format.
 
-  Args:
-    input_filenames: (list) A list of raw Telescope output files to convert.
-    output_dir: (str) Directory in which to place converted Observatory files.
-  """
+    Args:
+        input_filenames: (list) A list of raw Telescope output files to convert.
+        output_dir: (str) Directory in which to place converted Observatory
+            files.
+    """
     median_reducer = reducer.MedianReducer()
     file_writer = observatory_file_writer.ObservatoryFileWriter()
 
@@ -143,8 +145,8 @@ def main(args):
     filtered_files = filter_files(whitelist, input_files)
     perform_conversion(filtered_files, args.output)
     program_end_time = datetime.datetime.utcnow()
-    runtime_mins = (program_end_time - program_start_time
-                   ).total_seconds() / 60.0
+    runtime_mins = (
+        program_end_time - program_start_time).total_seconds() / 60.0
     logger.info('Conversion completed in %.1f minutes.', runtime_mins)
 
 
