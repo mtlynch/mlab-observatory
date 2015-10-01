@@ -12,7 +12,7 @@ script:
     # submodule of the repo and so should not be included in this repo's code
     # coverage metrics.
     - coverage run --omit="convert_from_telescope/telescope/*" --source convert_from_telescope -m unittest discover
-    # Run Python linter on Python files.
+    # Run Python formatter on Python files.
     - yapf --diff --style=google ./convert_from_telescope/*.py tests/*.py
 after_success:
     coveralls
