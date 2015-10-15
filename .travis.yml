@@ -5,7 +5,7 @@ install:
     - pip install -r requirements.txt
     - pip install -r test-requirements.txt
     - pip install coveralls
-    - pip install yapf
+    - pip install yapf==0.5.0
 script:
     # Run unit tests and calculate code coverage.
     # Note that we exclude the telescope/ directory from coverage as it is a
