@@ -59,8 +59,11 @@ class TelescopeResultGrouper(object):
       ...
     }
     """
+        # yapf: disable
         reader_groups = collections.defaultdict(
-            lambda: collections.defaultdict(lambda: telescope_data_parser.MergedTelescopeResultReader()))
+            lambda: collections.defaultdict(
+                lambda: telescope_data_parser.MergedTelescopeResultReader()))
+        # yapf: enable
         for result_reader in result_readers:
             metadata = result_reader.get_metadata()
             key = self._create_group_key(metadata)
