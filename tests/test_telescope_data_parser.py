@@ -24,8 +24,8 @@ import unittest
 import mock
 import pytz
 
-sys.path.insert(1, os.path.abspath(
-    os.path.join(os.path.dirname(__file__), '../convert_from_telescope')))
+sys.path.insert(1, os.path.abspath(os.path.join(
+    os.path.dirname(__file__), '../convert_from_telescope')))
 import telescope_data_parser
 
 
@@ -35,9 +35,7 @@ class SingleTelescopeResultReaderTest(unittest.TestCase):
         filename = '2012-01-01-000000+366d_atl01_comcast_average_rtt-raw.csv'
         metadata_expected = {
             'start_date_string': '2012-01-01-000000',
-            'start_date': datetime.datetime(2012,
-                                            1,
-                                            1,
+            'start_date': datetime.datetime(2012, 1, 1,
                                             tzinfo=pytz.utc),
             'duration_string': '366',
             'site_name': 'atl01',
@@ -57,9 +55,7 @@ class SingleTelescopeResultReaderTest(unittest.TestCase):
         filename = '2012-01-01-000000+366d_atl01_at&t_average_rtt-raw.csv'
         metadata_expected = {
             'start_date_string': '2012-01-01-000000',
-            'start_date': datetime.datetime(2012,
-                                            1,
-                                            1,
+            'start_date': datetime.datetime(2012, 1, 1,
                                             tzinfo=pytz.utc),
             'duration_string': '366',
             'site_name': 'atl01',
@@ -95,9 +91,8 @@ class SingleTelescopeResultReaderTest(unittest.TestCase):
 
     @mock.patch('__builtin__.open')
     def test_iter(self, mock_open):
-        file_contents = '\n'.join((
-            '1416501638,15.9014', '1326589323,109.11934', '1327712523,80.11242'
-        ))
+        file_contents = '\n'.join(('1416501638,15.9014', '1326589323,109.11934',
+                                   '1327712523,80.11242'))
         mock_input_file = io.BytesIO(file_contents)
         mock_open.return_value = mock_input_file
         results_expected = [
@@ -112,7 +107,7 @@ class SingleTelescopeResultReaderTest(unittest.TestCase):
 
     @mock.patch('__builtin__.open')
     def test_iter_when_file_contains_null_byte_raise_ParseFailedError(
-        self, mock_open):
+            self, mock_open):
         """A NULL byte in Telescope data should yield a ParseFailedError."""
         file_contents = '1416501638,\0x0015.9014'
         mock_open.return_value = io.BytesIO(file_contents)

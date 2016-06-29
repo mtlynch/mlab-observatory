@@ -146,8 +146,8 @@ class SingleTelescopeResultReader(TelescopeResultReader):
                 return _parse_data_file(data_file)
         except csv.Error as e:
             raise ParseFailedError(
-                'Failed to parse Telescope CSV file: %s\nError: %s' % (
-                    self._result_filename, e))
+                'Failed to parse Telescope CSV file: %s\nError: %s' %
+                (self._result_filename, e))
 
     def get_metadata(self):
         return _parse_filename_for_metadata(self._result_filename)

@@ -115,8 +115,7 @@ class ResultConverter(object):
         result_readers = []
         for filename in input_filenames:
             result_readers.append(
-                telescope_data_parser.SingleTelescopeResultReader(
-                    filename))
+                telescope_data_parser.SingleTelescopeResultReader(filename))
 
         result_groups = self._result_grouper.group_results(result_readers)
         self._convert_result_groups(result_groups)

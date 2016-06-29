@@ -22,8 +22,8 @@ import unittest
 
 import pytz
 
-sys.path.insert(1, os.path.abspath(
-    os.path.join(os.path.dirname(__file__), '../convert_from_telescope')))
+sys.path.insert(1, os.path.abspath(os.path.join(
+    os.path.dirname(__file__), '../convert_from_telescope')))
 import reducer
 
 DEFAULT_TIMEZONE = pytz.timezone('US/Eastern')
@@ -52,13 +52,12 @@ class MedianReducerTest(unittest.TestCase):
 
     def test_reduce_by_day_single_metric(self):
         metrics_raw = {
-            'download_throughput': (
-                (make_date(2014, 10, 1, 23, 45, 58), 25.0),
-                (make_date(2014, 10, 1, 3, 12, 42), 15.5),
-                (make_date(2014, 10, 1, 5, 19, 35), 1.0),
-                (make_date(2014, 10, 26, 5, 29, 25), 6.0),
-                (make_date(2014, 10, 26, 15, 21, 42), 4.0),
-                (make_date(2014, 11, 1, 7, 24, 24), 34.6),)
+            'download_throughput': ((make_date(2014, 10, 1, 23, 45, 58), 25.0),
+                                    (make_date(2014, 10, 1, 3, 12, 42), 15.5),
+                                    (make_date(2014, 10, 1, 5, 19, 35), 1.0),
+                                    (make_date(2014, 10, 26, 5, 29, 25), 6.0),
+                                    (make_date(2014, 10, 26, 15, 21, 42), 4.0),
+                                    (make_date(2014, 11, 1, 7, 24, 24), 34.6),)
         }
         # Results should be aggregated such that there is a single value and sample
         # count for each day represented.
@@ -82,12 +81,10 @@ class MedianReducerTest(unittest.TestCase):
 
     def test_reduce_by_day_multi_metric(self):
         metrics_raw = {
-            'download_throughput': (
-                (make_date(2014, 10, 1, 23, 45, 58), 25.0),
-                (make_date(2014, 10, 1, 3, 12, 42), 15.0),),
-            'average_rtt': (
-                (make_date(2014, 10, 1, 23, 45, 58), 6.0),
-                (make_date(2014, 10, 1, 3, 12, 42), 5.0),)
+            'download_throughput': ((make_date(2014, 10, 1, 23, 45, 58), 25.0),
+                                    (make_date(2014, 10, 1, 3, 12, 42), 15.0),),
+            'average_rtt': ((make_date(2014, 10, 1, 23, 45, 58), 6.0),
+                            (make_date(2014, 10, 1, 3, 12, 42), 5.0),)
         }
         # Reducing should keep separate metrics independent from one another.
         reduced_expected = {
@@ -104,12 +101,11 @@ class MedianReducerTest(unittest.TestCase):
 
     def test_reduce_by_hour_of_day_per_month_single_metric(self):
         metrics_raw = {
-            'download_throughput': (
-                (make_date(2014, 10, 9, 5, 45, 58), 19.0),
-                (make_date(2014, 10, 1, 7, 22, 18), 45.0),
-                (make_date(2014, 10, 26, 5, 29, 25), 20.0),
-                (make_date(2014, 11, 5, 5, 19, 35), 28.0),
-                (make_date(2014, 10, 5, 7, 24, 24), 35.0),)
+            'download_throughput': ((make_date(2014, 10, 9, 5, 45, 58), 19.0),
+                                    (make_date(2014, 10, 1, 7, 22, 18), 45.0),
+                                    (make_date(2014, 10, 26, 5, 29, 25), 20.0),
+                                    (make_date(2014, 11, 5, 5, 19, 35), 28.0),
+                                    (make_date(2014, 10, 5, 7, 24, 24), 35.0),)
         }
         # Results should be aggregated such that there is a single value and sample
         # count for each hour of day represented each month.

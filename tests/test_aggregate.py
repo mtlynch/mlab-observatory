@@ -22,8 +22,8 @@ import unittest
 
 import pytz
 
-sys.path.insert(1, os.path.abspath(
-    os.path.join(os.path.dirname(__file__), '../convert_from_telescope')))
+sys.path.insert(1, os.path.abspath(os.path.join(
+    os.path.dirname(__file__), '../convert_from_telescope')))
 import aggregate
 
 DEFAULT_TIMEZONE = pytz.timezone('US/Eastern')
@@ -139,7 +139,9 @@ class AggregateTest(unittest.TestCase):
             (make_date(2014, 3, 26, 5, 29, 25), 17.4),
             (make_date(2014, 11, 30, 7, 24, 24), 34.6),
         ]
-        aggregated_expected = {5: [28.8, 17.4], 7: [45.9, 34.6], 23: [19.2],}
+        aggregated_expected = {5: [28.8, 17.4],
+                               7: [45.9, 34.6],
+                               23: [19.2],}
         aggregated_actual = aggregate.aggregate_by_hour_of_day(results)
         self.assertDictEqual(aggregated_expected, aggregated_actual)
 
@@ -172,7 +174,7 @@ class AggregateTest(unittest.TestCase):
         self.assertDictEqual(aggregated_expected, aggregated_actual)
 
     def test_aggregate_by_hour_of_day_per_month_during_daylight_saving_time_switch(
-        self):
+            self):
         """Verify DST and non-DST results are aggregated together."""
         results = [
             (make_date_from_utc(2013, 11, 3, 5, 30, 0), 1.1),  # 1:30 am EDT

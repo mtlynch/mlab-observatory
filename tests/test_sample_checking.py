@@ -22,8 +22,8 @@ import unittest
 
 import mock
 
-sys.path.insert(1, os.path.abspath(
-    os.path.join(os.path.dirname(__file__), '../convert_from_telescope')))
+sys.path.insert(1, os.path.abspath(os.path.join(
+    os.path.dirname(__file__), '../convert_from_telescope')))
 import sample_checking
 
 
@@ -157,7 +157,8 @@ class SampleCountCheckerTest(unittest.TestCase):
             dt(2014, 10, 27): 50,
             dt(2014, 10, 28): 51,
             dt(2014, 10, 29): 55,
-            dt(2014, 10, 30): 58,  # 10/31 is missing and should count as 0 samples
+            dt(2014, 10, 30):
+            58,  # 10/31 is missing and should count as 0 samples
         }
         checker = sample_checking.SampleCountChecker(
             mock_sample_counter,
